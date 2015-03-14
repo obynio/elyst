@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Shopp</string>
+
+    <string name="txt_open">open</string>
+    <string name="txt_close">close</string>
+
+    <string-array name="navdrawer_items">
+        <item>My list</item>
+    </string-array>
+
+    <string-array name="navdrawer_fragments">
+        <item>com.sybiload.shopp.FragmentList</item>
+        <item>com.sybiload.shopp.FragmentList</item>
+    </string-array>
+
+    <string-array name="items_available">
+        <item>Cheese</item>
+        <item>Eggs</item>
+        <item>Carrots</item>
+        <item>Apples</item>
+        <item>Beefsteak</item>
+        <item>Milk</item>
+        <item>Chips</item>
+        <item>Chocolate</item>
+        <item>A4 paper</item>
+        <item>Honey</item>
+        <item>Pie</item>
+        <item>Sugar</item>
+        <item>Tomatoes</item>
+    </string-array>
+
+</resources>
