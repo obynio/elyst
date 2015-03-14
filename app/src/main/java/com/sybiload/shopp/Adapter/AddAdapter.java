@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sybiload.shopp.Item;
+import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
 import com.sybiload.shopp.Static;
 
@@ -41,22 +43,27 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
         }
     }
 
-    public void remove(String name)
+    public void remove(Item myItem)
     {
-        int position = Static.itemAvailable.indexOf(name);
+        int position = Static.itemAvailable.indexOf(myItem);
         Static.itemShop.add(Static.itemAvailable.get(position));
         Static.itemAvailable.remove(position);
-        Collections.sort(Static.itemShop);
+        //Collections.sort(Static.itemShop);
+        new Misc().sortItems(Static.itemShop);
 
         Set<String> set;
 
         set = new HashSet<String>();
-        set.addAll(Static.itemAvailable);
-        itemPref.edit().putStringSet("itemAvailable", set).commit();
+        for (Item it : Static.itemShop)
+            set.add(it.getName());
+
+        itemPref.edit().putStringSet("itemShop", set).commit();
 
         set = new HashSet<String>();
-        set.addAll(Static.itemShop);
-        itemPref.edit().putStringSet("itemShop", set).commit();
+        for (Item it : Static.itemAvailable)
+            set.add(it.getName());
+
+        itemPref.edit().putStringSet("itemAvailable", set).commit();
 
         notifyItemRemoved(position);
     }
@@ -76,8 +83,9 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        final String name = Static.itemAvailable.get(position);
-        holder.txtHeader.setText(Static.itemAvailable.get(position));
+        final Item myItem = Static.itemAvailable.get(position);
+
+        holder.txtHeader.setText(Static.itemAvailable.get(position).getName());
         holder.itemView.setOnClickListener(new OnClickListener()
         {
             @Override
@@ -91,7 +99,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
             @Override
             public void onClick(View v)
             {
-                remove(name);
+                remove(myItem);
             }
         });
     }

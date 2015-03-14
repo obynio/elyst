@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Static
 {
-    public static ArrayList<String> itemShop = new ArrayList<String>();
-    public static ArrayList<String> itemBuy = new ArrayList<String>();
-    public static ArrayList<String> itemAvailable = new ArrayList<String>();
+    public static ArrayList<Item> itemShop = new ArrayList<Item>();
+    public static ArrayList<Item> itemBuy = new ArrayList<Item>();
+    public static ArrayList<Item> itemAvailable = new ArrayList<Item>();
 }

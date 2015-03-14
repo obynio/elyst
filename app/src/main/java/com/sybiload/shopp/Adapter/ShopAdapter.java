@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sybiload.shopp.Item;
+import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
 import com.sybiload.shopp.Static;
 
@@ -44,22 +46,25 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder>
         }
     }
 
-    public void remove(String name)
+    public void remove(Item myItem)
     {
-        int position = Static.itemShop.indexOf(name);
+
+        int position = Static.itemShop.indexOf(myItem);
         Static.itemAvailable.add(Static.itemShop.get(position));
         Static.itemShop.remove(position);
-        Collections.sort(Static.itemAvailable);
+        new Misc().sortItems(Static.itemAvailable);
 
         Set<String> set;
 
         set = new HashSet<String>();
-        set.addAll(Static.itemAvailable);
-        itemPref.edit().putStringSet("itemAvailable", set).commit();
+        for (Item it : Static.itemShop)
+            set.add(it.getName());
+        itemPref.edit().putStringSet("itemShop", set).commit();
 
         set = new HashSet<String>();
-        set.addAll(Static.itemShop);
-        itemPref.edit().putStringSet("itemShop", set).commit();
+        for (Item it : Static.itemAvailable)
+            set.add(it.getName());
+        itemPref.edit().putStringSet("itemAvailable", set).commit();
 
         notifyItemRemoved(position);
     }
@@ -78,18 +83,19 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        final String name = Static.itemShop.get(position);
-        holder.txtHeader.setText(Static.itemShop.get(position));
+        final Item myItem = Static.itemShop.get(position);
+
+        holder.txtHeader.setText(Static.itemShop.get(position).getName());
         holder.imageView.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                remove(name);
+                remove(myItem);
             }
         });
 
-        holder.txtFooter.setText("Footer: " + Static.itemShop.get(position));
+        holder.txtFooter.setText("Footer: " + Static.itemShop.get(position).getName());
 
     }
 
