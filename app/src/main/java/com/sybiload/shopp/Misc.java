@@ -1,9 +1,16 @@
 package com.sybiload.shopp;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
+import android.provider.SyncStateContract;
+import android.util.Log;
+
+import com.sybiload.shopp.Database.Database;
+import com.sybiload.shopp.Database.DatabaseHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +21,15 @@ import java.util.Set;
 
 public class Misc
 {
+    public void log(String message)
+    {
+        if (BuildConfig.DEBUG)
+        {
+            Log.e("com.sybiload.shop.log", message);
+        }
+
+    }
+
     public void leftTransition(Activity act)
     {
         SharedPreferences readPref = PreferenceManager.getDefaultSharedPreferences(act);
@@ -48,21 +64,32 @@ public class Misc
     {
         SharedPreferences itemPref = ctx.getSharedPreferences("item", 0);
 
+        Database database = new Database(ctx);
+        database.open();
+
         // set temp default hashSet
         Set<String> defaultAvailableItems = new HashSet<String>(Arrays.asList(ctx.getResources().getStringArray(R.array.items_available)));
         Set<String> defaultShopItems = new HashSet<String>();
 
-        // get saved items and put them into hashSet
-        Set<String> myAvailableItems = itemPref.getStringSet("itemAvailable", defaultAvailableItems);
-        Set<String> myShopItems = itemPref.getStringSet("itemShop", defaultShopItems);
+        boolean firstLaunch = itemPref.getBoolean("firstLaunch", true);
 
-        // for each availableItem, put it into availableItem array
-        for (String str : myAvailableItems)
-            Static.itemAvailable.add(new Item(str));
+        if (firstLaunch)
+        {
+            itemPref.edit().putBoolean("firstLaunch", false).commit();
 
-        // for each availableItem, put it into shopItem array
-        for (String str : myShopItems)
-            Static.itemShop.add(new Item(str));
+            log("firstLaunch, creating database..");
+
+            for (String str : defaultAvailableItems)
+            {
+                Item myItem = new Item(str, null, R.mipmap.ic_launcher, false, false);
+                database.insertItem(myItem);
+            }
+        }
+
+        log("populate itemArrays from database..");
+
+        database.readAllItems();
+        database.close();
 
         // sort all this stuff
         sortItems(Static.itemAvailable);

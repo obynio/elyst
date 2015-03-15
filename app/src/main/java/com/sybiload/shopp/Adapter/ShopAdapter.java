@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sybiload.shopp.Database.Database;
 import com.sybiload.shopp.Item;
 import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
@@ -24,10 +25,12 @@ import com.sybiload.shopp.Static;
 public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder>
 {
     SharedPreferences itemPref;
+    Database database;
 
     public ShopAdapter(Context ctx)
     {
         itemPref = ctx.getSharedPreferences("item", 0);
+        database = new Database(ctx);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -48,23 +51,17 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder>
 
     public void remove(Item myItem)
     {
+        myItem.toShop(false);
 
         int position = Static.itemShop.indexOf(myItem);
         Static.itemAvailable.add(Static.itemShop.get(position));
         Static.itemShop.remove(position);
+
         new Misc().sortItems(Static.itemAvailable);
 
-        Set<String> set;
-
-        set = new HashSet<String>();
-        for (Item it : Static.itemShop)
-            set.add(it.getName());
-        itemPref.edit().putStringSet("itemShop", set).commit();
-
-        set = new HashSet<String>();
-        for (Item it : Static.itemAvailable)
-            set.add(it.getName());
-        itemPref.edit().putStringSet("itemAvailable", set).commit();
+        database.open();
+        database.updateByName(myItem.getName(), myItem);
+        database.close();
 
         notifyItemRemoved(position);
     }

@@ -1,9 +1,11 @@
 package com.sybiload.shopp;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +53,11 @@ public class ActivityAdd extends ActionBarActivity
                 finish();
             }
         });
+
+        // change searchView text color
+        SearchView searchView = (SearchView)toolbar.findViewById(R.id.searchViewAdd);
+        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
+        theTextArea.setTextColor(Color.WHITE);
 
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
 

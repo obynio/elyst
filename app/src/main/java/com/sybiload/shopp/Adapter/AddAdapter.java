@@ -7,6 +7,7 @@ import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sybiload.shopp.Database.Database;
+import com.sybiload.shopp.Database.DatabaseHandler;
 import com.sybiload.shopp.Item;
 import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
@@ -23,10 +26,12 @@ import com.sybiload.shopp.Static;
 public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
 {
     SharedPreferences itemPref;
+    Database database;
 
     public AddAdapter(Context ctx)
     {
         itemPref = ctx.getSharedPreferences("item", 0);
+        database = new Database(ctx);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -45,29 +50,20 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
 
     public void remove(Item myItem)
     {
+        myItem.toShop(true);
+
         int position = Static.itemAvailable.indexOf(myItem);
         Static.itemShop.add(Static.itemAvailable.get(position));
         Static.itemAvailable.remove(position);
-        //Collections.sort(Static.itemShop);
+
         new Misc().sortItems(Static.itemShop);
 
-        Set<String> set;
-
-        set = new HashSet<String>();
-        for (Item it : Static.itemShop)
-            set.add(it.getName());
-
-        itemPref.edit().putStringSet("itemShop", set).commit();
-
-        set = new HashSet<String>();
-        for (Item it : Static.itemAvailable)
-            set.add(it.getName());
-
-        itemPref.edit().putStringSet("itemAvailable", set).commit();
+        database.open();
+        database.updateByName(myItem.getName(), myItem);
+        database.close();
 
         notifyItemRemoved(position);
     }
-
 
 
     @Override

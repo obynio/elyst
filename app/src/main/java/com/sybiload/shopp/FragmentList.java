@@ -63,27 +63,4 @@ public class FragmentList extends Fragment
         recyclerView.setAdapter(shopAdapter);
         super.onResume();
     }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
-        inflater.inflate(R.menu.search, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            case R.id.search:
-
-
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
 }
