@@ -1,16 +1,13 @@
 package com.sybiload.shopp;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
-import android.provider.SyncStateContract;
 import android.util.Log;
 
-import com.sybiload.shopp.Database.Database;
-import com.sybiload.shopp.Database.DatabaseHandler;
+import com.sybiload.shopp.Database.Item.DatabaseItem;
+import com.sybiload.shopp.Database.List.DatabaseList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,38 +18,41 @@ import java.util.Set;
 
 public class Misc
 {
-    public void log(String message)
-    {
-        if (BuildConfig.DEBUG)
-        {
-            Log.e("com.sybiload.shop.log", message);
-        }
-
-    }
-
     public void leftTransition(Activity act)
     {
-        SharedPreferences readPref = PreferenceManager.getDefaultSharedPreferences(act);
-
-        if (readPref.getBoolean("checkBoxUiPrefTransitions", true))
-        {
-            act.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-        }
+        act.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
     public void rightTransition(Activity act)
     {
-        SharedPreferences readPref = PreferenceManager.getDefaultSharedPreferences(act);
-
-        if (readPref.getBoolean("checkBoxUiPrefTransitions", true))
-        {
-            act.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-        }
+        act.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 
-    public void sortItems(ArrayList<Item> list)
+    public void log(String message)
     {
-        Collections.sort(list, new Comparator<Item>()
+        if (BuildConfig.DEBUG)
+        {
+            Log.e("com.sybiload.mytag", message);
+        }
+
+    }
+
+    // sort list in alphabetical order
+    public void sortList(ArrayList<List> list)
+    {
+        Collections.sort(list, new Comparator<List>()
+        {
+            public int compare(List v1, List v2)
+            {
+                return v1.getName().compareTo(v2.getName());
+            }
+        });
+    }
+
+    // sort item in alphabetical order
+    public void sortItem(ArrayList<Item> item)
+    {
+        Collections.sort(item, new Comparator<Item>()
         {
             public int compare(Item v1, Item v2) {
                 return v1.getName().compareTo(v2.getName());
@@ -60,39 +60,67 @@ public class Misc
         });
     }
 
-    public void populateItems(Context ctx)
+    public void testList(Context ctx)
     {
-        SharedPreferences itemPref = ctx.getSharedPreferences("item", 0);
+        // open list tabl database
+        DatabaseList databaseList = new DatabaseList(ctx);
+        databaseList.open();
 
-        Database database = new Database(ctx);
-        database.open();
+        log("creating test list..");
 
-        // set temp default hashSet
-        Set<String> defaultAvailableItems = new HashSet<String>(Arrays.asList(ctx.getResources().getStringArray(R.array.items_available)));
-        Set<String> defaultShopItems = new HashSet<String>();
+        // create test list
+        List testList = new List("hey", "world", "hey.db");
 
-        boolean firstLaunch = itemPref.getBoolean("firstLaunch", true);
+        // fill it with all default item
+        testList.setItem(populateDefaultItem(ctx));
 
-        if (firstLaunch)
+
+
+        // insert list in the root tabl database
+        databaseList.insertList(testList);
+        databaseList.close();
+
+        DatabaseItem databaseItem = new DatabaseItem(ctx, testList.getDatabase());
+        databaseItem.open();
+        //databaseItem.createNewTabl();
+
+        for (Item newItem : testList.getItem())
         {
-            itemPref.edit().putBoolean("firstLaunch", false).commit();
-
-            log("firstLaunch, creating database..");
-
-            for (String str : defaultAvailableItems)
-            {
-                Item myItem = new Item(str, null, R.mipmap.ic_launcher, false, false);
-                database.insertItem(myItem);
-            }
+            databaseItem.insertItem(newItem);
         }
 
-        log("populate itemArrays from database..");
+        databaseItem.close();
 
-        database.readAllItems();
-        database.close();
+        populateList(ctx);
+    }
+
+    // get default item and send back an arraylist with all the default items
+    public ArrayList<Item> populateDefaultItem(Context ctx)
+    {
+        ArrayList<Item> itemArray = new ArrayList<Item>();
+        Set<String> defaultAvailableItems = new HashSet<String>(Arrays.asList(ctx.getResources().getStringArray(R.array.items_available)));
+
+        for (String str : defaultAvailableItems)
+        {
+            Item myItem = new Item(str, null, R.mipmap.ic_launcher, false, false);
+            itemArray.add(myItem);
+        }
+
+        return itemArray;
+    }
+
+    public void populateList(Context ctx)
+    {
+        DatabaseList databaseList = new DatabaseList(ctx);
+
+        Static.allList = new ArrayList<List>();
+
+        // read all list in the database and populate static list array
+        databaseList.open();
+        databaseList.readAllList();
+        databaseList.close();
 
         // sort all this stuff
-        sortItems(Static.itemAvailable);
-        sortItems(Static.itemShop);
+        sortList(Static.allList);
     }
 }

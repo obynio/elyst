@@ -1,6 +1,7 @@
 package com.sybiload.shopp;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,13 +13,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.sybiload.shopp.Adapter.ListViewAdapter;
+import com.sybiload.shopp.Adapter.AdapterListView;
 import com.sybiload.shopp.Adapter.ListViewItem;
 
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity
+public class ActivityMain extends ActionBarActivity
 {
     int ids = -1;
     private Toolbar toolbar;
@@ -38,10 +39,10 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         // populate items
-        new Misc().populateItems(getApplicationContext());
+        new Misc().populateList(getApplicationContext());
 
         drawerItems = getResources().getStringArray(R.array.navdrawer_items);
-        drawerFragments = getResources().getStringArray(R.array.navdrawer_fragments);
+        drawerFragments = getResources().getStringArray(R.array.navdrawer_views);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -79,7 +80,7 @@ public class MainActivity extends ActionBarActivity
             models.add(new ListViewItem(str));
         }
 
-        navList.setAdapter(new ListViewAdapter(this, models));
+        navList.setAdapter(new AdapterListView(this, models));
 
         navList.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -87,17 +88,19 @@ public class MainActivity extends ActionBarActivity
             public void onItemClick(AdapterView<?> parent, View view, final int pos, long id)
             {
 
-                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                tx.replace(R.id.main, Fragment.instantiate(MainActivity.this, drawerFragments[pos]));
-                tx.commit();
+                if (pos > 0)
+                {
+                    FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                    tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos - 1]));
+                    tx.commit();
 
-                drawerLayout.closeDrawer(navList);
+                    drawerLayout.closeDrawer(navList);
+                }
             }
         });
 
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.main, Fragment.instantiate(MainActivity.this, "com.sybiload.shopp.FragmentList"));
+        tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, "com.sybiload.shopp.FragmentList"));
         tx.commit();
     }
-
 }

@@ -5,11 +5,10 @@
     <string name="txt_close">close</string>
 
     <string-array name="navdrawer_items">
-        <item>My list</item>
+        <item>My lists</item>
     </string-array>
 
-    <string-array name="navdrawer_fragments">
-        <item>com.sybiload.shopp.FragmentList</item>
+    <string-array name="navdrawer_views">
         <item>com.sybiload.shopp.FragmentList</item>
     </string-array>
 

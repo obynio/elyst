@@ -1,9 +1,10 @@
 package com.sybiload.shopp;
 
+
 public class Item
 {
     private String name;
-    private String footer;
+    private String description;
     private int icon;
     private boolean shop;
     private boolean done;
@@ -11,7 +12,7 @@ public class Item
     public Item(String name, String footer, int icon, Boolean shop, Boolean done)
     {
         this.name = name;
-        this.footer = footer;
+        this.description = footer;
         this.icon = icon;
         this.shop = shop;
         this.done = done;
@@ -26,13 +27,13 @@ public class Item
         this.name = name;
     }
 
-    public String getFooter()
+    public String getDescription()
     {
-        return this.footer;
+        return this.description;
     }
-    public void setFooter (String footer)
+    public void setDescription (String description)
     {
-        this.footer = footer;
+        this.description = description;
     }
 
     public int getIcon()

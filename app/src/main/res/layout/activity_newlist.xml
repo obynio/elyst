@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C5CAE9"
+                android:background="@null"
+                android:textSize="32dp"
+                android:singleLine="true"
+                android:textColorHighlight="#2196F3"
+                android:inputType="textCapSentences"
+                android:hint="Name"
+                android:id="@+id/editTextNewListName"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/editTextNewListName"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C5CAE9"
+                android:background="@null"
+                android:textSize="20dp"
+                android:textColorHighlight="#2196F3"
+                android:hint="Description"
+                android:inputType="textCapSentences"
+                android:singleLine="true"
+                android:id="@+id/editTextNewListDescription"/>
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <ImageButton
+        android:id="@+id/imageButtonNewListFab"
+        android:layout_width="@dimen/fab_button_diameter"
+        android:layout_height="@dimen/fab_button_diameter"
+        android:layout_marginTop="170dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/fab_shape"
+        android:src="@mipmap/fab_ic_done"
+        android:tint="@android:color/white"/>
+
+
+</RelativeLayout>

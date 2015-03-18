@@ -11,12 +11,12 @@ import com.sybiload.shopp.R;
 
 import java.util.ArrayList;
 
-public class ListViewAdapter extends ArrayAdapter<ListViewItem>
+public class AdapterListView extends ArrayAdapter<ListViewItem>
 {
     private final Context context;
     private final ArrayList<ListViewItem> values;
 
-    public ListViewAdapter(Context context, ArrayList<ListViewItem> values)
+    public AdapterListView(Context context, ArrayList<ListViewItem> values)
     {
         super(context, R.layout.header, values);
 

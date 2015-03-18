@@ -1,13 +1,8 @@
 package com.sybiload.shopp.Adapter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,22 +11,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sybiload.shopp.Database.Database;
-import com.sybiload.shopp.Database.DatabaseHandler;
+import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.Item;
+import com.sybiload.shopp.List;
 import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
 import com.sybiload.shopp.Static;
 
-public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
+import java.util.ArrayList;
+
+public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 {
     SharedPreferences itemPref;
-    Database database;
+    ArrayList<Item> item;
 
-    public AddAdapter(Context ctx)
+
+    public AdapterAdd(Context ctx, List list)
     {
-        itemPref = ctx.getSharedPreferences("item", 0);
-        database = new Database(ctx);
+        item = list.getItem();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -52,22 +49,24 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
     {
         myItem.toShop(true);
 
+        /*
         int position = Static.itemAvailable.indexOf(myItem);
         Static.itemShop.add(Static.itemAvailable.get(position));
         Static.itemAvailable.remove(position);
 
-        new Misc().sortItems(Static.itemShop);
+        new Misc().sortItem(Static.itemShop);
 
-        database.open();
-        database.updateByName(myItem.getName(), myItem);
-        database.close();
+        databaseItem.open();
+        databaseItem.updateByName(myItem.getName(), myItem);
+        databaseItem.close();
 
         notifyItemRemoved(position);
+        */
     }
 
 
     @Override
-    public AddAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    public AdapterAdd.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_add, parent, false);
 
@@ -79,9 +78,9 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        final Item myItem = Static.itemAvailable.get(position);
+        final Item myItem = item.get(position);
 
-        holder.txtHeader.setText(Static.itemAvailable.get(position).getName());
+        holder.txtHeader.setText(item.get(position).getName());
         holder.itemView.setOnClickListener(new OnClickListener()
         {
             @Override
@@ -103,7 +102,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
     @Override
     public int getItemCount()
     {
-        return Static.itemAvailable.size();
+        return item.size();
     }
 
 }
