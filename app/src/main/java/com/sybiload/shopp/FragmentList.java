@@ -2,6 +2,7 @@ package com.sybiload.shopp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.sybiload.shopp.Adapter.AdapterList;
-
 public class FragmentList extends Fragment
 {
     private RecyclerView recyclerView;
@@ -37,9 +37,6 @@ public class FragmentList extends Fragment
                 startActivity(intent);
             }
         });
-
-
-
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewList);
 

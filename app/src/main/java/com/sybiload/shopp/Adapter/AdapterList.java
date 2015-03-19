@@ -2,8 +2,12 @@ package com.sybiload.shopp.Adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.provider.CalendarContract;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -52,6 +56,20 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     {
         holder.txtHeader.setText(Static.allList.get(position).getName());
         holder.txtFooter.setText(Static.allList.get(position).getDescription());
+
+        holder.itemView.setOnTouchListener(new View.OnTouchListener()
+        {
+            @Override
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE)
+                    v.setBackgroundColor(Color.parseColor("#C3C3C3"));
+                else
+                    v.setBackgroundColor(Color.TRANSPARENT);
+
+                return false;
+            }
+        });
         holder.itemView.setOnClickListener(new OnClickListener()
         {
             @Override
