@@ -60,7 +60,7 @@ public class Misc
         });
     }
 
-    public void testList(Context ctx)
+    public void addList(Context ctx, List myList)
     {
         // open list tabl database
         DatabaseList databaseList = new DatabaseList(ctx);
@@ -68,23 +68,20 @@ public class Misc
 
         log("creating test list..");
 
-        // create test list
-        List testList = new List("hey", "world", "hey.db");
-
         // fill it with all default item
-        testList.setItem(populateDefaultItem(ctx));
+        myList.setItem(populateDefaultItem(ctx));
 
 
 
         // insert list in the root tabl database
-        databaseList.insertList(testList);
+        databaseList.insertList(myList);
         databaseList.close();
 
-        DatabaseItem databaseItem = new DatabaseItem(ctx, testList.getDatabase());
+        DatabaseItem databaseItem = new DatabaseItem(ctx, myList.getDatabase());
         databaseItem.open();
         //databaseItem.createNewTabl();
 
-        for (Item newItem : testList.getItem())
+        for (Item newItem : myList.getItem())
         {
             databaseItem.insertItem(newItem);
         }

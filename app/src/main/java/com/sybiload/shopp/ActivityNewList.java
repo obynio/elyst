@@ -47,7 +47,7 @@ public class ActivityNewList extends ActionBarActivity
 
                 List myList = new List(editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), editTextNewListName.getText().toString().toLowerCase().replaceAll(" ", "_") + ".db");
 
-                new Misc().testList(getApplicationContext());
+                new Misc().addList(getApplicationContext(), myList);
 
                 finish();
             }
