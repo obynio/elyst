@@ -49,6 +49,7 @@ public class ActivityNewList extends ActionBarActivity
 
                 new Misc().addList(getApplicationContext(), myList);
 
+
                 finish();
             }
         });
