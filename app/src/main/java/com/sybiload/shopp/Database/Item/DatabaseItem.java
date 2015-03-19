@@ -41,6 +41,17 @@ public class DatabaseItem extends DatabaseItemH
         database.insert(CURRENT_TABL, null, value);
     }
 
+    public void updateByName(String name, Item newItem)
+    {
+        ContentValues value = new ContentValues();
+        value.put(COLUMN_NAME, newItem.getName());
+        value.put(COLUMN_DESCRIPTION, newItem.getDescription());
+        value.put(COLUMN_ICON, newItem.getIcon());
+        value.put(COLUMN_SHOP, newItem.isToShop() ? 1 : 0);
+        value.put(COLUMN_DONE, newItem.isDone() ? 1 : 0);
+        database.update(CURRENT_TABL, value, COLUMN_NAME + " = '" + name + "'", null);
+    }
+
     // read all list from the table
     public ArrayList<Item> readAllItem()
     {

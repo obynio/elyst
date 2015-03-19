@@ -45,7 +45,7 @@ public class ActivityNewList extends ActionBarActivity
                 DatabaseList databaseList = new DatabaseList(getApplicationContext());
                 databaseList.open();
 
-                List myList = new List(editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), editTextNewListName.getText().toString().toLowerCase().replaceAll(" ", "_"));
+                List myList = new List(editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), editTextNewListName.getText().toString().toLowerCase().replaceAll(" ", "_") + ".db");
 
                 new Misc().testList(getApplicationContext());
 

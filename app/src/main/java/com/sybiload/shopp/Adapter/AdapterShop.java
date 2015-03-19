@@ -27,7 +27,15 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     public AdapterShop(Context ctx, List list)
     {
         databaseItem = new DatabaseItem(ctx, list.getDatabase());
-        this.item = list.getItem();
+
+        ArrayList<Item> tmpList = list.getItem();
+        item = new ArrayList<Item>();
+
+        for (Item it : tmpList)
+        {
+            if (it.isToShop())
+                item.add(it);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -50,20 +58,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     {
         myItem.toShop(false);
 
-        /*
-        int position = Static.itemShop.indexOf(myItem);
-        Static.itemAvailable.add(Static.itemShop.get(position));
-        Static.itemShop.remove(position);
+        int position = item.indexOf(myItem);
+        item.remove(position);
 
-        new Misc().sortItem(Static.itemAvailable);
-
-        databaseItem.open(Static.list.get(0).getTable());
+        databaseItem.open();
         databaseItem.updateByName(myItem.getName(), myItem);
         databaseItem.close();
 
-
         notifyItemRemoved(position);
-        */
     }
 
 
@@ -80,20 +82,22 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        final Item myItem = item.get(position);
-
-        holder.txtHeader.setText(item.get(position).getName());
-        holder.imageView.setOnClickListener(new OnClickListener()
+        if (item.get(position).isToShop())
         {
-            @Override
-            public void onClick(View v)
+            final Item myItem = item.get(position);
+
+            holder.txtHeader.setText(item.get(position).getName());
+            holder.imageView.setOnClickListener(new OnClickListener()
             {
-                remove(myItem);
-            }
-        });
+                @Override
+                public void onClick(View v)
+                {
+                    remove(myItem);
+                }
+            });
 
-        holder.txtFooter.setText("Footer: " + item.get(position).getName());
-
+            holder.txtFooter.setText("Footer: " + item.get(position).getName());
+        }
     }
 
     @Override

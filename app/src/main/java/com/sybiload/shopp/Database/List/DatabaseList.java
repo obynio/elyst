@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.List;
+import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.Static;
 
 public class DatabaseList extends DatabaseListH

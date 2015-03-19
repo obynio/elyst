@@ -59,5 +59,6 @@ public class List
     public void setItem(ArrayList<Item> item)
     {
         this.item = item;
+        new Misc().sortItem(this.item);
     }
 }

@@ -22,13 +22,22 @@ import java.util.ArrayList;
 
 public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 {
-    SharedPreferences itemPref;
+    DatabaseItem databaseItem;
     ArrayList<Item> item;
 
 
     public AdapterAdd(Context ctx, List list)
     {
-        item = list.getItem();
+        databaseItem = new DatabaseItem(ctx, list.getDatabase());
+
+        ArrayList<Item> tmpList = list.getItem();
+        item = new ArrayList<Item>();
+
+        for (Item it : tmpList)
+        {
+            if (!it.isToShop())
+                item.add(it);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -49,19 +58,15 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     {
         myItem.toShop(true);
 
-        /*
-        int position = Static.itemAvailable.indexOf(myItem);
-        Static.itemShop.add(Static.itemAvailable.get(position));
-        Static.itemAvailable.remove(position);
-
-        new Misc().sortItem(Static.itemShop);
+        int position = item.indexOf(myItem);
+        item.remove(position);
 
         databaseItem.open();
         databaseItem.updateByName(myItem.getName(), myItem);
         databaseItem.close();
 
         notifyItemRemoved(position);
-        */
+
     }
 
 
@@ -78,25 +83,28 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        final Item myItem = item.get(position);
+        if (!item.get(position).isToShop())
+        {
+            final Item myItem = item.get(position);
 
-        holder.txtHeader.setText(item.get(position).getName());
-        holder.itemView.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+            holder.txtHeader.setText(item.get(position).getName());
+            holder.itemView.setOnClickListener(new OnClickListener()
             {
-                System.out.println("hemmp");
-            }
-        });
-        holder.imageView.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+                @Override
+                public void onClick(View v)
+                {
+                    System.out.println("hemmp");
+                }
+            });
+            holder.imageView.setOnClickListener(new OnClickListener()
             {
-                remove(myItem);
-            }
-        });
+                @Override
+                public void onClick(View v)
+                {
+                    remove(myItem);
+                }
+            });
+        }
     }
 
     @Override
