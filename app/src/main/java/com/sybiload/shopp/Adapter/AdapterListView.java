@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sybiload.shopp.R;
@@ -45,7 +47,10 @@ public class AdapterListView extends ArrayAdapter<ListViewItem>
             rowView = inflater.inflate(R.layout.item_nav, parent, false);
 
             TextView titleView = (TextView) rowView.findViewById(R.id.textViewNavTitle);
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.iconNav);
+
             titleView.setText(values.get(position).getTitle());
+            imageView.setImageDrawable(values.get(position).getIcon());
         }
 
         return rowView;

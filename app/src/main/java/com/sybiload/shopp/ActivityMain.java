@@ -77,7 +77,7 @@ public class ActivityMain extends ActionBarActivity
         models.add(new ListViewItem("Carottes", "carottes@gmail.com"));
         for (String str : drawerItems)
         {
-            models.add(new ListViewItem(str));
+            models.add(new ListViewItem(str, getResources().getDrawable(R.mipmap.ic_add)));
         }
 
         navList.setAdapter(new AdapterListView(this, models));
