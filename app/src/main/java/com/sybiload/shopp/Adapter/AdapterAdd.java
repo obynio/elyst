@@ -3,6 +3,8 @@ package com.sybiload.shopp.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +27,11 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     DatabaseItem databaseItem;
     ArrayList<Item> item;
 
+    Context ctx;
 
     public AdapterAdd(Context ctx, List list)
     {
+        this.ctx = ctx;
         databaseItem = new DatabaseItem(ctx, list.getDatabase());
 
         ArrayList<Item> tmpList = list.getItem();
@@ -44,6 +48,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     {
         public TextView txtHeader;
         public ImageView imageView;
+        public ImageView imageViewItemIcon;
 
         public ViewHolder(View v)
         {
@@ -51,6 +56,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
             txtHeader = (TextView) v.findViewById(R.id.textViewAddFirstLine);
             imageView = (ImageView) v.findViewById(R.id.imageViewAdd);
+            imageViewItemIcon = (ImageView) v.findViewById(R.id.imageViewAddItemIcon);
         }
     }
 
@@ -87,6 +93,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         {
             final Item myItem = item.get(position);
 
+
             holder.txtHeader.setText(item.get(position).getName());
             holder.itemView.setOnClickListener(new OnClickListener()
             {
@@ -104,6 +111,9 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
                     remove(myItem);
                 }
             });
+
+            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(item.get(position).getIcon()));
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
         }
     }
 

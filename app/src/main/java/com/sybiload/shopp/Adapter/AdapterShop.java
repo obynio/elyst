@@ -2,6 +2,7 @@ package com.sybiload.shopp.Adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +25,11 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     DatabaseItem databaseItem;
     ArrayList<Item> item;
 
+    Context ctx;
+
     public AdapterShop(Context ctx, List list)
     {
+        this.ctx = ctx;
         databaseItem = new DatabaseItem(ctx, list.getDatabase());
 
         ArrayList<Item> tmpList = list.getItem();
@@ -43,6 +47,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         public TextView txtHeader;
         public TextView txtFooter;
         public ImageView imageView;
+        public ImageView imageViewItemIcon;
 
         public ViewHolder(View v)
         {
@@ -51,6 +56,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             txtHeader = (TextView) v.findViewById(R.id.textViewShopFirstLine);
             txtFooter = (TextView) v.findViewById(R.id.textViewShopSecondLine);
             imageView = (ImageView) v.findViewById(R.id.imageViewShop);
+            imageViewItemIcon = (ImageView) v.findViewById(R.id.imageViewShopItemIcon);
         }
     }
 
@@ -97,6 +103,8 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             });
 
             holder.txtFooter.setText("Footer: " + item.get(position).getName());
+            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(item.get(position).getIcon()));
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
         }
     }
 

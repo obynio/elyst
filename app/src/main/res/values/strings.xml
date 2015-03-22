@@ -12,20 +12,83 @@
         <item>com.sybiload.shopp.FragmentList</item>
     </string-array>
 
-    <string-array name="items_available">
+    <string-array name="item_name">
+        <item>Apple</item>
+        <item>Aubergine</item>
+        <item>Bacon</item>
+        <item>Banana</item>
+        <item>Beans</item>
+        <item>Beer</item>
+        <item>Bone</item>
+        <item>Bread</item>
+        <item>Broccoli</item>
+        <item>Cake</item>
+        <item>Candy</item>
+        <item>Carrot</item>
+        <item>Cereal</item>
         <item>Cheese</item>
-        <item>Eggs</item>
-        <item>Carrots</item>
-        <item>Apples</item>
-        <item>Beefsteak</item>
-        <item>Milk</item>
-        <item>Chips</item>
+        <item>Cherry</item>
+        <item>Chili</item>
         <item>Chocolate</item>
-        <item>A4 paper</item>
+        <item>Clam</item>
+        <item>Cocktail</item>
+        <item>Coffee</item>
+        <item>Coffee beans</item>
+        <item>Cola</item>
+        <item>Cookie</item>
+        <item>Corn</item>
+        <item>Croissant</item>
+        <item>Cucumber</item>
+        <item>Donut</item>
+        <item>Egg</item>
+        <item>Fish</item>
+        <item>Fried egg</item>
+        <item>Fries</item>
+        <item>Garlic</item>
+        <item>Grape</item>
+        <item>Hamburger</item>
+        <item>Herb</item>
         <item>Honey</item>
-        <item>Pie</item>
-        <item>Sugar</item>
-        <item>Tomatoes</item>
+        <item>Hot dog</item>
+        <item>Ice cream</item>
+        <item>Lemon</item>
+        <item>Lemonade</item>
+        <item>Lettuce</item>
+        <item>Meat</item>
+        <item>Melon</item>
+        <item>Milk</item>
+        <item>Muffin</item>
+        <item>Mushroom</item>
+        <item>Oil</item>
+        <item>Orange</item>
+        <item>Paper</item>
+        <item>Pasta</item>
+        <item>Pear</item>
+        <item>Pepper powder</item>
+        <item>Pepper</item>
+        <item>Pineapple</item>
+        <item>Pizza</item>
+        <item>Potato</item>
+        <item>Poultry</item>
+        <item>Prawn</item>
+        <item>Pretzel</item>
+        <item>Pumpkin</item>
+        <item>Raisin</item>
+        <item>Red wine</item>
+        <item>Salt</item>
+        <item>Sausage</item>
+        <item>Soup</item>
+        <item>Squid</item>
+        <item>Strawberry</item>
+        <item>Sushi</item>
+        <item>Taco</item>
+        <item>Tea</item>
+        <item>Toast</item>
+        <item>Tomato</item>
+        <item>Vanilla</item>
+        <item>Vinegar</item>
+        <item>Washing liquid</item>
+        <item>Water</item>
+        <item>White wine</item>
     </string-array>
-
 </resources>

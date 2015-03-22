@@ -4,7 +4,7 @@
                 android:padding="6dip" >
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/imageViewShopItemIcon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
@@ -18,7 +18,7 @@
         android:layout_width="fill_parent"
         android:layout_height="26dip"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/icon"
+        android:layout_toRightOf="@id/imageViewShopItemIcon"
         android:layout_toLeftOf="@+id/imageViewShop"
         android:ellipsize="marquee"
         android:singleLine="true"
@@ -32,7 +32,7 @@
         android:layout_above="@id/textViewShopSecondLine"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
+        android:layout_toRightOf="@id/imageViewShopItemIcon"
         android:layout_toLeftOf="@+id/imageViewShop"
         android:gravity="center_vertical"
         android:text="Example application"

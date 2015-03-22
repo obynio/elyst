@@ -95,11 +95,11 @@ public class Misc
     public ArrayList<Item> populateDefaultItem(Context ctx)
     {
         ArrayList<Item> itemArray = new ArrayList<Item>();
-        Set<String> defaultAvailableItems = new HashSet<String>(Arrays.asList(ctx.getResources().getStringArray(R.array.items_available)));
+        String[] defaultItemName = ctx.getResources().getStringArray(R.array.item_name);
 
-        for (String str : defaultAvailableItems)
+        for (int i = 0; i < defaultItemName.length; i++)
         {
-            Item myItem = new Item(str, null, R.mipmap.ic_launcher, false, false);
+            Item myItem = new Item(defaultItemName[i], null, Static.defaultItemIcon[i], false, false);
             itemArray.add(myItem);
         }
 
