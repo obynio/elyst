@@ -75,6 +75,9 @@ public class ActivityShop extends ActionBarActivity
         AdapterShop adapterShop = new AdapterShop(getApplicationContext(), newList);
         recyclerView.setAdapter(adapterShop);
 
+        // testing
+        List l = newList;
+
         super.onResume();
     }
 

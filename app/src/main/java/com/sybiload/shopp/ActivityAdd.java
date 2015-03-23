@@ -1,6 +1,7 @@
 package com.sybiload.shopp;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,15 +9,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 
 import com.sybiload.shopp.Adapter.AdapterAdd;
+import com.sybiload.shopp.Database.Item.DatabaseItem;
+import com.sybiload.shopp.Database.List.DatabaseList;
+
+import java.util.ArrayList;
 
 
 public class ActivityAdd extends ActionBarActivity
 {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private SearchView searchView;
+
 
     int listNumber = 0;
 
@@ -46,28 +55,78 @@ public class ActivityAdd extends ActionBarActivity
             public void onClick(View v)
             {
                 finish();
+                searchView.setQuery("", false);
+                searchView.clearFocus();
             }
         });
 
-        // change searchView text color
-        SearchView searchView = (SearchView)toolbar.findViewById(R.id.searchViewAdd);
-        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
-        theTextArea.setTextColor(Color.WHITE);
-
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
+        searchView = (SearchView) toolbar.findViewById(R.id.searchViewAdd);
 
         recyclerView.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
 
-
         // adding all items available
         AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext(), newList);
         recyclerView.setAdapter(adapterAdd);
+
+
+
+        // change searchView text color
+        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
+        theTextArea.setTextColor(Color.WHITE);
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener()
+        {
+            @Override
+            public boolean onClose()
+            {
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+
+                return false;
+            }
+        });
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextSubmit(String s)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s)
+            {
+                new Misc().log("hello here");
+                ArrayList<Item> arrayItem = new ArrayList<Item>();
+
+                DatabaseItem database = new DatabaseItem(getApplicationContext(), newList.getDatabase());
+
+                database.open();
+                ArrayList<Item> ite = database.searchItem(s.toLowerCase());
+                database.close();
+
+                newList.setItem(ite);
+
+
+
+                AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext(), newList);
+                recyclerView.setAdapter(adapterAdd);
+
+
+                return false;
+            }
+        });
     }
     public void onBackPressed()
     {
         finish();
+        searchView.setQuery("", false);
+        searchView.clearFocus();
     }
 }

@@ -79,27 +79,18 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     public void done(Item myItem)
     {
         if (!myItem.isDone())
-        {
             myItem.done(true);
-
-            int position = item.indexOf(myItem);
-
-            new Misc().sortItem(item);
-            new Misc().sortItemByDone(item);
-
-            notifyItemMoved(position, item.indexOf(myItem));
-        }
         else
-        {
             myItem.done(false);
 
-            int position = item.indexOf(myItem);
 
-            new Misc().sortItem(item);
-            new Misc().sortItemByDone(item);
+        int position = item.indexOf(myItem);
 
-            notifyItemMoved(position, item.indexOf(myItem));
-        }
+        new Misc().sortItem(item);
+        new Misc().sortItemByDone(item);
+
+
+        notifyItemMoved(position, item.indexOf(myItem));
 
         databaseItem.open();
         databaseItem.updateByName(myItem.getName(), myItem);
@@ -146,7 +137,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                     {
                         holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                        holder.imageViewItemIcon.setColorFilter(Color.parseColor("#1565C0"));
+                        holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
                     }
                     else
                     {
@@ -164,7 +155,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             {
                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#1565C0"));
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
             }
             else
             {

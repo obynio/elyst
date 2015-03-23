@@ -52,6 +52,24 @@ public class DatabaseItem extends DatabaseItemH
         database.update(CURRENT_TABL, value, COLUMN_NAME + " = '" + name + "'", null);
     }
 
+    public ArrayList<Item> searchItem(String s)
+    {
+        // get all the rows
+        ArrayList<Item> arrayItem = new ArrayList<Item>();
+
+        Cursor c = database.rawQuery("select * from " + CURRENT_TABL + " where name like '" + s + "%'", null);
+
+        while (c.moveToNext())
+        {
+            // for each row, create a new list object and add it to the list array
+            Item myItem = new Item(c.getString(0), c.getString(1), c.getInt(2), (c.getInt(3) != 0), (c.getInt(4) != 0));
+            arrayItem.add(myItem);
+        }
+
+        c.close();
+        return arrayItem;
+    }
+
     // read all list from the table
     public ArrayList<Item> readAllItem()
     {
