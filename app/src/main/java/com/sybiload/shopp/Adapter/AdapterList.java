@@ -11,12 +11,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sybiload.shopp.ActivityShop;
+import com.sybiload.shopp.Item;
 import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
 import com.sybiload.shopp.Static;
+
+import java.util.ArrayList;
 
 public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 {
@@ -31,6 +35,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     {
         public TextView txtHeader;
         public TextView txtFooter;
+        public TextView textViewItemNb;
 
         public ViewHolder(View v)
         {
@@ -38,6 +43,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 
             txtHeader = (TextView) v.findViewById(R.id.textViewListFirstLine);
             txtFooter = (TextView) v.findViewById(R.id.textViewListSecondLine);
+            textViewItemNb = (TextView) v.findViewById(R.id.textViewListItemNb);
         }
     }
 
@@ -56,6 +62,15 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     {
         holder.txtHeader.setText(Static.allList.get(position).getName());
         holder.txtFooter.setText(Static.allList.get(position).getDescription());
+
+        int itemLeft = 0;
+        for (Item it : Static.allList.get(position).getItem())
+        {
+            if (it.isToShop() && !it.isDone())
+                itemLeft++;
+        }
+
+        holder.textViewItemNb.setText(Integer.toString(itemLeft));
 
         holder.itemView.setOnTouchListener(new View.OnTouchListener()
         {

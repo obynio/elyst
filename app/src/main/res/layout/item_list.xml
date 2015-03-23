@@ -1,29 +1,81 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
-                android:layout_height="?android:attr/listPreferredItemHeight"
-                android:padding="6dip" >
+                android:layout_height="?android:attr/listPreferredItemHeight" >
 
-    <TextView
-        android:id="@+id/textViewListFirstLine"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="4dp"
-        android:text="Example application"
-        android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/textViewListSecondLine"
-        android:layout_width="fill_parent"
-        android:layout_marginLeft="18dp"
-        android:layout_marginTop="4dp"
-        android:layout_below="@+id/textViewListFirstLine"
-        android:layout_height="26dip"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="Description"
-        android:textSize="12sp" />
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_weight="1"
+           android:layout_height="match_parent">
+
+           <TextView
+               android:id="@+id/textViewListFirstLine"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:gravity="center_vertical"
+               android:layout_marginLeft="16dp"
+               android:layout_marginTop="10dp"
+               android:text="Example application"
+               android:textSize="18dp" />
+
+           <TextView
+               android:id="@+id/textViewListSecondLine"
+               android:layout_width="fill_parent"
+               android:layout_marginLeft="18dp"
+               android:layout_marginTop="2dp"
+               android:layout_below="@+id/textViewListFirstLine"
+               android:layout_alignParentBottom="true"
+               android:layout_height="26dip"
+               android:textColor="#9E9E9E"
+               android:singleLine="true"
+               android:text="Description"
+               android:textSize="12sp" />
+
+       </RelativeLayout>
+
+       <RelativeLayout
+           android:layout_width="140dp"
+           android:layout_height="match_parent"
+           android:gravity="center"
+           android:layout_marginRight="10dp"
+           android:layout_weight="1">
+
+           <TextView
+               android:id="@+id/textViewListItemNb"
+               android:layout_width="match_parent"
+               android:layout_weight="1"
+               android:layout_height="wrap_content"
+               android:gravity="center"
+               android:singleLine="true"
+               android:text="21"
+               android:textStyle="bold"
+               android:textColor="#9E9E9E"
+               android:textSize="26dp" />
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_below="@+id/textViewListItemNb"
+               android:layout_weight="1"
+               android:layout_height="wrap_content"
+               android:gravity="center"
+               android:singleLine="true"
+               android:text="items left"
+               android:textStyle="bold"
+               android:textColor="#9E9E9E"
+               android:textSize="10dp" />
+
+       </RelativeLayout>
+
+
+
+
+   </LinearLayout>
+
+
 
 
 

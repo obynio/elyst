@@ -14,6 +14,10 @@ import android.widget.ImageButton;
 import com.sybiload.shopp.Adapter.EditTextAdapter;
 import com.sybiload.shopp.Database.List.DatabaseList;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 
 public class ActivityNewList extends ActionBarActivity
 {
@@ -96,10 +100,20 @@ public class ActivityNewList extends ActionBarActivity
                 DatabaseList databaseList = new DatabaseList(getApplicationContext());
                 databaseList.open();
 
-                List myList = new List(editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), editTextNewListName.getText().toString().toLowerCase().replaceAll(" ", "_") + ".db");
+                String des = editTextNewListDescription.getText().toString();
+
+                if (des.equals(""))
+                {
+                    Calendar cal = Calendar.getInstance();
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM");
+                    des = "Created on " + dateFormat.format(cal.getTime());
+                }
+
+                List myList = new List(editTextNewListName.getText().toString(), des, editTextNewListName.getText().toString().toLowerCase().replaceAll(" ", "_") + ".db");
 
                 new Misc().addList(getApplicationContext(), myList);
 
+                databaseList.close();
 
                 finish();
             }

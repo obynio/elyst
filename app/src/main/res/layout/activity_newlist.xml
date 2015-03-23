@@ -23,6 +23,7 @@
                 android:layout_marginTop="60dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:maxLength="24"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#C5CAE9"
                 android:background="@null"
@@ -36,6 +37,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="42"
                 android:layout_below="@+id/editTextNewListName"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"

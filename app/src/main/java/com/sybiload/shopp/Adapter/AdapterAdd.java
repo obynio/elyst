@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sybiload.shopp.ActivityAdd;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.Item;
 import com.sybiload.shopp.List;
@@ -71,7 +72,6 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         databaseItem.close();
 
         notifyItemRemoved(position);
-
     }
 
 
