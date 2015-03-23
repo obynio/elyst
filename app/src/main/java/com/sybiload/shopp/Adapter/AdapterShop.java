@@ -3,6 +3,8 @@ package com.sybiload.shopp.Adapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,13 +42,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             if (it.isToShop())
                 item.add(it);
         }
+
+        new Misc().sortItemByDone(item);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public TextView txtHeader;
         public TextView txtFooter;
-        public ImageView imageView;
         public ImageView imageViewItemIcon;
 
         public ViewHolder(View v)
@@ -55,7 +58,6 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
             txtHeader = (TextView) v.findViewById(R.id.textViewShopFirstLine);
             txtFooter = (TextView) v.findViewById(R.id.textViewShopSecondLine);
-            imageView = (ImageView) v.findViewById(R.id.imageViewShop);
             imageViewItemIcon = (ImageView) v.findViewById(R.id.imageViewShopItemIcon);
         }
     }
@@ -74,6 +76,35 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         notifyItemRemoved(position);
     }
 
+    public void done(Item myItem)
+    {
+        if (!myItem.isDone())
+        {
+            myItem.done(true);
+
+            int position = item.indexOf(myItem);
+
+            new Misc().sortItem(item);
+            new Misc().sortItemByDone(item);
+
+            notifyItemMoved(position, item.indexOf(myItem));
+        }
+        else
+        {
+            myItem.done(false);
+
+            int position = item.indexOf(myItem);
+
+            new Misc().sortItem(item);
+            new Misc().sortItemByDone(item);
+
+            notifyItemMoved(position, item.indexOf(myItem));
+        }
+
+        databaseItem.open();
+        databaseItem.updateByName(myItem.getName(), myItem);
+        databaseItem.close();
+    }
 
     @Override
     public AdapterShop.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -86,25 +117,62 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position)
+    public void onBindViewHolder(final ViewHolder holder, final int position)
     {
         if (item.get(position).isToShop())
         {
             final Item myItem = item.get(position);
 
             holder.txtHeader.setText(item.get(position).getName());
-            holder.imageView.setOnClickListener(new OnClickListener()
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    remove(myItem);
+                    return true;
+                }
+            });
+
+            holder.itemView.setOnClickListener(new OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
-                    remove(myItem);
+                    done(myItem);
+
+                    if (myItem.isDone())
+                    {
+                        holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        holder.imageViewItemIcon.setColorFilter(Color.parseColor("#1565C0"));
+                    }
+                    else
+                    {
+                        holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                        holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                        holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+                    }
                 }
             });
 
             holder.txtFooter.setText("Footer: " + item.get(position).getName());
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(item.get(position).getIcon()));
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+
+            if (item.get(position).isDone())
+            {
+                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#1565C0"));
+            }
+            else
+            {
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+            }
+
+
+
         }
     }
 

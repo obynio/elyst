@@ -60,6 +60,17 @@ public class Misc
         });
     }
 
+    // sort item in alphabetical order
+    public void sortItemByDone(ArrayList<Item> item)
+    {
+        Collections.sort(item, new Comparator<Item>()
+        {
+            public int compare(Item v1, Item v2) {
+                return v1.isDone().compareTo(v2.isDone());
+            }
+        });
+    }
+
     public void addList(Context ctx, List myList)
     {
         // open list tabl database

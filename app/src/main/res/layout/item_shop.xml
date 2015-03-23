@@ -19,7 +19,6 @@
         android:layout_height="26dip"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/imageViewShopItemIcon"
-        android:layout_toLeftOf="@+id/imageViewShop"
         android:ellipsize="marquee"
         android:singleLine="true"
         android:text="Description"
@@ -33,20 +32,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:layout_toRightOf="@id/imageViewShopItemIcon"
-        android:layout_toLeftOf="@+id/imageViewShop"
         android:gravity="center_vertical"
         android:text="Example application"
         android:textSize="16sp" />
-
-
-    <ImageView
-        android:id="@+id/imageViewShop"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="6dip"
-        android:src="@mipmap/ic_done" />
 
 </RelativeLayout>

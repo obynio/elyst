@@ -47,7 +47,6 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public TextView txtHeader;
-        public ImageView imageView;
         public ImageView imageViewItemIcon;
 
         public ViewHolder(View v)
@@ -55,7 +54,6 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             super(v);
 
             txtHeader = (TextView) v.findViewById(R.id.textViewAddFirstLine);
-            imageView = (ImageView) v.findViewById(R.id.imageViewAdd);
             imageViewItemIcon = (ImageView) v.findViewById(R.id.imageViewAddItemIcon);
         }
     }
@@ -63,6 +61,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     public void remove(Item myItem)
     {
         myItem.toShop(true);
+        myItem.done(false);
 
         int position = item.indexOf(myItem);
         item.remove(position);
@@ -96,14 +95,6 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
             holder.txtHeader.setText(item.get(position).getName());
             holder.itemView.setOnClickListener(new OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    System.out.println("hemmp");
-                }
-            });
-            holder.imageView.setOnClickListener(new OnClickListener()
             {
                 @Override
                 public void onClick(View v)
