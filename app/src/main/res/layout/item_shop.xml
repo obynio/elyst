@@ -19,7 +19,7 @@
         android:layout_height="26dip"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/imageViewShopItemIcon"
-        android:ellipsize="marquee"
+        android:textColor="#9E9E9E"
         android:singleLine="true"
         android:text="Description"
         android:textSize="12sp" />
