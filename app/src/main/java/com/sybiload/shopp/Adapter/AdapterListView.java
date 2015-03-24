@@ -20,7 +20,7 @@ public class AdapterListView extends ArrayAdapter<ListViewItem>
 
     public AdapterListView(Context context, ArrayList<ListViewItem> values)
     {
-        super(context, R.layout.header, values);
+        super(context, R.layout.item_nav, values);
 
         this.context = context;
         this.values = values;
@@ -32,26 +32,13 @@ public class AdapterListView extends ArrayAdapter<ListViewItem>
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View rowView;
-        if (position == 0)
-        {
-            rowView = inflater.inflate(R.layout.header, parent, false);
+        rowView = inflater.inflate(R.layout.item_nav, parent, false);
 
-            TextView mailView = (TextView) rowView.findViewById(R.id.email);
-            TextView titleView = (TextView) rowView.findViewById(R.id.name);
+        TextView titleView = (TextView) rowView.findViewById(R.id.textViewNavTitle);
+        ImageView imageView = (ImageView) rowView.findViewById(R.id.iconNav);
 
-            mailView.setText(values.get(position).getMail());
-            titleView.setText(values.get(position).getTitle());
-        }
-        else
-        {
-            rowView = inflater.inflate(R.layout.item_nav, parent, false);
-
-            TextView titleView = (TextView) rowView.findViewById(R.id.textViewNavTitle);
-            ImageView imageView = (ImageView) rowView.findViewById(R.id.iconNav);
-
-            titleView.setText(values.get(position).getTitle());
-            imageView.setImageDrawable(values.get(position).getIcon());
-        }
+        titleView.setText(values.get(position).getTitle());
+        imageView.setImageDrawable(values.get(position).getIcon());
 
         return rowView;
     }

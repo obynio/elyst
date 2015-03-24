@@ -74,11 +74,10 @@ public class ActivityMain extends ActionBarActivity
 
         navList = (ListView) findViewById(R.id.drawer);
 
-        models.add(new ListViewItem("Carottes", "carottes@gmail.com"));
-        for (String str : drawerItems)
-        {
-            models.add(new ListViewItem(str, getResources().getDrawable(R.mipmap.ic_add)));
-        }
+        models.add(new ListViewItem(drawerItems[0], getResources().getDrawable(R.mipmap.ic_shop)));
+        models.add(new ListViewItem(drawerItems[1], getResources().getDrawable(R.mipmap.ic_schedule)));
+        models.add(new ListViewItem(drawerItems[2], getResources().getDrawable(R.mipmap.ic_pin)));
+        models.add(new ListViewItem(drawerItems[3], getResources().getDrawable(R.mipmap.ic_settings)));
 
         navList.setAdapter(new AdapterListView(this, models));
 
@@ -88,14 +87,11 @@ public class ActivityMain extends ActionBarActivity
             public void onItemClick(AdapterView<?> parent, View view, final int pos, long id)
             {
 
-                if (pos > 0)
-                {
-                    FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                    tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos - 1]));
-                    tx.commit();
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos]));
+                tx.commit();
 
-                    drawerLayout.closeDrawer(navList);
-                }
+                drawerLayout.closeDrawer(navList);
             }
         });
 

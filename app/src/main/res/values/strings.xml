@@ -1,14 +1,20 @@
 <resources>
-    <string name="app_name">Shopp</string>
+    <string name="app_name">Shopy</string>
 
     <string name="txt_open">open</string>
     <string name="txt_close">close</string>
 
     <string-array name="navdrawer_items">
         <item>My lists</item>
+        <item>Reminders</item>
+        <item>Around me</item>
+        <item>Settings</item>
     </string-array>
 
     <string-array name="navdrawer_views">
+        <item>com.sybiload.shopp.FragmentList</item>
+        <item>com.sybiload.shopp.FragmentList</item>
+        <item>com.sybiload.shopp.FragmentList</item>
         <item>com.sybiload.shopp.FragmentList</item>
     </string-array>
 
