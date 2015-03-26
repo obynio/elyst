@@ -1,6 +1,7 @@
 package com.sybiload.shopp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -32,6 +33,7 @@ public class ActivityShop extends ActionBarActivity
     private EditText editTextDescription;
 
     public static Item currentItem;
+    public static AdapterShop currentAdapter;
 
     ImageButton fabImageButton;
     int listNumber = 0;
@@ -82,26 +84,14 @@ public class ActivityShop extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
+                        Item oldItem = currentItem;
+
+                        currentItem.setName(editTextName.getText().toString());
+                        currentItem.setDescription(editTextDescription.getText().toString());
+
+                        currentAdapter.update(oldItem, currentItem);
+
                         barAction();
-
-                        int position = newList.getItem().indexOf(currentItem);
-
-                        newList.getItem().get(position).setName(editTextName.getText().toString());
-                        newList.getItem().get(position).setDescription(editTextDescription.getText().toString());
-
-                        // update database
-                        DatabaseItem databaseItem = new DatabaseItem(getBaseContext(), newList.getDatabase());
-
-                        databaseItem.open();
-                        databaseItem.updateByName(currentItem.getName(), currentItem);
-                        databaseItem.close();
-
-                        // add all new fresh items to shop
-                        AdapterShop adapterShop = new AdapterShop(ActivityShop.this, newList);
-                        recyclerView.setAdapter(adapterShop);
-
-                        // reset current item
-                        currentItem = null;
 
                         return true;
                 }
@@ -200,6 +190,11 @@ public class ActivityShop extends ActionBarActivity
         {
             collapse(toolbar);
             llEditItem.setVisibility(View.GONE);
+
+            // solve the keyboard focus bug by removing the keyboard manually
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editTextName.getWindowToken(), 0);
+
             toolbar.getMenu().clear();
 
             fabImageButton.setClickable(true);
@@ -210,12 +205,22 @@ public class ActivityShop extends ActionBarActivity
             fabImageButton.startAnimation(scaleAnim);
 
             toolbarOpened = false;
+
+            currentAdapter = null;
+            currentItem = null;
         }
         else
         {
             expand(toolbar);
             llEditItem.setVisibility(View.VISIBLE);
+
             editTextName.setText(currentItem.getName());
+
+            if (currentItem.getDescription().equals(""))
+            {
+                
+            }
+
             editTextDescription.setText(currentItem.getDescription());
             toolbar.inflateMenu(R.menu.done);
 

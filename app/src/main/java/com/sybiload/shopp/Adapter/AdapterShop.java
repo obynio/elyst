@@ -78,6 +78,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         databaseItem.close();
 
         notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
     public void done(Item myItem)
@@ -101,6 +102,20 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         databaseItem.close();
     }
 
+    public void update(Item oldItem, Item newItem)
+    {
+        // update database
+
+        int position = item.indexOf(oldItem);
+        item.set(position, newItem);
+
+        notifyDataSetChanged();
+
+        databaseItem.open();
+        databaseItem.updateByName(oldItem.getName(), newItem);
+        databaseItem.close();
+    }
+
     @Override
     public AdapterShop.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -119,6 +134,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             final Item myItem = item.get(position);
 
             holder.txtHeader.setText(item.get(position).getName());
+            holder.txtFooter.setText(item.get(position).getDescription());
 
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
             {
@@ -161,7 +177,6 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 }
             });
 
-            holder.txtFooter.setText("Footer: " + item.get(position).getName());
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(item.get(position).getIcon()));
 
             if (item.get(position).isDone())
@@ -183,6 +198,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                     if(ctx instanceof ActivityShop){
                         // absolute bullshit
                         ActivityShop.currentItem = item.get(position);
+                        ActivityShop.currentAdapter = AdapterShop.this;
                         ((ActivityShop)ctx).barAction();
                     }
 
