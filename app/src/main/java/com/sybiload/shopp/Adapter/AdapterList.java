@@ -1,6 +1,8 @@
 package com.sybiload.shopp.Adapter;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.provider.CalendarContract;
@@ -15,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sybiload.shopp.ActivityShop;
+import com.sybiload.shopp.FragmentList;
 import com.sybiload.shopp.Item;
 import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
@@ -24,11 +27,11 @@ import java.util.ArrayList;
 
 public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 {
-    Activity activity;
+    FragmentList fm;
 
-    public AdapterList(Activity act)
+    public AdapterList(FragmentList fm)
     {
-        activity = act;
+        this.fm = fm;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -90,10 +93,8 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(v.getContext(), ActivityShop.class);
-                intent.putExtra("LIST_NUMBER", position);
-                v.getContext().startActivity(intent);
-                new Misc().leftTransition(activity);
+
+                ((FragmentList)fm).enterList(position);
             }
         });
     }

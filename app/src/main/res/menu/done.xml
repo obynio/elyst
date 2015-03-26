@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:kernell="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_done"
+        android:icon="@mipmap/fab_ic_done"
+        android:title="accept"
+        kernell:showAsAction="ifRoom" />
+
+</menu>

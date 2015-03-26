@@ -1,5 +1,6 @@
 package com.sybiload.shopp.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sybiload.shopp.ActivityShop;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.Item;
 import com.sybiload.shopp.List;
@@ -36,6 +38,8 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
         ArrayList<Item> tmpList = list.getItem();
         item = new ArrayList<Item>();
+
+
 
         for (Item it : tmpList)
         {
@@ -121,7 +125,16 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 @Override
                 public boolean onLongClick(View v)
                 {
-                    remove(myItem);
+
+                    // prevent user from deleting item and editing it at the same time
+                    if (!ActivityShop.toolbarOpened)
+                        remove(myItem);
+                    else
+                    {
+                        if(ctx instanceof ActivityShop)
+                            ((ActivityShop)ctx).barAction();
+                    }
+
                     return true;
                 }
             });
@@ -162,7 +175,20 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
             }
 
+            holder.imageViewItemIcon.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    if(ctx instanceof ActivityShop){
+                        ActivityShop.editTextName.setText(item.get(position).getName());
+                        ActivityShop.editTextDescription.setText(item.get(position).getDescription());
+                        ((ActivityShop)ctx).barAction();
+                    }
 
+                    return true;
+                }
+            });
 
         }
     }

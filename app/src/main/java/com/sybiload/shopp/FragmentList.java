@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 
 import com.sybiload.shopp.Adapter.AdapterList;
@@ -42,18 +45,26 @@ public class FragmentList extends Fragment
 
         recyclerView.setHasFixedSize(true);
 
-        layoutManager = new LinearLayoutManager(view.getContext());
+        layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
 
         return view;
     }
 
+    public void enterList(final int position)
+    {
+        Intent intent = new Intent(getActivity(), ActivityShop.class);
+        intent.putExtra("LIST_NUMBER", position);
+        startActivity(intent);
+        new Misc().leftTransition(getActivity());
+    }
+
     @Override
     public void onResume()
     {
         // add all items to shop
-        AdapterList adapterList = new AdapterList(getActivity());
+        AdapterList adapterList = new AdapterList(this);
         recyclerView.setAdapter(adapterList);
 
         super.onResume();
