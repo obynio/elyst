@@ -84,12 +84,10 @@ public class ActivityShop extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item oldItem = currentItem;
+                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getIcon(), currentItem.isToShop(), currentItem.isDone());
 
-                        currentItem.setName(editTextName.getText().toString());
-                        currentItem.setDescription(editTextDescription.getText().toString());
 
-                        currentAdapter.update(oldItem, currentItem);
+                        currentAdapter.update(currentItem, newItem);
 
                         barAction();
 
@@ -214,14 +212,10 @@ public class ActivityShop extends ActionBarActivity
             expand(toolbar);
             llEditItem.setVisibility(View.VISIBLE);
 
+            // set name and description editText
             editTextName.setText(currentItem.getName());
-
-            if (currentItem.getDescription().equals(""))
-            {
-                
-            }
-
             editTextDescription.setText(currentItem.getDescription());
+
             toolbar.inflateMenu(R.menu.done);
 
             fabImageButton.setClickable(false);

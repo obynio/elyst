@@ -17,7 +17,9 @@ public class DatabaseItemH extends SQLiteOpenHelper
     private static final int DATABASE_VERSION = 1;
 
     protected static final String CURRENT_TABL = "item";
-    protected static final String CREATE_ITEM = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_NAME + " TEXT, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_ICON + " INTEGER DEFAULT 0, " + COLUMN_SHOP + " INTEGER DEFAULT 0, " + COLUMN_DONE + " INTEGER DEFAULT 0);";
+    protected static final String CREATE_ITEM = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_NAME + " TEXT NOT NULL, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_ICON + " INTEGER DEFAULT 0, " + COLUMN_SHOP + " INTEGER DEFAULT 0, " + COLUMN_DONE + " INTEGER DEFAULT 0);";
+    protected static final String INSERT_INTO = "INSERT INTO " + CURRENT_TABL + " VALUES (?, ?, ?, ?, ?);";
+    protected static final String UPDATE = "UPDATE " + CURRENT_TABL + " SET " + COLUMN_NAME + "=?, " + COLUMN_DESCRIPTION + "=?, " + COLUMN_ICON + "=?, " + COLUMN_SHOP + "=?, " + COLUMN_DONE + "=? WHERE " + COLUMN_NAME + "=?;";
 
     public DatabaseItemH(Context context, String database)
     {

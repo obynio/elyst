@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import com.sybiload.shopp.Item;
 
@@ -32,24 +33,35 @@ public class DatabaseItem extends DatabaseItemH
     // insert a new list into the table
     public void insertItem(Item newItem)
     {
-        ContentValues value = new ContentValues();
-        value.put(COLUMN_NAME, newItem.getName());
-        value.put(COLUMN_DESCRIPTION, newItem.getDescription());
-        value.put(COLUMN_ICON, newItem.getIcon());
-        value.put(COLUMN_SHOP, newItem.isToShop() ? 1 : 0);
-        value.put(COLUMN_DONE, newItem.isDone() ? 1 : 0);
-        database.insert(CURRENT_TABL, null, value);
+        SQLiteStatement stmt = database.compileStatement(INSERT_INTO);
+        stmt.bindString(1, newItem.getName());
+
+        if (newItem.getDescription() == null)
+            stmt.bindNull(2);
+        else
+            stmt.bindString(2, newItem.getDescription());
+
+        stmt.bindLong(3, newItem.getIcon());
+        stmt.bindLong(4, newItem.isToShop() ? 1 : 0);
+        stmt.bindLong(5, newItem.isDone() ? 1 : 0);
+        stmt.execute();
     }
 
     public void updateByName(String name, Item newItem)
     {
-        ContentValues value = new ContentValues();
-        value.put(COLUMN_NAME, newItem.getName());
-        value.put(COLUMN_DESCRIPTION, newItem.getDescription());
-        value.put(COLUMN_ICON, newItem.getIcon());
-        value.put(COLUMN_SHOP, newItem.isToShop() ? 1 : 0);
-        value.put(COLUMN_DONE, newItem.isDone() ? 1 : 0);
-        database.update(CURRENT_TABL, value, COLUMN_NAME + " = '" + name + "'", null);
+        SQLiteStatement stmt = database.compileStatement(UPDATE);
+        stmt.bindString(1, newItem.getName());
+
+        if (newItem.getDescription() == null)
+            stmt.bindNull(2);
+        else
+            stmt.bindString(2, newItem.getDescription());
+
+        stmt.bindLong(3, newItem.getIcon());
+        stmt.bindLong(4, newItem.isToShop() ? 1 : 0);
+        stmt.bindLong(5, newItem.isDone() ? 1 : 0);
+        stmt.bindString(6, name);
+        stmt.execute();
     }
 
     public ArrayList<Item> searchItem(String s)

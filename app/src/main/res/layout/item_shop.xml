@@ -13,27 +13,34 @@
         android:contentDescription="TODO"
         android:src="@mipmap/ic_launcher" />
 
-    <TextView
-        android:id="@+id/textViewShopSecondLine"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentBottom="true"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_toRightOf="@id/imageViewShopItemIcon"
-        android:textColor="#9E9E9E"
-        android:singleLine="true"
-        android:text="Description"
-        android:textSize="12sp" />
+        android:paddingTop="6dp">
 
-    <TextView
-        android:id="@+id/textViewShopFirstLine"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/textViewShopSecondLine"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/imageViewShopItemIcon"
-        android:gravity="center_vertical"
-        android:text="Example application"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/textViewShopFirstLine"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignWithParentIfMissing="true"
+            android:gravity="center_vertical"
+            android:text="Example application"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textViewShopSecondLine"
+            android:layout_below="@id/textViewShopFirstLine"
+            android:layout_width="fill_parent"
+            android:layout_height="26dip"
+            android:textColor="#9E9E9E"
+            android:singleLine="true"
+            android:text="Description"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
+
 
 </RelativeLayout>

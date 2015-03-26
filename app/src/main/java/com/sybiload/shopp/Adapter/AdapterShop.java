@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sybiload.shopp.ActivityShop;
@@ -78,7 +79,6 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         databaseItem.close();
 
         notifyItemRemoved(position);
-        notifyDataSetChanged();
     }
 
     public void done(Item myItem)
@@ -95,6 +95,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         new Misc().sortItemByDone(item);
 
 
+
         notifyItemMoved(position, item.indexOf(myItem));
 
         databaseItem.open();
@@ -109,7 +110,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         int position = item.indexOf(oldItem);
         item.set(position, newItem);
 
-        notifyDataSetChanged();
+        notifyItemChanged(position);
 
         databaseItem.open();
         databaseItem.updateByName(oldItem.getName(), newItem);
@@ -121,9 +122,12 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shop, parent, false);
 
+
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
+    
+    
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
@@ -131,10 +135,26 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     {
         if (item.get(position).isToShop())
         {
+            new Misc().log("bindView");
+
             final Item myItem = item.get(position);
 
-            holder.txtHeader.setText(item.get(position).getName());
-            holder.txtFooter.setText(item.get(position).getDescription());
+            holder.txtHeader.setText(myItem.getName());
+
+            Item it = myItem;
+
+            if (it.getDescription() == null || it.getDescription().equals(""))
+            {
+                holder.txtFooter.setVisibility(View.GONE);
+                holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+            }
+            else
+            {
+                holder.txtFooter.setText(myItem.getDescription());
+                holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                holder.txtFooter.setVisibility(View.VISIBLE);
+            }
+
 
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
             {
@@ -154,6 +174,19 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                     return true;
                 }
             });
+
+            if (myItem.isDone())
+            {
+                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
+            }
+            else
+            {
+                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+            }
 
             holder.itemView.setOnClickListener(new OnClickListener()
             {
@@ -177,18 +210,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 }
             });
 
-            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(item.get(position).getIcon()));
-
-            if (item.get(position).isDone())
-            {
-                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
-            }
-            else
-            {
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
-            }
+            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(myItem.getIcon()));
 
             holder.imageViewItemIcon.setOnLongClickListener(new View.OnLongClickListener()
             {
@@ -197,7 +219,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 {
                     if(ctx instanceof ActivityShop){
                         // absolute bullshit
-                        ActivityShop.currentItem = item.get(position);
+                        ActivityShop.currentItem = myItem;
                         ActivityShop.currentAdapter = AdapterShop.this;
                         ((ActivityShop)ctx).barAction();
                     }

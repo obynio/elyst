@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,17 +62,21 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
     public void remove(Item myItem)
     {
-        myItem.toShop(true);
-        myItem.done(false);
+        if (item.contains(myItem))
+        {
+            myItem.toShop(true);
+            myItem.done(false);
 
-        int position = item.indexOf(myItem);
-        item.remove(position);
+            int position = item.indexOf(myItem);
 
-        databaseItem.open();
-        databaseItem.updateByName(myItem.getName(), myItem);
-        databaseItem.close();
+            item.remove(position);
 
-        notifyItemRemoved(position);
+            databaseItem.open();
+            databaseItem.updateByName(myItem.getName(), myItem);
+            databaseItem.close();
+
+            notifyItemRemoved(position);
+        }
     }
 
 
@@ -86,7 +91,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position)
+    public void onBindViewHolder(final ViewHolder holder, final int position)
     {
         if (!item.get(position).isToShop())
         {

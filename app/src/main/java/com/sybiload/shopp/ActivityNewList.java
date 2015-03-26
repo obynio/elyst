@@ -109,7 +109,13 @@ public class ActivityNewList extends ActionBarActivity
                     des = "Created on " + dateFormat.format(cal.getTime());
                 }
 
-                List myList = new List(editTextNewListName.getText().toString(), des, editTextNewListName.getText().toString().toLowerCase().replaceAll(" ", "_") + ".db");
+                String dbName = editTextNewListName.getText().toString().toLowerCase();
+                dbName = dbName.replaceAll(" ", "_");
+                dbName = dbName.replaceAll("\\\\", "");
+                dbName = dbName.replaceAll("/", "");
+                dbName = dbName.replaceAll("\'", "");
+                dbName = dbName.replaceAll("\"", "");
+                List myList = new List(editTextNewListName.getText().toString(), des, dbName + ".db");
 
                 new Misc().addList(getApplicationContext(), myList);
 

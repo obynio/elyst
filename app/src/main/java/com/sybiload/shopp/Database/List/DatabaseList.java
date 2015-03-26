@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.List;
@@ -32,18 +33,23 @@ public class DatabaseList extends DatabaseListH
     // insert a new list into the table
     public void insertList(List newList)
     {
-        ContentValues value = new ContentValues();
-        value.put(COLUMN_NAME, newList.getName());
-        value.put(COLUMN_DESCRIPTION, newList.getDescription());
-        value.put(COLUMN_TABL, newList.getDatabase());
-        database.insert(CURRENT_TABL, null, value);
+        SQLiteStatement stmt = database.compileStatement(INSERT_INTO);
+        stmt.bindString(1, newList.getName());
+
+        if (newList.getDescription() == null)
+            stmt.bindNull(2);
+        else
+            stmt.bindString(2, newList.getDescription());
+
+        stmt.bindString(3, newList.getDatabase());
+        stmt.execute();
     }
 
     // read all list from the table
     public void readAllList()
     {
         // get all the rows
-        Cursor c = database.rawQuery("select * from " + CURRENT_TABL, null);
+        Cursor c = database.rawQuery("SELECT * FROM " + CURRENT_TABL, null);
 
         while (c.moveToNext())
         {
