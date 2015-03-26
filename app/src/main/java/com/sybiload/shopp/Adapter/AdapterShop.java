@@ -181,8 +181,8 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 public boolean onLongClick(View v)
                 {
                     if(ctx instanceof ActivityShop){
-                        ActivityShop.editTextName.setText(item.get(position).getName());
-                        ActivityShop.editTextDescription.setText(item.get(position).getDescription());
+                        // absolute bullshit
+                        ActivityShop.currentItem = item.get(position);
                         ((ActivityShop)ctx).barAction();
                     }
 

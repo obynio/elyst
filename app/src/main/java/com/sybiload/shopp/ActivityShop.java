@@ -18,6 +18,9 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.sybiload.shopp.Adapter.AdapterShop;
+import com.sybiload.shopp.Database.Item.DatabaseItem;
+
+import java.util.ArrayList;
 
 
 public class ActivityShop extends ActionBarActivity
@@ -25,8 +28,10 @@ public class ActivityShop extends ActionBarActivity
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    public static EditText editTextName;
-    public static EditText editTextDescription;
+    private EditText editTextName;
+    private EditText editTextDescription;
+
+    public static Item currentItem;
 
     ImageButton fabImageButton;
     int listNumber = 0;
@@ -79,7 +84,24 @@ public class ActivityShop extends ActionBarActivity
                     case R.id.action_done:
                         barAction();
 
+                        int position = newList.getItem().indexOf(currentItem);
 
+                        newList.getItem().get(position).setName(editTextName.getText().toString());
+                        newList.getItem().get(position).setDescription(editTextDescription.getText().toString());
+
+                        // update database
+                        DatabaseItem databaseItem = new DatabaseItem(getBaseContext(), newList.getDatabase());
+
+                        databaseItem.open();
+                        databaseItem.updateByName(currentItem.getName(), currentItem);
+                        databaseItem.close();
+
+                        // add all new fresh items to shop
+                        AdapterShop adapterShop = new AdapterShop(ActivityShop.this, newList);
+                        recyclerView.setAdapter(adapterShop);
+
+                        // reset current item
+                        currentItem = null;
 
                         return true;
                 }
@@ -193,6 +215,8 @@ public class ActivityShop extends ActionBarActivity
         {
             expand(toolbar);
             llEditItem.setVisibility(View.VISIBLE);
+            editTextName.setText(currentItem.getName());
+            editTextDescription.setText(currentItem.getDescription());
             toolbar.inflateMenu(R.menu.done);
 
             fabImageButton.setClickable(false);
