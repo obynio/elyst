@@ -27,28 +27,16 @@ import java.util.ArrayList;
 
 public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 {
-    DatabaseItem databaseItem;
-    ArrayList<Item> item;
-
+    DatabaseItem database;
     Context ctx;
 
-    public AdapterShop(Context ctx, List list)
+    public AdapterShop(Context ctx)
     {
         this.ctx = ctx;
-        databaseItem = new DatabaseItem(ctx, list.getDatabase());
+        database = new DatabaseItem(ctx, Static.currentList.getDatabase());
 
-        ArrayList<Item> tmpList = list.getItem();
-        item = new ArrayList<Item>();
-
-
-
-        for (Item it : tmpList)
-        {
-            if (it.isToShop())
-                item.add(it);
-        }
-
-        new Misc().sortItemByDone(item);
+        Static.currentList.sortShop();
+        Static.currentList.sortShopDone();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -69,59 +57,85 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
     public void remove(Item myItem)
     {
+        // set new attributes
         myItem.toShop(false);
+        myItem.setDescription(null);
 
-        int position = item.indexOf(myItem);
-        item.remove(position);
+        // update database
+        database.open();
+        database.updateByName(myItem.getName(), myItem);
+        database.close();
 
-        databaseItem.open();
-        databaseItem.updateByName(myItem.getName(), myItem);
-        databaseItem.close();
+        // remove item from itemShop
+        int position = Static.currentList.itemShop.indexOf(myItem);
+        Static.currentList.itemShop.remove(position);
+
+        // add item to itemAvailable
+        Static.currentList.itemAvailable.add(myItem);
 
         notifyItemRemoved(position);
     }
 
     public void done(Item myItem)
     {
+        // set new attributes
         if (!myItem.isDone())
             myItem.done(true);
         else
             myItem.done(false);
 
+        // update database
+        database.open();
+        database.updateByName(myItem.getName(), myItem);
+        database.close();
 
-        int position = item.indexOf(myItem);
+        // get current position of the item
+        int position = Static.currentList.itemShop.indexOf(myItem);
 
-        new Misc().sortItem(item);
-        new Misc().sortItemByDone(item);
+        // sort itemShop
+        Static.currentList.sortShop();
+        Static.currentList.sortShopDone();
 
-
-
-        notifyItemMoved(position, item.indexOf(myItem));
-
-        databaseItem.open();
-        databaseItem.updateByName(myItem.getName(), myItem);
-        databaseItem.close();
+        // move the item to the new position thanks to the previous position that we stored
+        notifyItemMoved(position, Static.currentList.itemShop.indexOf(myItem));
     }
+
 
     public void update(Item oldItem, Item newItem)
     {
         // update database
 
-        int position = item.indexOf(oldItem);
-        item.set(position, newItem);
+        database.open();
+        database.updateByName(oldItem.getName(), newItem);
+        database.close();
+
+
+        int position = Static.currentList.itemShop.indexOf(oldItem);
+
+        // prevent the 'not update on set list' bug
+        Static.currentList.itemShop.set(position, newItem);
+
+        // if there is a bug somewhere, be sure it's here !
 
         notifyItemChanged(position);
 
-        databaseItem.open();
-        databaseItem.updateByName(oldItem.getName(), newItem);
-        databaseItem.close();
+        // possibility to remove this for the simple variable 'position' ?
+        Item it = Static.currentList.itemShop.get(position);
+
+        Static.currentList.sortShop();
+        Static.currentList.sortShopDone();
+
+        int orf = Static.currentList.itemShop.indexOf(it);
+
+
+        notifyItemMoved(position, orf);
     }
+
 
     @Override
     public AdapterShop.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shop, parent, false);
-
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
@@ -133,16 +147,15 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        if (item.get(position).isToShop())
+        if (Static.currentList.itemShop.get(position).isToShop())
         {
-            new Misc().log("bindView");
-
-            final Item myItem = item.get(position);
+            final Item myItem = Static.currentList.itemShop.get(position);
 
             holder.txtHeader.setText(myItem.getName());
 
             Item it = myItem;
 
+            // when adapter is refreshing, check if the current row has a description or not and adapt the layout
             if (it.getDescription() == null || it.getDescription().equals(""))
             {
                 holder.txtFooter.setVisibility(View.GONE);
@@ -156,25 +169,25 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             }
 
 
+            // when there is a long click on a row, either remove item if the toolbar of the activity is not opened, or hide the toolbar if it is opened. More details below
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
             {
                 @Override
                 public boolean onLongClick(View v)
                 {
 
-                    // prevent user from deleting item and editing it at the same time
-                    if (!ActivityShop.toolbarOpened)
-                        remove(myItem);
-                    else
-                    {
-                        if(ctx instanceof ActivityShop)
-                            ((ActivityShop)ctx).barAction();
+                    if(ctx instanceof ActivityShop){
+                        // absolute bullshit
+                        ActivityShop.currentItem = myItem;
+                        ActivityShop.currentAdapter = AdapterShop.this;
+                        ((ActivityShop)ctx).barAction();
                     }
 
                     return true;
                 }
             });
 
+            // if current row is done, change the color or the icon and the style of the text
             if (myItem.isDone())
             {
                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -188,6 +201,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
             }
 
+            // when doing a click on the row, put it done
             holder.itemView.setOnClickListener(new OnClickListener()
             {
                 @Override
@@ -212,16 +226,20 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(myItem.getIcon()));
 
+            // when doing a long click on the icon of a row, open the edit toolbar in the parent activity
             holder.imageViewItemIcon.setOnLongClickListener(new View.OnLongClickListener()
             {
                 @Override
                 public boolean onLongClick(View v)
                 {
-                    if(ctx instanceof ActivityShop){
-                        // absolute bullshit
-                        ActivityShop.currentItem = myItem;
-                        ActivityShop.currentAdapter = AdapterShop.this;
-                        ((ActivityShop)ctx).barAction();
+
+                    // prevent user from deleting item and editing it at the same time
+                    if (!ActivityShop.toolbarOpened)
+                        remove(myItem);
+                    else
+                    {
+                        if(ctx instanceof ActivityShop)
+                            ((ActivityShop)ctx).barAction();
                     }
 
                     return true;
@@ -234,7 +252,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     @Override
     public int getItemCount()
     {
-        return item.size();
+        return Static.currentList.itemShop.size();
     }
 
 }

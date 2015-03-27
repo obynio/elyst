@@ -8,9 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import com.sybiload.shopp.Database.Item.DatabaseItem;
+import com.sybiload.shopp.Item;
 import com.sybiload.shopp.List;
 import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.Static;
+
+import java.util.ArrayList;
 
 public class DatabaseList extends DatabaseListH
 {
@@ -46,8 +49,9 @@ public class DatabaseList extends DatabaseListH
     }
 
     // read all list from the table
-    public void readAllList()
+    public ArrayList<List> readAllList()
     {
+        ArrayList<List> allList = new ArrayList<List>();
         // get all the rows
         Cursor c = database.rawQuery("SELECT * FROM " + CURRENT_TABL, null);
 
@@ -56,16 +60,10 @@ public class DatabaseList extends DatabaseListH
             // for each row, create a new list object and add it to the list array
             List myList = new List(c.getString(0), c.getString(1), c.getString(2));
 
-            DatabaseItem databaseItem = new DatabaseItem(ctx, myList.getDatabase());
-            databaseItem.open();
-
-            myList.setItem(databaseItem.readAllItem());
-
-            databaseItem.close();
-
-            Static.allList.add(myList);
+            allList.add(myList);
         }
 
         c.close();
+        return allList;
     }
 }

@@ -29,22 +29,10 @@ public class ActivityAdd extends ActionBarActivity
     private SearchView searchView;
 
 
-    int listNumber = 0;
-
-    List newList;
-
-
     protected void onCreate(Bundle paramBundle)
     {
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_additem);
-
-        Intent intent = getIntent();
-
-        if (intent != null)
-            listNumber = intent.getIntExtra("LIST_NUMBER", 0);
-
-        newList = Static.allList.get(listNumber);
 
         Toolbar toolbar;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -76,7 +64,7 @@ public class ActivityAdd extends ActionBarActivity
         recyclerView.setLayoutManager(layoutManager);
 
         // adding all items available
-        AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext(), newList);
+        AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext());
         recyclerView.setAdapter(adapterAdd);
 
 
@@ -87,6 +75,7 @@ public class ActivityAdd extends ActionBarActivity
         searchViewText.setHintTextColor(Color.parseColor("#C5CAE9"));
 
 
+        // listen to search text
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
         {
             @Override
@@ -98,19 +87,19 @@ public class ActivityAdd extends ActionBarActivity
             @Override
             public boolean onQueryTextChange(String s)
             {
-                ArrayList<Item> arrayItem = new ArrayList<Item>();
-
-                DatabaseItem database = new DatabaseItem(getApplicationContext(), newList.getDatabase());
-
+                DatabaseItem database = new DatabaseItem(getApplicationContext(), Static.currentList.getDatabase());
                 database.open();
-                ArrayList<Item> ite = database.searchItem(s.toLowerCase());
+
+                // search item into the whole database
+                ArrayList<Item> searchItems = database.searchItem(s.toLowerCase());
+
                 database.close();
 
-                newList.setItem(ite);
+                // add it to the itemAvailable list
+                Static.currentList.itemAvailable = searchItems;
 
-
-
-                AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext(), newList);
+                // update the recyclerView with the results
+                AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext());
                 recyclerView.setAdapter(adapterAdd);
 
                 return false;
@@ -120,6 +109,7 @@ public class ActivityAdd extends ActionBarActivity
     public void onBackPressed()
     {
 
+        // if research is opened, reset the field and close it, otherwise finish the activity
         if (searchView.isIconified())
             finish();
         else

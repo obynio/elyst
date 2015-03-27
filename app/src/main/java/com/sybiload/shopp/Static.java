@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class Static
 {
     public static ArrayList<List> allList = new ArrayList<List>();
+    public static List currentList;
 
     public static int[] defaultItemIcon = {
             R.drawable.item_apple,

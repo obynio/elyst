@@ -27,23 +27,14 @@ import java.util.ArrayList;
 public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 {
     DatabaseItem databaseItem;
-    ArrayList<Item> item;
-
     Context ctx;
 
-    public AdapterAdd(Context ctx, List list)
+    public AdapterAdd(Context ctx)
     {
         this.ctx = ctx;
-        databaseItem = new DatabaseItem(ctx, list.getDatabase());
+        databaseItem = new DatabaseItem(ctx, Static.currentList.getDatabase());
 
-        ArrayList<Item> tmpList = list.getItem();
-        item = new ArrayList<Item>();
-
-        for (Item it : tmpList)
-        {
-            if (!it.isToShop())
-                item.add(it);
-        }
+        Static.currentList.sortAvailable();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -62,18 +53,22 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
     public void remove(Item myItem)
     {
-        if (item.contains(myItem))
+        if (Static.currentList.itemAvailable.contains(myItem))
         {
             myItem.toShop(true);
             myItem.done(false);
 
-            int position = item.indexOf(myItem);
-
-            item.remove(position);
-
+            // update database
             databaseItem.open();
             databaseItem.updateByName(myItem.getName(), myItem);
             databaseItem.close();
+
+            // get position of our item in the availableItem and remove it
+            int position = Static.currentList.itemAvailable.indexOf(myItem);
+            Static.currentList.itemAvailable.remove(position);
+
+            // copy the item to shopItem
+            Static.currentList.itemShop.add(myItem);
 
             notifyItemRemoved(position);
         }
@@ -93,12 +88,12 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        if (!item.get(position).isToShop())
+        if (!Static.currentList.itemAvailable.get(position).isToShop())
         {
-            final Item myItem = item.get(position);
+            final Item myItem = Static.currentList.itemAvailable.get(position);
 
 
-            holder.txtHeader.setText(item.get(position).getName());
+            holder.txtHeader.setText(myItem.getName());
             holder.itemView.setOnClickListener(new OnClickListener()
             {
                 @Override
@@ -108,7 +103,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
                 }
             });
 
-            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(item.get(position).getIcon()));
+            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(myItem.getIcon()));
             holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
         }
     }
@@ -116,7 +111,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     @Override
     public int getItemCount()
     {
-        return item.size();
+        return Static.currentList.itemAvailable.size();
     }
 
 }

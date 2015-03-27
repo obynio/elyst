@@ -38,9 +38,6 @@ public class ActivityMain extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // populate items
-        new Misc().populateList(getApplicationContext());
-
         drawerItems = getResources().getStringArray(R.array.navdrawer_items);
         drawerFragments = getResources().getStringArray(R.array.navdrawer_views);
 

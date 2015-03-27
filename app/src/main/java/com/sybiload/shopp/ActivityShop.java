@@ -3,11 +3,14 @@ package com.sybiload.shopp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -19,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.sybiload.shopp.Adapter.AdapterShop;
+import com.sybiload.shopp.Adapter.EditTextAdapter;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 
 import java.util.ArrayList;
@@ -29,16 +33,14 @@ public class ActivityShop extends ActionBarActivity
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    private EditText editTextName;
+    Toolbar toolbar;
+    private EditTextAdapter editTextName;
     private EditText editTextDescription;
 
     public static Item currentItem;
     public static AdapterShop currentAdapter;
 
     ImageButton fabImageButton;
-    int listNumber = 0;
-
-    List newList;
 
     public static boolean toolbarOpened = false;
 
@@ -47,20 +49,12 @@ public class ActivityShop extends ActionBarActivity
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_item);
 
-        editTextName = (EditText)findViewById(R.id.editTextItemName);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        editTextName = (EditTextAdapter)findViewById(R.id.editTextItemName);
         editTextDescription = (EditText)findViewById(R.id.editTextItemDescription);
 
-        Intent intent = getIntent();
-
-        if (intent != null)
-            listNumber = intent.getIntExtra("LIST_NUMBER", 0);
-
-        newList = Static.allList.get(listNumber);
-
-        Toolbar toolbar;
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.setTitle(newList.getName());
+        toolbar.setTitle(Static.currentList.getName());
         toolbar.setNavigationOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -98,13 +92,50 @@ public class ActivityShop extends ActionBarActivity
             }
         });
 
+        editTextName.addTextChangedListener(new TextWatcher()
+        {
+            public void afterTextChanged(Editable s)
+            {
+                boolean error = false;
+                String text = editTextName.getText().toString();
+
+                for (Item it : Static.currentList.itemShop)
+                {
+                    if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                    {
+                        error = true;
+                        break;
+                    }
+                }
+
+                if (toolbarOpened && error)
+                {
+                    editTextName.setError("");
+
+                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+                }
+                else if (toolbarOpened && text.length() == 0)
+                {
+                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+                }
+                else if (toolbarOpened)
+                {
+                    editTextName.setError(null);
+                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        });
+
         fabImageButton = (ImageButton) findViewById(R.id.imageButtonItemFab);
 
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ActivityAdd.class);
-                intent.putExtra("LIST_NUMBER", listNumber);
                 startActivity(intent);
             }
         });
@@ -116,6 +147,8 @@ public class ActivityShop extends ActionBarActivity
 
         layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
+
+
     }
 
     @Override
@@ -123,11 +156,8 @@ public class ActivityShop extends ActionBarActivity
     {
 
         // add all items to shop
-        AdapterShop adapterShop = new AdapterShop(ActivityShop.this, newList);
+        AdapterShop adapterShop = new AdapterShop(ActivityShop.this);
         recyclerView.setAdapter(adapterShop);
-
-        // testing
-        List l = newList;
 
         super.onResume();
     }

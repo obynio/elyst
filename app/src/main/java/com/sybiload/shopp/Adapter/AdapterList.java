@@ -38,7 +38,6 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     {
         public TextView txtHeader;
         public TextView txtFooter;
-        public TextView textViewItemNb;
 
         public ViewHolder(View v)
         {
@@ -46,7 +45,6 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 
             txtHeader = (TextView) v.findViewById(R.id.textViewListFirstLine);
             txtFooter = (TextView) v.findViewById(R.id.textViewListSecondLine);
-            textViewItemNb = (TextView) v.findViewById(R.id.textViewListItemNb);
         }
     }
 
@@ -65,15 +63,6 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     {
         holder.txtHeader.setText(Static.allList.get(position).getName());
         holder.txtFooter.setText(Static.allList.get(position).getDescription());
-
-        int itemLeft = 0;
-        for (Item it : Static.allList.get(position).getItem())
-        {
-            if (it.isToShop() && !it.isDone())
-                itemLeft++;
-        }
-
-        holder.textViewItemNb.setText(Integer.toString(itemLeft));
 
         holder.itemView.setOnTouchListener(new View.OnTouchListener()
         {

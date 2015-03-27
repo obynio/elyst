@@ -4,6 +4,8 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,17 +14,16 @@ public class List
     private String name;
     private String description;
     private String database;
-    private ArrayList<Item> item;
+    public static ArrayList<Item> itemShop;
+    public static ArrayList<Item> itemAvailable;
 
     public List(String name, String description, String database)
     {
         this.name = name;
         this.description = description;
         this.database = database;
-        item = new ArrayList<Item>();
-
-        // sort all this stuff
-        new Misc().sortItem(this.item);
+        itemShop = new ArrayList<Item>();
+        itemAvailable = new ArrayList<Item>();
     }
 
     public String getName()
@@ -52,13 +53,37 @@ public class List
         this.database = database;
     }
 
-    public ArrayList<Item> getItem()
+
+    // sort item in alphabetical order
+    public void sortShop()
     {
-        return this.item;
+        Collections.sort(itemShop, new Comparator<Item>()
+        {
+            public int compare(Item v1, Item v2) {
+                return v1.getName().compareTo(v2.getName());
+            }
+        });
     }
-    public void setItem(ArrayList<Item> item)
+
+    // sort item in alphabetical order
+    public void sortAvailable()
     {
-        this.item = item;
-        new Misc().sortItem(this.item);
+        Collections.sort(itemAvailable, new Comparator<Item>()
+        {
+            public int compare(Item v1, Item v2) {
+                return v1.getName().compareTo(v2.getName());
+            }
+        });
+    }
+
+    // sort item in alphabetical order
+    public void sortShopDone()
+    {
+        Collections.sort(itemShop, new Comparator<Item>()
+        {
+            public int compare(Item v1, Item v2) {
+                return v1.isDone().compareTo(v2.isDone());
+            }
+        });
     }
 }

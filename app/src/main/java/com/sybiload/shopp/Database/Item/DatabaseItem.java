@@ -69,7 +69,8 @@ public class DatabaseItem extends DatabaseItemH
         // get all the rows
         ArrayList<Item> arrayItem = new ArrayList<Item>();
 
-        Cursor c = database.rawQuery("select * from " + CURRENT_TABL + " where name like '" + s + "%'", null);
+        // only select the row which have the first letters of the name in common and that are not available to shop
+        Cursor c = database.rawQuery("SELECT * FROM " + CURRENT_TABL + " WHERE name LIKE '" + s + "%' AND shop LIKE 0", null);
 
         while (c.moveToNext())
         {
@@ -78,6 +79,7 @@ public class DatabaseItem extends DatabaseItemH
             arrayItem.add(myItem);
         }
 
+        // return the result of the research
         c.close();
         return arrayItem;
     }
@@ -87,7 +89,7 @@ public class DatabaseItem extends DatabaseItemH
     {
         // get all the rows
         ArrayList<Item> arrayItem = new ArrayList<Item>();
-        Cursor c = database.rawQuery("select * from " + CURRENT_TABL, null);
+        Cursor c = database.rawQuery("SELECT * FROM " + CURRENT_TABL, null);
 
         while (c.moveToNext())
         {

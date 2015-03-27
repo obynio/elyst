@@ -29,7 +29,8 @@ public class FragmentList extends Fragment
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
-
+        // populate items
+        new Misc().populateList(getActivity());
 
         fabImageButton = (ImageButton) view.findViewById(R.id.imageButtonListFab);
 
@@ -54,8 +55,11 @@ public class FragmentList extends Fragment
 
     public void enterList(final int position)
     {
+        Static.currentList = Static.allList.get(position);
+        new Misc().populateItem(getActivity(), Static.currentList);
+
         Intent intent = new Intent(getActivity(), ActivityShop.class);
-        intent.putExtra("LIST_NUMBER", position);
+
         startActivity(intent);
         new Misc().leftTransition(getActivity());
     }
