@@ -3,11 +3,14 @@ package com.sybiload.shopp;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -94,6 +97,7 @@ public class ActivityNewList extends ActionBarActivity
             public void onTextChanged(CharSequence s, int start, int before, int count) { }
         });
 
+        fabImageButton.setVisibility(View.GONE);
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +134,18 @@ public class ActivityNewList extends ActionBarActivity
         fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
 
 
+        new Handler().postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                fabImageButton.setVisibility(View.VISIBLE);
+
+                Animation scaleAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_up);
+                scaleAnim.setFillAfter(true);
+                fabImageButton.startAnimation(scaleAnim);
+            }
+        }, 200);
     }
 
     public void onBackPressed()

@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.EditTextAdapter;
@@ -99,7 +100,18 @@ public class ActivityShop extends ActionBarActivity
                 boolean error = false;
                 String text = editTextName.getText().toString();
 
+                // check if an item to shop already exists
                 for (Item it : Static.currentList.itemShop)
+                {
+                    if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                    {
+                        error = true;
+                        break;
+                    }
+                }
+
+                // check if an item available already exists
+                for (Item it : Static.currentList.itemAvailable)
                 {
                     if (text.toLowerCase().equals(it.getName().toLowerCase()))
                     {
@@ -240,6 +252,7 @@ public class ActivityShop extends ActionBarActivity
         else
         {
             expand(toolbar);
+
             llEditItem.setVisibility(View.VISIBLE);
 
             // set name and description editText

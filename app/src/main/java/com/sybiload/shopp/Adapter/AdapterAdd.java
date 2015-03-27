@@ -103,6 +103,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
                 }
             });
 
+
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(myItem.getIcon()));
             holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
         }
