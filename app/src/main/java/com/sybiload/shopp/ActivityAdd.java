@@ -24,8 +24,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.shopp.Adapter.AdapterAdd;
 import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.EditTextAdapter;
@@ -41,12 +44,15 @@ public class ActivityAdd extends ActionBarActivity
     private RecyclerView.LayoutManager layoutManager;
     private SearchView searchView;
     private ImageButton fabImageButton;
+    private TextView textViewBarcode;
 
     Toolbar toolbar;
     private EditTextAdapter editTextName;
     private EditText editTextDescription;
 
     public static boolean toolbarOpened = false;
+    private String barType = null;
+    private String barCode = null;
 
     protected void onCreate(Bundle paramBundle)
     {
@@ -59,6 +65,7 @@ public class ActivityAdd extends ActionBarActivity
         fabImageButton = (ImageButton) findViewById(R.id.imageButtonAddItemFab);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
         searchView = (SearchView) toolbar.findViewById(R.id.searchViewAdd);
+        textViewBarcode = (TextView) findViewById(R.id.textViewAddItemBarcode);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setTitle("Add items");
@@ -89,7 +96,7 @@ public class ActivityAdd extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), R.mipmap.ic_launcher, false, false);
+                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), R.mipmap.ic_launcher, barType, barCode, false, false);
 
                         // add new item to the itemAvailable and sort the list
                         Static.currentList.itemAvailable.add(newItem);
@@ -107,7 +114,20 @@ public class ActivityAdd extends ActionBarActivity
                         AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext());
                         recyclerView.setAdapter(adapterAdd);
 
+                        // reset barType and barCode
+                        barType = null;
+                        barCode = null;
+
                         barAction();
+
+                        return true;
+                    case R.id.action_barcode:
+
+                        IntentIntegrator integrator = new IntentIntegrator(ActivityAdd.this);
+                        integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+                        integrator.setPrompt("Scan your product's barcode");
+                        integrator.setResultDisplayDuration(0);
+                        integrator.initiateScan();
 
                         return true;
                 }
@@ -295,6 +315,7 @@ public class ActivityAdd extends ActionBarActivity
             // reset text fields
             editTextName.setText(null);
             editTextDescription.setText(null);
+            textViewBarcode.setText(null);
 
             // solve the keyboard focus bug by removing the keyboard manually
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -328,6 +349,25 @@ public class ActivityAdd extends ActionBarActivity
             fabImageButton.startAnimation(scaleAnim);
 
             toolbarOpened = true;
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+
+        if (scanningResult.getContents() != null)
+        {
+            Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
+
+            barType = scanningResult.getFormatName();
+            barCode = scanningResult.getContents();
+
+            textViewBarcode.setText(barType + " - " + barCode);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "No barcode scanned", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -6,14 +6,18 @@ public class Item
     private String name;
     private String description;
     private int icon;
+    private String barType;
+    private String barCode;
     private boolean shop;
     private boolean done;
 
-    public Item(String name, String footer, int icon, Boolean shop, Boolean done)
+    public Item(String name, String footer, int icon, String barType, String barCode, Boolean shop, Boolean done)
     {
         this.name = name;
         this.description = footer;
         this.icon = icon;
+        this.barType = barType;
+        this.barCode = barCode;
         this.shop = shop;
         this.done = done;
     }
@@ -43,6 +47,24 @@ public class Item
     public void setIcon(int icon)
     {
         this.icon = icon;
+    }
+
+    public String getBarType()
+    {
+        return this.barType;
+    }
+    public void setBarType(String barType)
+    {
+        this.barType = barType;
+    }
+
+    public String getBarCode()
+    {
+        return this.barCode;
+    }
+    public void setBarCode(String barCode)
+    {
+        this.barCode = barCode;
     }
 
     public Boolean isToShop()

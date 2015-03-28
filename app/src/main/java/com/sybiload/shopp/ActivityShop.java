@@ -20,8 +20,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.EditTextAdapter;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
@@ -37,6 +40,7 @@ public class ActivityShop extends ActionBarActivity
     Toolbar toolbar;
     private EditTextAdapter editTextName;
     private EditText editTextDescription;
+    private TextView textViewBarcode;
 
     public static Item currentItem;
     public static AdapterShop currentAdapter;
@@ -44,6 +48,8 @@ public class ActivityShop extends ActionBarActivity
     ImageButton fabImageButton;
 
     public static boolean toolbarOpened = false;
+    private String barType = null;
+    private String barCode = null;
 
     protected void onCreate(Bundle paramBundle)
     {
@@ -53,6 +59,7 @@ public class ActivityShop extends ActionBarActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         editTextName = (EditTextAdapter)findViewById(R.id.editTextItemName);
         editTextDescription = (EditText)findViewById(R.id.editTextItemDescription);
+        textViewBarcode = (TextView)findViewById(R.id.textViewItemBarcode);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setTitle(Static.currentList.getName());
@@ -79,12 +86,25 @@ public class ActivityShop extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getIcon(), currentItem.isToShop(), currentItem.isDone());
-
+                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getIcon(), barType, barCode, currentItem.isToShop(), currentItem.isDone());
 
                         currentAdapter.update(currentItem, newItem);
 
                         barAction();
+
+                        // reset barType and barCode
+                        barType = null;
+                        barCode = null;
+
+                        return true;
+
+                    case R.id.action_barcode:
+
+                        IntentIntegrator integrator = new IntentIntegrator(ActivityShop.this);
+                        integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+                        integrator.setPrompt("Scan your product's barcode");
+                        integrator.setResultDisplayDuration(0);
+                        integrator.initiateScan();
 
                         return true;
                 }
@@ -235,6 +255,11 @@ public class ActivityShop extends ActionBarActivity
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editTextName.getWindowToken(), 0);
 
+            // reset text fields
+            editTextName.setText(null);
+            editTextDescription.setText(null);
+            textViewBarcode.setText(null);
+
             toolbar.getMenu().clear();
 
             fabImageButton.setClickable(true);
@@ -246,6 +271,9 @@ public class ActivityShop extends ActionBarActivity
 
             toolbarOpened = false;
 
+            // reset barType, barCode, currentItem and currentAdapter
+            barType = null;
+            barCode = null;
             currentAdapter = null;
             currentItem = null;
         }
@@ -259,6 +287,9 @@ public class ActivityShop extends ActionBarActivity
             editTextName.setText(currentItem.getName());
             editTextDescription.setText(currentItem.getDescription());
 
+            if (currentItem.getBarType() != null && currentItem.getBarCode() != null)
+                textViewBarcode.setText(currentItem.getBarType() + " - " + currentItem.getBarCode());
+
             toolbar.inflateMenu(R.menu.done);
 
             fabImageButton.setClickable(false);
@@ -269,6 +300,25 @@ public class ActivityShop extends ActionBarActivity
             fabImageButton.startAnimation(scaleAnim);
 
             toolbarOpened = true;
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+
+        if (scanningResult.getContents() != null)
+        {
+            Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
+
+            barType = scanningResult.getFormatName();
+            barCode = scanningResult.getContents();
+
+            textViewBarcode.setText(barType + " - " + barCode);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "No barcode scanned", Toast.LENGTH_SHORT).show();
         }
     }
 

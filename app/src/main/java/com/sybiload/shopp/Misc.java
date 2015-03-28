@@ -89,7 +89,7 @@ public class Misc
 
         for (int i = 0; i < defaultItemName.length; i++)
         {
-            Item myItem = new Item(defaultItemName[i], null, Static.defaultItemIcon[i], false, false);
+            Item myItem = new Item(defaultItemName[i], null, Static.defaultItemIcon[i], null, null, false, false);
             itemArray.add(myItem);
         }
 

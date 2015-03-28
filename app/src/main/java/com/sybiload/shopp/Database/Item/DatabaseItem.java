@@ -42,8 +42,19 @@ public class DatabaseItem extends DatabaseItemH
             stmt.bindString(2, newItem.getDescription());
 
         stmt.bindLong(3, newItem.getIcon());
-        stmt.bindLong(4, newItem.isToShop() ? 1 : 0);
-        stmt.bindLong(5, newItem.isDone() ? 1 : 0);
+
+        if (newItem.getBarType() == null)
+            stmt.bindNull(4);
+        else
+            stmt.bindString(4, newItem.getBarType());
+
+        if (newItem.getBarCode() == null)
+            stmt.bindNull(5);
+        else
+            stmt.bindString(5, newItem.getBarCode());
+
+        stmt.bindLong(6, newItem.isToShop() ? 1 : 0);
+        stmt.bindLong(7, newItem.isDone() ? 1 : 0);
         stmt.execute();
     }
 
@@ -58,9 +69,20 @@ public class DatabaseItem extends DatabaseItemH
             stmt.bindString(2, newItem.getDescription());
 
         stmt.bindLong(3, newItem.getIcon());
-        stmt.bindLong(4, newItem.isToShop() ? 1 : 0);
-        stmt.bindLong(5, newItem.isDone() ? 1 : 0);
-        stmt.bindString(6, name);
+
+        if (newItem.getBarType() == null)
+            stmt.bindNull(4);
+        else
+            stmt.bindString(4, newItem.getBarType());
+
+        if (newItem.getBarCode() == null)
+            stmt.bindNull(5);
+        else
+            stmt.bindString(5, newItem.getBarCode());
+
+        stmt.bindLong(6, newItem.isToShop() ? 1 : 0);
+        stmt.bindLong(7, newItem.isDone() ? 1 : 0);
+        stmt.bindString(8, name);
         stmt.execute();
     }
 
@@ -75,7 +97,7 @@ public class DatabaseItem extends DatabaseItemH
         while (c.moveToNext())
         {
             // for each row, create a new list object and add it to the list array
-            Item myItem = new Item(c.getString(0), c.getString(1), c.getInt(2), (c.getInt(3) != 0), (c.getInt(4) != 0));
+            Item myItem = new Item(c.getString(0), c.getString(1), c.getInt(2), c.getString(3), c.getString(4), (c.getInt(5) != 0), (c.getInt(6) != 0));
             arrayItem.add(myItem);
         }
 
@@ -94,7 +116,7 @@ public class DatabaseItem extends DatabaseItemH
         while (c.moveToNext())
         {
             // for each row, create a new list object and add it to the list array
-            Item myItem = new Item(c.getString(0), c.getString(1), c.getInt(2), (c.getInt(3) != 0), (c.getInt(4) != 0));
+            Item myItem = new Item(c.getString(0), c.getString(1), c.getInt(2), c.getString(3), c.getString(4), (c.getInt(5) != 0), (c.getInt(6) != 0));
             arrayItem.add(myItem);
         }
 
