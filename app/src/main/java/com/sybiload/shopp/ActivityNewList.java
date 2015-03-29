@@ -1,7 +1,9 @@
 package com.sybiload.shopp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -101,31 +103,7 @@ public class ActivityNewList extends ActionBarActivity
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseList databaseList = new DatabaseList(getApplicationContext());
-                databaseList.open();
-
-                String des = editTextNewListDescription.getText().toString();
-
-                if (des.equals(""))
-                {
-                    Calendar cal = Calendar.getInstance();
-                    DateFormat dateFormat = new SimpleDateFormat("dd/MM");
-                    des = "Created on " + dateFormat.format(cal.getTime());
-                }
-
-                String dbName = editTextNewListName.getText().toString().toLowerCase();
-                dbName = dbName.replaceAll(" ", "_");
-                dbName = dbName.replaceAll("\\\\", "");
-                dbName = dbName.replaceAll("/", "");
-                dbName = dbName.replaceAll("\'", "");
-                dbName = dbName.replaceAll("\"", "");
-                List myList = new List(editTextNewListName.getText().toString(), des, dbName + ".db");
-
-                new Misc().addList(getApplicationContext(), myList);
-
-                databaseList.close();
-
-                finish();
+                new createListAsync().execute();
             }
         });
 
@@ -151,5 +129,59 @@ public class ActivityNewList extends ActionBarActivity
     public void onBackPressed()
     {
         finish();
+    }
+
+    public class createListAsync extends AsyncTask<Void, Void, Void>
+    {
+        protected ProgressDialog Dialog;
+
+        @Override
+        protected void onPreExecute()
+        {
+            Dialog = new ProgressDialog(ActivityNewList.this);
+            Dialog.setMessage("Just a moment..");
+            Dialog.setCancelable(false);
+            Dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            DatabaseList databaseList = new DatabaseList(getApplicationContext());
+            databaseList.open();
+
+            String des = editTextNewListDescription.getText().toString();
+
+            if (des.equals(""))
+            {
+                Calendar cal = Calendar.getInstance();
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM");
+                des = "Created on " + dateFormat.format(cal.getTime());
+            }
+
+            String dbName = editTextNewListName.getText().toString().toLowerCase();
+            dbName = dbName.replaceAll(" ", "_");
+            dbName = dbName.replaceAll("\\\\", "");
+            dbName = dbName.replaceAll("/", "");
+            dbName = dbName.replaceAll("\'", "");
+            dbName = dbName.replaceAll("\"", "");
+            List myList = new List(editTextNewListName.getText().toString(), des, dbName + ".db");
+
+            new Misc().addList(getApplicationContext(), myList);
+
+            databaseList.close();
+
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused)
+        {
+            Dialog.dismiss();
+
+            finish();
+        }
     }
 }

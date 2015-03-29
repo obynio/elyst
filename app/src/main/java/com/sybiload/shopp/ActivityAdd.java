@@ -362,8 +362,39 @@ public class ActivityAdd extends ActionBarActivity
 
             barType = scanningResult.getFormatName();
             barCode = scanningResult.getContents();
+            Item myItem = null;
 
-            textViewBarcode.setText(barType + " - " + barCode);
+            for (Item it : Static.currentList.itemAvailable)
+            {
+                if (it.getBarType() != null && it.getBarCode() != null && it.getBarType().equals(barType) && it.getBarCode().equals(barCode))
+                {
+                    myItem = it;
+                    break;
+                }
+            }
+
+            for (Item it : Static.currentList.itemShop)
+            {
+                if (it.getBarType() != null && it.getBarCode() != null && it.getBarType().equals(barType) && it.getBarCode().equals(barCode))
+                {
+                    myItem = it;
+                    break;
+                }
+            }
+
+            if (myItem != null)
+            {
+                Toast.makeText(getApplicationContext(), "This barcode is already assigned", Toast.LENGTH_SHORT).show();
+
+                // reset barcode strings
+                barType = null;
+                barCode = null;
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
+                textViewBarcode.setText(barType + " - " + barCode);
+            }
         }
         else
         {

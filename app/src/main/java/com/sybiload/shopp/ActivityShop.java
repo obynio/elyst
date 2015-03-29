@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,6 +63,7 @@ public class ActivityShop extends ActionBarActivity
         textViewBarcode = (TextView)findViewById(R.id.textViewItemBarcode);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.inflateMenu(R.menu.barcode);
         toolbar.setTitle(Static.currentList.getName());
         toolbar.setNavigationOnClickListener(new View.OnClickListener()
         {
@@ -186,7 +188,6 @@ public class ActivityShop extends ActionBarActivity
     @Override
     public void onResume()
     {
-
         // add all items to shop
         AdapterShop adapterShop = new AdapterShop(ActivityShop.this);
         recyclerView.setAdapter(adapterShop);
@@ -260,7 +261,9 @@ public class ActivityShop extends ActionBarActivity
             editTextDescription.setText(null);
             textViewBarcode.setText(null);
 
+            // erase previous layout and replace it
             toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.barcode);
 
             fabImageButton.setClickable(true);
 
@@ -290,6 +293,8 @@ public class ActivityShop extends ActionBarActivity
             if (currentItem.getBarType() != null && currentItem.getBarCode() != null)
                 textViewBarcode.setText(currentItem.getBarType() + " - " + currentItem.getBarCode());
 
+            // erase previous layout and replace it
+            toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.done);
 
             fabImageButton.setClickable(false);
@@ -309,12 +314,104 @@ public class ActivityShop extends ActionBarActivity
 
         if (scanningResult.getContents() != null)
         {
-            Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
-
             barType = scanningResult.getFormatName();
             barCode = scanningResult.getContents();
 
-            textViewBarcode.setText(barType + " - " + barCode);
+            Item myItem = null;
+
+            if (toolbarOpened)
+            {
+                for (Item it : Static.currentList.itemAvailable)
+                {
+                    if (it.getBarType() != null && it.getBarCode() != null && it.getBarType().equals(barType) && it.getBarCode().equals(barCode))
+                    {
+                        myItem = it;
+                        break;
+                    }
+                }
+
+                for (Item it : Static.currentList.itemShop)
+                {
+                    if (it.getBarType() != null && it.getBarCode() != null && it.getBarType().equals(barType) && it.getBarCode().equals(barCode))
+                    {
+                        myItem = it;
+                        break;
+                    }
+                }
+
+                if (myItem != null)
+                {
+                    Toast.makeText(getApplicationContext(), "This barcode is already assigned", Toast.LENGTH_SHORT).show();
+
+                    // reset barcode strings
+                    barType = null;
+                    barCode = null;
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
+                    textViewBarcode.setText(barType + " - " + barCode);
+                }
+            }
+            else
+            {
+                for (Item it : Static.currentList.itemAvailable)
+                {
+                    if (it.getBarType() != null && it.getBarCode() != null && it.getBarType().equals(barType) && it.getBarCode().equals(barCode))
+                    {
+                        myItem = it;
+                        break;
+                    }
+                }
+
+                if (myItem != null)
+                {
+                    myItem.toShop(true);
+                    myItem.done(false);
+
+                    DatabaseItem databaseItem = new DatabaseItem(getApplicationContext(), Static.currentList.getDatabase());
+
+                    // update database
+                    databaseItem.open();
+                    databaseItem.updateByName(myItem.getName(), myItem);
+                    databaseItem.close();
+
+                    // get position of our item in the availableItem and remove it
+                    int position = Static.currentList.itemAvailable.indexOf(myItem);
+                    Static.currentList.itemAvailable.remove(position);
+
+                    // copy the item to shopItem
+                    Static.currentList.itemShop.add(myItem);
+
+                    Static.currentList.sortShop();
+                    Static.currentList.sortShopDone();
+
+                    Toast.makeText(getApplicationContext(), myItem.getName() + " added", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    for (Item it : Static.currentList.itemShop)
+                    {
+                        if (it.getBarType() != null && it.getBarCode() != null && it.getBarType().equals(barType) && it.getBarCode().equals(barCode))
+                        {
+                            myItem = it;
+                            break;
+                        }
+                    }
+
+                    if (myItem != null)
+                    {
+                        Toast.makeText(getApplicationContext(), "Item already in the shop list", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(), "Item unknown", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                barType = null;
+                barCode = null;
+            }
         }
         else
         {

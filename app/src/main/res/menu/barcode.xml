@@ -7,10 +7,4 @@
         android:title="accept"
         kernell:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_done"
-        android:icon="@mipmap/fab_ic_done"
-        android:title="accept"
-        kernell:showAsAction="ifRoom" />
-
 </menu>
