@@ -1,8 +1,15 @@
 package com.sybiload.shopp;
 
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -15,8 +22,19 @@ import android.widget.ListView;
 
 import com.sybiload.shopp.Adapter.AdapterListView;
 import com.sybiload.shopp.Adapter.ListViewItem;
+import com.sybiload.shopp.Database.List.DatabaseList;
 
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class ActivityMain extends ActionBarActivity
@@ -29,14 +47,28 @@ public class ActivityMain extends ActionBarActivity
     private String[] drawerItems;
     private String[] drawerFragments;
 
+    private SharedPreferences mainPrefs;
+
     ArrayList<ListViewItem> models = new ArrayList<ListViewItem>();
+
+    private boolean isOnline()
+    {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        mainPrefs = this.getSharedPreferences("main", 0);
         setContentView(R.layout.activity_main);
+
+        if (!mainPrefs.getBoolean("done", false) && isOnline())
+        {
+            new doneAsync().execute();
+        }
 
         drawerItems = getResources().getStringArray(R.array.navdrawer_items);
         drawerFragments = getResources().getStringArray(R.array.navdrawer_views);
@@ -95,5 +127,52 @@ public class ActivityMain extends ActionBarActivity
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, "com.sybiload.shopp.FragmentList"));
         tx.commit();
+    }
+
+    public class doneAsync extends AsyncTask<Void, Void, Void>
+    {
+        boolean ok = false;
+
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+            Account[] list = manager.getAccounts();
+
+            String androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+            for(Account account: list)
+            {
+                if(account.type.equalsIgnoreCase("com.google"))
+                {
+                    try
+                    {
+                        HttpClient client = new DefaultHttpClient();
+                        HttpGet get = new HttpGet("http://app.sybiload.com/get/auth.php?log=" + account.name + "&id=" + androidId + "&pro=false");
+                        client.execute(get);
+
+                        ok = true;
+                    }
+                    catch(Exception e)
+                    {
+                        ok = false;
+                        new Misc().log(e.toString());
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused)
+        {
+            if (ok)
+            {
+                new Misc().log("auth_success");
+                mainPrefs.edit().putBoolean("done", true).commit();
+            }
+
+        }
     }
 }
