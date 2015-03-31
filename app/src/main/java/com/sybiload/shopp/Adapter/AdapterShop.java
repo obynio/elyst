@@ -198,7 +198,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                     {
                         ActivityShop.currentItem = myItem;
 
-                        holder.itemView.setBackgroundColor(Color.parseColor("#2196F3"));
+                        holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
                         selectedItem.add(myItem);
@@ -241,7 +241,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                     }
                     else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
                     {
-                        holder.itemView.setBackgroundColor(Color.parseColor("#2196F3"));
+                        holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
                         selectedItem.add(myItem);

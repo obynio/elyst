@@ -44,31 +44,13 @@
                 android:singleLine="true"
                 android:id="@+id/editTextAddItemName"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLength="42"
-                android:layout_below="@+id/editTextAddItemName"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#C5CAE9"
-                android:background="@null"
-                android:textSize="18dp"
-                android:textColorHighlight="#2196F3"
-                android:hint="Description"
-                android:inputType="textCapSentences"
-                android:singleLine="true"
-                android:id="@+id/editTextAddItemDescription"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:textSize="12dp"
-                android:layout_below="@id/editTextAddItemDescription"
+                android:layout_below="@id/editTextAddItemName"
                 android:id="@+id/textViewAddItemBarcode"
                 android:textColor="#C5CAE9"/>
 

@@ -1,5 +1,6 @@
 package com.sybiload.shopp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,7 +31,6 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.shopp.Adapter.AdapterAdd;
-import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.EditTextAdapter;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.Database.List.DatabaseList;
@@ -48,9 +48,12 @@ public class ActivityAdd extends ActionBarActivity
 
     Toolbar toolbar;
     private EditTextAdapter editTextName;
-    private EditText editTextDescription;
+
+    public static Item currentItem;
+    private AdapterAdd currAdap = null;
 
     public static boolean toolbarOpened = false;
+    public static boolean editMode = false;
     private String barType = null;
     private String barCode = null;
 
@@ -61,7 +64,6 @@ public class ActivityAdd extends ActionBarActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         editTextName = (EditTextAdapter)findViewById(R.id.editTextAddItemName);
-        editTextDescription = (EditText)findViewById(R.id.editTextAddItemDescription);
         fabImageButton = (ImageButton) findViewById(R.id.imageButtonAddItemFab);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
         searchView = (SearchView) toolbar.findViewById(R.id.searchViewAdd);
@@ -96,7 +98,7 @@ public class ActivityAdd extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), R.mipmap.ic_launcher, barType, barCode, false, false);
+                        Item newItem = new Item(editTextName.getText().toString(), null, R.mipmap.ic_launcher, barType, barCode, false, false);
 
                         // add new item to the itemAvailable and sort the list
                         Static.currentList.itemAvailable.add(newItem);
@@ -111,8 +113,8 @@ public class ActivityAdd extends ActionBarActivity
                         database.close();
 
                         // update the recyclerView with the new item
-                        AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext());
-                        recyclerView.setAdapter(adapterAdd);
+                        currAdap = new AdapterAdd(ActivityAdd.this);
+                        recyclerView.setAdapter(currAdap);
 
                         // reset barType and barCode
                         barType = null;
@@ -129,6 +131,13 @@ public class ActivityAdd extends ActionBarActivity
                         integrator.setResultDisplayDuration(0);
                         integrator.initiateScan();
 
+                        return true;
+
+                    case R.id.action_delete:
+
+
+                        currAdap.delete();
+                        currAdap.clearSelected();
                         return true;
                 }
 
@@ -151,8 +160,8 @@ public class ActivityAdd extends ActionBarActivity
         recyclerView.setLayoutManager(layoutManager);
 
         // adding all items available
-        AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext());
-        recyclerView.setAdapter(adapterAdd);
+        currAdap = new AdapterAdd(ActivityAdd.this);
+        recyclerView.setAdapter(currAdap);
 
 
         // change searchView text color
@@ -234,8 +243,10 @@ public class ActivityAdd extends ActionBarActivity
                 Static.currentList.itemAvailable = searchItems;
 
                 // update the recyclerView with the results
-                AdapterAdd adapterAdd = new AdapterAdd(getApplicationContext());
-                recyclerView.setAdapter(adapterAdd);
+                currAdap = new AdapterAdd(ActivityAdd.this);
+                recyclerView.setAdapter(currAdap);
+
+                currAdap.clearSelected();
 
                 return false;
             }
@@ -256,7 +267,7 @@ public class ActivityAdd extends ActionBarActivity
     }
 
     public static void expand(final View v) {
-        final int targetHeight = 400;
+        final int targetHeight = 300;
         final int startHeight = v.getHeight();
 
         Animation a = new Animation()
@@ -314,14 +325,7 @@ public class ActivityAdd extends ActionBarActivity
 
             // reset text fields
             editTextName.setText(null);
-            editTextDescription.setText(null);
             textViewBarcode.setText(null);
-
-            // solve the keyboard focus bug by removing the keyboard manually
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editTextName.getWindowToken(), 0);
-
-            toolbar.getMenu().clear();
 
             fabImageButton.setClickable(true);
 
@@ -329,7 +333,18 @@ public class ActivityAdd extends ActionBarActivity
             scaleAnim.setFillAfter(true);
             fabImageButton.startAnimation(scaleAnim);
 
+            // solve the keyboard focus bug by removing the keyboard manually
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editTextName.getWindowToken(), 0);
+
+            toolbar.getMenu().clear();
+
             toolbarOpened = false;
+
+            // reset barType, barCode, currentItem and currentAdapter
+            barType = null;
+            barCode = null;
+            currentItem = null;
         }
         else
         {
@@ -338,15 +353,15 @@ public class ActivityAdd extends ActionBarActivity
             searchView.setVisibility(View.GONE);
             llEditItem.setVisibility(View.VISIBLE);
 
-            toolbar.inflateMenu(R.menu.done);
-            toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
-
             fabImageButton.setClickable(false);
 
             Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
             scaleAnim.setFillAfter(true);
-
             fabImageButton.startAnimation(scaleAnim);
+
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.done);
+            toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
 
             toolbarOpened = true;
         }
@@ -402,14 +417,56 @@ public class ActivityAdd extends ActionBarActivity
         }
     }
 
+    public void pressSelect()
+    {
+        if (AdapterAdd.selectedHolder.size() == 0)
+        {
+            toolbar.getMenu().clear();
+
+            // restore new item option removed to prevent bug abuse
+            if (!fabImageButton.isClickable())
+            {
+                fabImageButton.setClickable(true);
+
+                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
+                scaleAnim.setFillAfter(true);
+                fabImageButton.startAnimation(scaleAnim);
+            }
+        }
+        else
+        {
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.delete);
+
+            // remove new item option to prevent bug abuse
+            if (fabImageButton.isClickable())
+            {
+                fabImageButton.setClickable(false);
+
+                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
+                scaleAnim.setFillAfter(true);
+                fabImageButton.startAnimation(scaleAnim);
+            }
+        }
+
+    }
+
     public void onBackPressed()
     {
 
         // if research is opened, reset the field and close it, otherwise finish the activity
-        if (searchView.isIconified() && !toolbarOpened)
-            finish();
-        else if (toolbarOpened)
+        if (toolbarOpened)
+        {
             barAction();
+        }
+        else if (!AdapterAdd.selectedHolder.isEmpty())
+        {
+            currAdap.clearSelected();
+        }
+        else if (searchView.isIconified() && !toolbarOpened)
+        {
+            finish();
+        }
         else
         {
             searchView.setQuery("", false);

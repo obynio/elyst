@@ -31,6 +31,12 @@ public class DatabaseItem extends DatabaseItemH
     }
 
     // insert a new list into the table
+    public void deleteItem(Item newItem)
+    {
+        database.delete(CURRENT_TABL, COLUMN_NAME + "='" + newItem.getName() + "'", null);
+    }
+
+    // insert a new list into the table
     public void insertItem(Item newItem)
     {
         SQLiteStatement stmt = database.compileStatement(INSERT_INTO);

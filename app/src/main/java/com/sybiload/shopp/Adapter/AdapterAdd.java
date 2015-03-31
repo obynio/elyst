@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sybiload.shopp.ActivityAdd;
+import com.sybiload.shopp.ActivityShop;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.Item;
 import com.sybiload.shopp.List;
@@ -26,13 +27,16 @@ import java.util.ArrayList;
 
 public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 {
-    DatabaseItem databaseItem;
+    DatabaseItem database;
     Context ctx;
+
+    public static ArrayList<ViewHolder> selectedHolder = new ArrayList<ViewHolder>();
+    public static ArrayList<Item> selectedItem = new ArrayList<Item>();
 
     public AdapterAdd(Context ctx)
     {
         this.ctx = ctx;
-        databaseItem = new DatabaseItem(ctx, Static.currentList.getDatabase());
+        database = new DatabaseItem(ctx, Static.currentList.getDatabase());
 
         Static.currentList.sortAvailable();
     }
@@ -51,6 +55,37 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         }
     }
 
+    public void delete()
+    {
+        for (Item myItem : selectedItem)
+        {
+            // update database
+            database.open();
+            database.deleteItem(myItem);
+            database.close();
+
+            // remove item from itemShop
+            int position = Static.currentList.itemAvailable.indexOf(myItem);
+            Static.currentList.itemAvailable.remove(position);
+
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clearSelected()
+    {
+
+        for (int i = 0; i < selectedHolder.size(); i++)
+        {
+            selectedHolder.get(i).itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
+
+        selectedHolder.clear();
+        selectedItem.clear();
+        ((ActivityAdd)ctx).pressSelect();
+    }
+
     public void remove(Item myItem)
     {
         if (Static.currentList.itemAvailable.contains(myItem))
@@ -59,9 +94,9 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             myItem.done(false);
 
             // update database
-            databaseItem.open();
-            databaseItem.updateByName(myItem.getName(), myItem);
-            databaseItem.close();
+            database.open();
+            database.updateByName(myItem.getName(), myItem);
+            database.close();
 
             // get position of our item in the availableItem and remove it
             int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -94,12 +129,57 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
 
             holder.txtHeader.setText(myItem.getName());
+
+
+            // when there is a long click on a row, either remove item if the toolbar of the activity is not opened, or hide the toolbar if it is opened. More details below
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    if (!selectedHolder.contains(holder))
+                    {
+                        ActivityAdd.currentItem = myItem;
+
+                        holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+
+                        selectedHolder.add(holder);
+                        selectedItem.add(myItem);
+
+                        ((ActivityAdd)ctx).pressSelect();
+                    }
+
+                    return true;
+                }
+            });
+
             holder.itemView.setOnClickListener(new OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
-                    remove(myItem);
+                    if (selectedHolder.contains(holder))
+                    {
+                        holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+
+                        selectedHolder.remove(holder);
+                        selectedItem.remove(myItem);
+
+                        ((ActivityAdd)ctx).pressSelect();
+                    }
+                    else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
+                    {
+                        holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+
+                        selectedHolder.add(holder);
+                        selectedItem.add(myItem);
+
+                        ((ActivityAdd)ctx).pressSelect();
+                    }
+                    else if (selectedHolder.size() == 0)
+                    {
+                        remove(myItem);
+                    }
                 }
             });
 

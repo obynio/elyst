@@ -37,15 +37,12 @@ public class ActivityShop extends ActionBarActivity
     private EditTextAdapter editTextName;
     private EditText editTextDescription;
     private TextView textViewBarcode;
+    private ImageButton fabImageButton;
 
     public static Item currentItem;
-
-    AdapterShop currAdap = null;
-
-    ImageButton fabImageButton;
+    private AdapterShop currAdap = null;
 
     public static boolean toolbarOpened = false;
-    public static boolean selection = false;
     private String barType = null;
     private String barCode = null;
 
@@ -275,16 +272,12 @@ public class ActivityShop extends ActionBarActivity
             editTextDescription.setText(null);
             textViewBarcode.setText(null);
 
+            // unselect all selected items
+            currAdap.clearSelected();
+
             // erase previous layout and replace it
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.barcode);
-
-            fabImageButton.setClickable(true);
-
-
-            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
-            scaleAnim.setFillAfter(true);
-            fabImageButton.startAnimation(scaleAnim);
 
             toolbarOpened = false;
 
@@ -296,9 +289,6 @@ public class ActivityShop extends ActionBarActivity
         else
         {
             expand(toolbar);
-
-            // unselect all selected items
-            currAdap.clearSelected();
 
             llEditItem.setVisibility(View.VISIBLE);
 
@@ -312,13 +302,6 @@ public class ActivityShop extends ActionBarActivity
             // erase previous layout and replace it
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.done);
-
-            fabImageButton.setClickable(false);
-
-            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
-            scaleAnim.setFillAfter(true);
-
-            fabImageButton.startAnimation(scaleAnim);
 
             toolbarOpened = true;
         }
@@ -441,14 +424,32 @@ public class ActivityShop extends ActionBarActivity
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.barcode);
+
+            // restore new item option removed to prevent bug abuse
+            if (!fabImageButton.isClickable())
+            {
+                fabImageButton.setClickable(true);
+
+                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
+                scaleAnim.setFillAfter(true);
+                fabImageButton.startAnimation(scaleAnim);
+            }
         }
         else if (AdapterShop.selectedHolder.size() == 1)
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.edit_remove);
 
-            toolbar.showOverflowMenu();
 
+            // remove new item option to prevent bug abuse
+            if (fabImageButton.isClickable())
+            {
+                fabImageButton.setClickable(false);
+
+                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
+                scaleAnim.setFillAfter(true);
+                fabImageButton.startAnimation(scaleAnim);
+            }
         }
         else
         {
@@ -464,7 +465,7 @@ public class ActivityShop extends ActionBarActivity
         {
             barAction();
         }
-        else if (AdapterShop.selectedHolder.size() > 0)
+        else if (!AdapterShop.selectedHolder.isEmpty())
         {
             currAdap.clearSelected();
         }
