@@ -1,10 +1,7 @@
 package com.sybiload.shopp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,8 +27,6 @@ import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.EditTextAdapter;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 
-import java.util.ArrayList;
-
 
 public class ActivityShop extends ActionBarActivity
 {
@@ -44,11 +39,13 @@ public class ActivityShop extends ActionBarActivity
     private TextView textViewBarcode;
 
     public static Item currentItem;
-    public static AdapterShop currentAdapter;
+
+    AdapterShop currAdap = null;
 
     ImageButton fabImageButton;
 
     public static boolean toolbarOpened = false;
+    public static boolean selection = false;
     private String barType = null;
     private String barCode = null;
 
@@ -71,7 +68,13 @@ public class ActivityShop extends ActionBarActivity
             public void onClick(View v)
             {
                 if (toolbarOpened)
+                {
                     barAction();
+                }
+                else if (AdapterShop.selectedHolder.size() > 0)
+                {
+                    currAdap.clearSelected();
+                }
                 else
                 {
                     finish();
@@ -90,7 +93,7 @@ public class ActivityShop extends ActionBarActivity
                     case R.id.action_done:
                         Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getIcon(), barType, barCode, currentItem.isToShop(), currentItem.isDone());
 
-                        currentAdapter.update(currentItem, newItem);
+                        currAdap.update(currentItem, newItem);
 
                         barAction();
 
@@ -108,6 +111,17 @@ public class ActivityShop extends ActionBarActivity
                         integrator.setResultDisplayDuration(0);
                         integrator.initiateScan();
 
+                        return true;
+
+                    case R.id.action_edit:
+
+                        barAction();
+                        return true;
+
+                    case R.id.action_remove:
+
+                        currAdap.remove();
+                        currAdap.clearSelected();
                         return true;
                 }
 
@@ -189,8 +203,8 @@ public class ActivityShop extends ActionBarActivity
     public void onResume()
     {
         // add all items to shop
-        AdapterShop adapterShop = new AdapterShop(ActivityShop.this);
-        recyclerView.setAdapter(adapterShop);
+        currAdap = new AdapterShop(ActivityShop.this);
+        recyclerView.setAdapter(currAdap);
 
         super.onResume();
     }
@@ -277,12 +291,14 @@ public class ActivityShop extends ActionBarActivity
             // reset barType, barCode, currentItem and currentAdapter
             barType = null;
             barCode = null;
-            currentAdapter = null;
             currentItem = null;
         }
         else
         {
             expand(toolbar);
+
+            // unselect all selected items
+            currAdap.clearSelected();
 
             llEditItem.setVisibility(View.VISIBLE);
 
@@ -419,10 +435,39 @@ public class ActivityShop extends ActionBarActivity
         }
     }
 
+    public void pressSelect()
+    {
+        if (AdapterShop.selectedHolder.size() == 0)
+        {
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.barcode);
+        }
+        else if (AdapterShop.selectedHolder.size() == 1)
+        {
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.edit_remove);
+
+            toolbar.showOverflowMenu();
+
+        }
+        else
+        {
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.remove);
+        }
+
+    }
+
     public void onBackPressed()
     {
         if (toolbarOpened)
+        {
             barAction();
+        }
+        else if (AdapterShop.selectedHolder.size() > 0)
+        {
+            currAdap.clearSelected();
+        }
         else
         {
             finish();

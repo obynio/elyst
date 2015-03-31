@@ -30,6 +30,9 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     DatabaseItem database;
     Context ctx;
 
+    public static ArrayList<ViewHolder> selectedHolder = new ArrayList<ViewHolder>();
+    public static ArrayList<Item> selectedItem = new ArrayList<Item>();
+
     public AdapterShop(Context ctx)
     {
         this.ctx = ctx;
@@ -55,25 +58,28 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         }
     }
 
-    public void remove(Item myItem)
+    public void remove()
     {
-        // set new attributes
-        myItem.toShop(false);
-        myItem.setDescription(null);
+        for (Item myItem : selectedItem)
+        {
+            // set new attributes
+            myItem.toShop(false);
+            myItem.setDescription(null);
 
-        // update database
-        database.open();
-        database.updateByName(myItem.getName(), myItem);
-        database.close();
+            // update database
+            database.open();
+            database.updateByName(myItem.getName(), myItem);
+            database.close();
 
-        // remove item from itemShop
-        int position = Static.currentList.itemShop.indexOf(myItem);
-        Static.currentList.itemShop.remove(position);
+            // remove item from itemShop
+            int position = Static.currentList.itemShop.indexOf(myItem);
+            Static.currentList.itemShop.remove(position);
 
-        // add item to itemAvailable
-        Static.currentList.itemAvailable.add(myItem);
+            // add item to itemAvailable
+            Static.currentList.itemAvailable.add(myItem);
 
-        notifyItemRemoved(position);
+            notifyItemRemoved(position);
+        }
     }
 
     public void done(Item myItem)
@@ -131,6 +137,19 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         notifyItemMoved(position, orf);
     }
 
+    public void clearSelected()
+    {
+        for (int i = 0; i < selectedHolder.size(); i++)
+        {
+            selectedHolder.get(i).itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
+
+        selectedHolder.clear();
+        selectedItem.clear();
+        ((ActivityShop)ctx).pressSelect();
+    }
+
 
     @Override
     public AdapterShop.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -175,12 +194,16 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 @Override
                 public boolean onLongClick(View v)
                 {
-
-                    if(ctx instanceof ActivityShop){
-                        // absolute bullshit
+                    if (!selectedHolder.contains(holder))
+                    {
                         ActivityShop.currentItem = myItem;
-                        ActivityShop.currentAdapter = AdapterShop.this;
-                        ((ActivityShop)ctx).barAction();
+
+                        holder.itemView.setBackgroundColor(Color.parseColor("#2196F3"));
+
+                        selectedHolder.add(holder);
+                        selectedItem.add(myItem);
+
+                        ((ActivityShop)ctx).pressSelect();
                     }
 
                     return true;
@@ -207,44 +230,45 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 @Override
                 public void onClick(View v)
                 {
-                    done(myItem);
+                    if (selectedHolder.contains(holder))
+                    {
+                        holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
-                    if (myItem.isDone())
-                    {
-                        holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                        holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                        holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
+                        selectedHolder.remove(holder);
+                        selectedItem.remove(myItem);
+
+                        ((ActivityShop)ctx).pressSelect();
                     }
-                    else
+                    else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
                     {
-                        holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                        holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                        holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+                        holder.itemView.setBackgroundColor(Color.parseColor("#2196F3"));
+
+                        selectedHolder.add(holder);
+                        selectedItem.add(myItem);
+
+                        ((ActivityShop)ctx).pressSelect();
+                    }
+                    else if (selectedHolder.size() == 0)
+                    {
+                        done(myItem);
+
+                        if (myItem.isDone())
+                        {
+                            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
+                        }
+                        else
+                        {
+                            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+                        }
                     }
                 }
             });
 
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(myItem.getIcon()));
-
-            // when doing a long click on the icon of a row, open the edit toolbar in the parent activity
-            holder.imageViewItemIcon.setOnLongClickListener(new View.OnLongClickListener()
-            {
-                @Override
-                public boolean onLongClick(View v)
-                {
-
-                    // prevent user from deleting item and editing it at the same time
-                    if (!ActivityShop.toolbarOpened)
-                        remove(myItem);
-                    else
-                    {
-                        if(ctx instanceof ActivityShop)
-                            ((ActivityShop)ctx).barAction();
-                    }
-
-                    return true;
-                }
-            });
 
         }
     }
