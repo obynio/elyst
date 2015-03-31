@@ -104,9 +104,8 @@ public class ActivityMain extends ActionBarActivity
         navList = (ListView) findViewById(R.id.drawer);
 
         models.add(new ListViewItem(drawerItems[0], getResources().getDrawable(R.mipmap.ic_shop)));
-        models.add(new ListViewItem(drawerItems[1], getResources().getDrawable(R.mipmap.ic_schedule)));
-        models.add(new ListViewItem(drawerItems[2], getResources().getDrawable(R.mipmap.ic_ratio)));
-        models.add(new ListViewItem(drawerItems[3], getResources().getDrawable(R.mipmap.ic_settings)));
+        models.add(new ListViewItem(drawerItems[1], getResources().getDrawable(R.mipmap.ic_ratio)));
+        models.add(new ListViewItem(drawerItems[2], getResources().getDrawable(R.mipmap.ic_settings)));
 
         navList.setAdapter(new AdapterListView(this, models));
 
