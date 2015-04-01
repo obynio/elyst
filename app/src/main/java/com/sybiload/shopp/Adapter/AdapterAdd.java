@@ -158,27 +158,30 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
                 @Override
                 public void onClick(View v)
                 {
-                    if (selectedHolder.contains(holder))
+                    if (!ActivityAdd.toolbarOpened)
                     {
-                        holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                        if (selectedHolder.contains(holder))
+                        {
+                            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
-                        selectedHolder.remove(holder);
-                        selectedItem.remove(myItem);
+                            selectedHolder.remove(holder);
+                            selectedItem.remove(myItem);
 
-                        ((ActivityAdd)ctx).pressSelect();
-                    }
-                    else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
-                    {
-                        holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+                            ((ActivityAdd)ctx).pressSelect();
+                        }
+                        else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
+                        {
+                            holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
-                        selectedHolder.add(holder);
-                        selectedItem.add(myItem);
+                            selectedHolder.add(holder);
+                            selectedItem.add(myItem);
 
-                        ((ActivityAdd)ctx).pressSelect();
-                    }
-                    else if (selectedHolder.size() == 0)
-                    {
-                        remove(myItem);
+                            ((ActivityAdd)ctx).pressSelect();
+                        }
+                        else if (selectedHolder.size() == 0)
+                        {
+                            remove(myItem);
+                        }
                     }
                 }
             });

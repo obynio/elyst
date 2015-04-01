@@ -230,39 +230,42 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 @Override
                 public void onClick(View v)
                 {
-                    if (selectedHolder.contains(holder))
+                    if (!ActivityShop.toolbarOpened)
                     {
-                        holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-
-                        selectedHolder.remove(holder);
-                        selectedItem.remove(myItem);
-
-                        ((ActivityShop)ctx).pressSelect();
-                    }
-                    else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
-                    {
-                        holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
-
-                        selectedHolder.add(holder);
-                        selectedItem.add(myItem);
-
-                        ((ActivityShop)ctx).pressSelect();
-                    }
-                    else if (selectedHolder.size() == 0)
-                    {
-                        done(myItem);
-
-                        if (myItem.isDone())
+                        if (selectedHolder.contains(holder))
                         {
-                            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
+                            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+
+                            selectedHolder.remove(holder);
+                            selectedItem.remove(myItem);
+
+                            ((ActivityShop)ctx).pressSelect();
                         }
-                        else
+                        else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
                         {
-                            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+                            holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+
+                            selectedHolder.add(holder);
+                            selectedItem.add(myItem);
+
+                            ((ActivityShop)ctx).pressSelect();
+                        }
+                        else if (selectedHolder.size() == 0)
+                        {
+                            done(myItem);
+
+                            if (myItem.isDone())
+                            {
+                                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
+                            }
+                            else
+                            {
+                                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+                            }
                         }
                     }
                 }

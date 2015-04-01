@@ -50,6 +50,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:textSize="12dp"
+                android:visibility="gone"
                 android:layout_below="@id/editTextAddItemName"
                 android:id="@+id/textViewAddItemBarcode"
                 android:textColor="#C5CAE9"/>

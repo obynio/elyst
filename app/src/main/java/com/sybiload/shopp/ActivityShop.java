@@ -262,6 +262,7 @@ public class ActivityShop extends ActionBarActivity
         {
             collapse(toolbar);
             llEditItem.setVisibility(View.GONE);
+            textViewBarcode.setVisibility(View.GONE);
 
             // solve the keyboard focus bug by removing the keyboard manually
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -297,7 +298,11 @@ public class ActivityShop extends ActionBarActivity
             editTextDescription.setText(currentItem.getDescription());
 
             if (currentItem.getBarType() != null && currentItem.getBarCode() != null)
+            {
+                textViewBarcode.setVisibility(View.VISIBLE);
                 textViewBarcode.setText(currentItem.getBarType() + " - " + currentItem.getBarCode());
+            }
+
 
             // erase previous layout and replace it
             toolbar.getMenu().clear();
@@ -349,6 +354,7 @@ public class ActivityShop extends ActionBarActivity
                 else
                 {
                     Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
+                    textViewBarcode.setVisibility(View.VISIBLE);
                     textViewBarcode.setText(barType + " - " + barCode);
                 }
             }

@@ -322,6 +322,7 @@ public class ActivityAdd extends ActionBarActivity
             collapse(toolbar);
             llEditItem.setVisibility(View.GONE);
             searchView.setVisibility(View.VISIBLE);
+            textViewBarcode.setVisibility(View.GONE);
 
             // reset text fields
             editTextName.setText(null);
@@ -408,6 +409,7 @@ public class ActivityAdd extends ActionBarActivity
             else
             {
                 Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
+                textViewBarcode.setVisibility(View.VISIBLE);
                 textViewBarcode.setText(barType + " - " + barCode);
             }
         }

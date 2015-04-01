@@ -65,7 +65,8 @@
                 android:textSize="12dp"
                 android:layout_below="@id/editTextItemDescription"
                 android:id="@+id/textViewItemBarcode"
-                android:textColor="#C5CAE9"/>
+                android:textColor="#C5CAE9"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 
