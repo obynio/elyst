@@ -112,15 +112,15 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     public String getColor(int color)
     {
         if (color == 1)
-            return "#FF99CC00";
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.green));
         else if (color == 2)
-            return "#FFFF4444";
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.red));
         else if (color == 3)
-            return "#FFFFBB33";
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.orange));
         else if (color == 4)
-            return "#FFAA66CC";
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.purple));
         else if (color == 5)
-            return "#FF33B5E5";
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
         else
             return "#78909C";
     }

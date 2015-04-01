@@ -17,6 +17,7 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +39,11 @@ public class ActivityShop extends ActionBarActivity
     private EditText editTextDescription;
     private TextView textViewBarcode;
     private ImageButton fabImageButton;
+    private ImageView imageViewColorGreen;
+    private ImageView imageViewColorOrange;
+    private ImageView imageViewColorRed;
+    private ImageView imageViewColorPurple;
+    private ImageView imageViewColorBlue;
 
     public static Item currentItem;
     private AdapterShop currAdap = null;
@@ -55,6 +61,11 @@ public class ActivityShop extends ActionBarActivity
         editTextName = (EditTextAdapter)findViewById(R.id.editTextItemName);
         editTextDescription = (EditText)findViewById(R.id.editTextItemDescription);
         textViewBarcode = (TextView)findViewById(R.id.textViewItemBarcode);
+        imageViewColorGreen = (ImageView)findViewById(R.id.imageViewItemColorGreen);
+        imageViewColorOrange = (ImageView)findViewById(R.id.imageViewItemColorOrange);
+        imageViewColorRed = (ImageView)findViewById(R.id.imageViewItemColorRed);
+        imageViewColorPurple = (ImageView)findViewById(R.id.imageViewItemColorPurple);
+        imageViewColorBlue = (ImageView)findViewById(R.id.imageViewItemColorBlue);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.inflateMenu(R.menu.barcode);
@@ -120,11 +131,14 @@ public class ActivityShop extends ActionBarActivity
                         currAdap.remove();
                         currAdap.clearSelected();
                         return true;
-                }
 
-                return false;
+                    default:
+                        return false;
+                }
             }
         });
+
+
 
         editTextName.addTextChangedListener(new TextWatcher()
         {
@@ -185,6 +199,56 @@ public class ActivityShop extends ActionBarActivity
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ActivityAdd.class);
                 startActivity(intent);
+            }
+        });
+
+        imageViewColorGreen.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                currentItem.setColor(1);
+                setColorImageView(1);
+            }
+        });
+
+        imageViewColorOrange.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                currentItem.setColor(2);
+                setColorImageView(2);
+            }
+        });
+
+        imageViewColorRed.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                currentItem.setColor(3);
+                setColorImageView(3);
+            }
+        });
+
+        imageViewColorPurple.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                currentItem.setColor(4);
+                setColorImageView(4);
+            }
+        });
+
+        imageViewColorBlue.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                currentItem.setColor(5);
+                setColorImageView(5);
             }
         });
 
@@ -312,9 +376,10 @@ public class ActivityShop extends ActionBarActivity
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.done);
 
-            // set name and description editText
+            // set name, description editText and color imageView
             editTextName.setText(currentItem.getName());
             editTextDescription.setText(currentItem.getDescription());
+            setColorImageView(currentItem.getColor());
 
             // visible editText field
             llEditItem.setVisibility(View.VISIBLE);
@@ -493,6 +558,34 @@ public class ActivityShop extends ActionBarActivity
             Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
             scaleAnim.setFillAfter(true);
             fabImageButton.startAnimation(scaleAnim);
+        }
+    }
+
+    private void setColorImageView(int id)
+    {
+        imageViewColorGreen.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorOrange.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorRed.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorPurple.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorBlue.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+
+        switch (id)
+        {
+            case 1:
+                imageViewColorGreen.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 2:
+                imageViewColorOrange.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 3:
+                imageViewColorRed.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 4:
+                imageViewColorPurple.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 5:
+                imageViewColorBlue.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
         }
     }
 

@@ -24,6 +24,7 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,11 @@ public class ActivityAdd extends ActionBarActivity
     private SearchView searchView;
     private ImageButton fabImageButton;
     private TextView textViewBarcode;
+    private ImageView imageViewColorGreen;
+    private ImageView imageViewColorOrange;
+    private ImageView imageViewColorRed;
+    private ImageView imageViewColorPurple;
+    private ImageView imageViewColorBlue;
 
     Toolbar toolbar;
     private EditTextAdapter editTextName;
@@ -56,6 +62,7 @@ public class ActivityAdd extends ActionBarActivity
     public static boolean editMode = false;
     private String barType = null;
     private String barCode = null;
+    private int color = 1;
 
     protected void onCreate(Bundle paramBundle)
     {
@@ -68,6 +75,11 @@ public class ActivityAdd extends ActionBarActivity
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
         searchView = (SearchView) toolbar.findViewById(R.id.searchViewAdd);
         textViewBarcode = (TextView) findViewById(R.id.textViewAddItemBarcode);
+        imageViewColorGreen = (ImageView)findViewById(R.id.imageViewAddItemColorGreen);
+        imageViewColorOrange = (ImageView)findViewById(R.id.imageViewAddItemColorOrange);
+        imageViewColorRed = (ImageView)findViewById(R.id.imageViewAddItemColorRed);
+        imageViewColorPurple = (ImageView)findViewById(R.id.imageViewAddItemColorPurple);
+        imageViewColorBlue = (ImageView)findViewById(R.id.imageViewAddItemColorBlue);
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setTitle("Add items");
@@ -99,7 +111,7 @@ public class ActivityAdd extends ActionBarActivity
                 {
                     case R.id.action_done:
                         // if there is a bug, it's here
-                        Item newItem = new Item(editTextName.getText().toString(), null, getResources().getColor(R.color.human), barType, barCode, false, false);
+                        Item newItem = new Item(editTextName.getText().toString(), null, color, barType, barCode, false, false);
 
                         // add new item to the itemAvailable and sort the list
                         Static.currentList.itemAvailable.add(newItem);
@@ -151,6 +163,56 @@ public class ActivityAdd extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 barAction();
+            }
+        });
+
+        imageViewColorGreen.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                color = 1;
+                setColorImageView(1);
+            }
+        });
+
+        imageViewColorOrange.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                color = 2;
+                setColorImageView(2);
+            }
+        });
+
+        imageViewColorRed.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                color = 3;
+                setColorImageView(3);
+            }
+        });
+
+        imageViewColorPurple.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                color = 4;
+                setColorImageView(4);
+            }
+        });
+
+        imageViewColorBlue.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                color = 5;
+                setColorImageView(5);
             }
         });
 
@@ -283,7 +345,7 @@ public class ActivityAdd extends ActionBarActivity
     }
 
     public static void expand(final View v) {
-        final int targetHeight = 300;
+        final int targetHeight = 400;
         final int startHeight = v.getHeight();
 
         Animation a = new Animation()
@@ -353,9 +415,10 @@ public class ActivityAdd extends ActionBarActivity
             // restore fabButton
             fabUp();
 
-            // reset barType, barCode
+            // reset barType, barCode and color
             barType = null;
             barCode = null;
+            color = 1;
         }
         else
         {
@@ -367,9 +430,10 @@ public class ActivityAdd extends ActionBarActivity
             toolbar.inflateMenu(R.menu.done);
             toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
 
-            // reset text fields
+            // reset text fields and color
             editTextName.setText(null);
             textViewBarcode.setText(null);
+            setColorImageView(color);
 
             // hide fields
             searchView.setVisibility(View.GONE);
@@ -471,6 +535,34 @@ public class ActivityAdd extends ActionBarActivity
             Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
             scaleAnim.setFillAfter(true);
             fabImageButton.startAnimation(scaleAnim);
+        }
+    }
+
+    private void setColorImageView(int id)
+    {
+        imageViewColorGreen.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorOrange.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorRed.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorPurple.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+        imageViewColorBlue.setImageDrawable(getResources().getDrawable(R.drawable.ic_icon));
+
+        switch (id)
+        {
+            case 1:
+                imageViewColorGreen.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 2:
+                imageViewColorOrange.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 3:
+                imageViewColorRed.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 4:
+                imageViewColorPurple.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
+            case 5:
+                imageViewColorBlue.setImageDrawable(getResources().getDrawable(R.drawable.ic_nicon));
+                break;
         }
     }
 

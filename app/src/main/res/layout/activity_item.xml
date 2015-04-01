@@ -73,30 +73,42 @@
                 android:layout_marginTop="20dp">
 
                 <ImageView
-                    android:id="@+id/imageViewItemColor1"
+                    android:id="@+id/imageViewItemColorGreen"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tint="@color/green"
                     android:layout_weight="1"
                     android:src="@drawable/ic_icon" />
 
                 <ImageView
-                    android:id="@+id/imageViewItemColor2"
+                    android:id="@+id/imageViewItemColorOrange"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tint="@color/orange"
                     android:layout_weight="1"
                     android:src="@drawable/ic_icon" />
 
                 <ImageView
-                    android:id="@+id/imageViewItemColor3"
+                    android:id="@+id/imageViewItemColorRed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tint="@color/red"
                     android:layout_weight="1"
                     android:src="@drawable/ic_icon" />
 
                 <ImageView
-                    android:id="@+id/imageViewItemColor4"
+                    android:id="@+id/imageViewItemColorPurple"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tint="@color/purple"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_icon" />
+
+                <ImageView
+                    android:id="@+id/imageViewItemColorBlue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tint="@color/blue"
                     android:layout_weight="1"
                     android:src="@drawable/ic_icon" />
 
