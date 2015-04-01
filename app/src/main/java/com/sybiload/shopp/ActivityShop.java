@@ -133,40 +133,43 @@ public class ActivityShop extends ActionBarActivity
                 boolean error = false;
                 String text = editTextName.getText().toString();
 
-                // check if an item to shop already exists
-                for (Item it : Static.currentList.itemShop)
+                if (!text.equals(currentItem.getName()) && toolbarOpened)
                 {
-                    if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                    // check if an item to shop already exists
+                    for (Item it : Static.currentList.itemShop)
                     {
-                        error = true;
-                        break;
+                        if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                        {
+                            error = true;
+                            break;
+                        }
                     }
-                }
 
-                // check if an item available already exists
-                for (Item it : Static.currentList.itemAvailable)
-                {
-                    if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                    // check if an item available already exists
+                    for (Item it : Static.currentList.itemAvailable)
                     {
-                        error = true;
-                        break;
+                        if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                        {
+                            error = true;
+                            break;
+                        }
                     }
-                }
 
-                if (toolbarOpened && error)
-                {
-                    editTextName.setError("");
+                    if (error)
+                    {
+                        editTextName.setError("");
 
-                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
-                }
-                else if (toolbarOpened && text.isEmpty())
-                {
-                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
-                }
-                else if (toolbarOpened)
-                {
-                    editTextName.setError(null);
-                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
+                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+                    }
+                    else if (text.isEmpty())
+                    {
+                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+                    }
+                    else
+                    {
+                        editTextName.setError(null);
+                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
+                    }
                 }
             }
 
@@ -273,6 +276,18 @@ public class ActivityShop extends ActionBarActivity
         if (toolbarOpened)
         {
             collapse(toolbar);
+            toolbarOpened = false;
+
+            // erase previous layout and replace it
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.barcode);
+
+            // reset text fields
+            editTextName.setText(null);
+            editTextDescription.setText(null);
+            textViewBarcode.setText(null);
+
+            // hide fields
             llEditItem.setVisibility(View.GONE);
             textViewBarcode.setVisibility(View.GONE);
 
@@ -280,18 +295,10 @@ public class ActivityShop extends ActionBarActivity
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editTextName.getWindowToken(), 0);
 
-            // reset text fields
-            editTextName.setText(null);
-            editTextDescription.setText(null);
-            textViewBarcode.setText(null);
+            // restore fabButton
+            fabUp();
 
-            // erase previous layout and replace it
-            toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.barcode);
-
-            toolbarOpened = false;
-
-            // reset barType, barCode, currentItem and currentAdapter
+            // reset barType, barCode, currentItem
             barType = null;
             barCode = null;
             currentItem = null;
@@ -299,27 +306,31 @@ public class ActivityShop extends ActionBarActivity
         else
         {
             expand(toolbar);
+            toolbarOpened = true;
 
-            llEditItem.setVisibility(View.VISIBLE);
+            // erase previous layout and replace it
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.done);
 
             // set name and description editText
             editTextName.setText(currentItem.getName());
             editTextDescription.setText(currentItem.getDescription());
 
+            // visible editText field
+            llEditItem.setVisibility(View.VISIBLE);
+
+            // check if a barcode exists and set visible if yes
             if (currentItem.getBarType() != null && currentItem.getBarCode() != null)
             {
                 textViewBarcode.setVisibility(View.VISIBLE);
                 textViewBarcode.setText(currentItem.getBarType() + " - " + currentItem.getBarCode());
             }
 
-            toolbarOpened = true;
-
             // unselect all selected items
             currAdap.clearSelected();
 
-            // erase previous layout and replace it
-            toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.done);
+            // remove fabButton, maybe useless ?
+            fabDown();
         }
     }
 
@@ -437,43 +448,52 @@ public class ActivityShop extends ActionBarActivity
 
     public void pressSelect()
     {
-        if (AdapterShop.selectedHolder.size() == 0)
+        if (!toolbarOpened && AdapterShop.selectedHolder.size() == 0)
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.barcode);
 
             // restore new item option removed to prevent bug abuse
-            if (!fabImageButton.isClickable() && !toolbarOpened)
-            {
-                fabImageButton.setClickable(true);
-
-                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
-                scaleAnim.setFillAfter(true);
-                fabImageButton.startAnimation(scaleAnim);
-            }
+            fabUp();
         }
-        else if (AdapterShop.selectedHolder.size() == 1)
+        else if (!toolbarOpened && AdapterShop.selectedHolder.size() == 1)
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.edit_remove);
 
-
             // remove new item option to prevent bug abuse
-            if (fabImageButton.isClickable())
-            {
-                fabImageButton.setClickable(false);
-
-                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
-                scaleAnim.setFillAfter(true);
-                fabImageButton.startAnimation(scaleAnim);
-            }
+            fabDown();
         }
-        else
+        else if (!toolbarOpened)
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.remove);
         }
 
+    }
+
+    private void fabUp()
+    {
+        if (!fabImageButton.isClickable())
+        {
+            fabImageButton.setClickable(true);
+
+            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
+            scaleAnim.setFillAfter(true);
+            fabImageButton.startAnimation(scaleAnim);
+        }
+    }
+
+    private void fabDown()
+    {
+        if (fabImageButton.isClickable())
+        {
+            fabImageButton.setClickable(false);
+
+            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
+            scaleAnim.setFillAfter(true);
+            fabImageButton.startAnimation(scaleAnim);
+        }
     }
 
     public void onBackPressed()

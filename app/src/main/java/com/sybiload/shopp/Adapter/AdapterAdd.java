@@ -155,8 +155,6 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
                 {
                     if (!selectedHolder.contains(holder))
                     {
-                        ActivityAdd.currentItem = myItem;
-
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);

@@ -50,7 +50,6 @@ public class ActivityAdd extends ActionBarActivity
     Toolbar toolbar;
     private EditTextAdapter editTextName;
 
-    public static Item currentItem;
     private AdapterAdd currAdap = null;
 
     public static boolean toolbarOpened = false;
@@ -179,40 +178,43 @@ public class ActivityAdd extends ActionBarActivity
                 boolean error = false;
                 String text = editTextName.getText().toString();
 
-                // check if an item to shop already exists
-                for (Item it : Static.currentList.itemShop)
+                if (toolbarOpened)
                 {
-                    if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                    // check if an item to shop already exists
+                    for (Item it : Static.currentList.itemShop)
                     {
-                        error = true;
-                        break;
+                        if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                        {
+                            error = true;
+                            break;
+                        }
                     }
-                }
 
-                // check if an item available already exists
-                for (Item it : Static.currentList.itemAvailable)
-                {
-                    if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                    // check if an item available already exists
+                    for (Item it : Static.currentList.itemAvailable)
                     {
-                        error = true;
-                        break;
+                        if (text.toLowerCase().equals(it.getName().toLowerCase()))
+                        {
+                            error = true;
+                            break;
+                        }
                     }
-                }
 
-                if (toolbarOpened && error)
-                {
-                    editTextName.setError("");
+                    if (error)
+                    {
+                        editTextName.setError("");
 
-                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
-                }
-                else if (toolbarOpened && text.length() == 0)
-                {
-                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
-                }
-                else if (toolbarOpened)
-                {
-                    editTextName.setError(null);
-                    toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
+                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+                    }
+                    else if (text.isEmpty())
+                    {
+                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+                    }
+                    else
+                    {
+                        editTextName.setError(null);
+                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
+                    }
                 }
             }
 
@@ -334,51 +336,47 @@ public class ActivityAdd extends ActionBarActivity
         if (toolbarOpened)
         {
             collapse(toolbar);
+            toolbarOpened = false;
+
+            // erase previous layout
+            toolbar.getMenu().clear();
+
+            // hide fields
             llEditItem.setVisibility(View.GONE);
             searchView.setVisibility(View.VISIBLE);
             textViewBarcode.setVisibility(View.GONE);
-
-            // reset text fields
-            editTextName.setText(null);
-            textViewBarcode.setText(null);
-
-            fabImageButton.setClickable(true);
-
-            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
-            scaleAnim.setFillAfter(true);
-            fabImageButton.startAnimation(scaleAnim);
 
             // solve the keyboard focus bug by removing the keyboard manually
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editTextName.getWindowToken(), 0);
 
-            toolbar.getMenu().clear();
+            // restore fabButton
+            fabUp();
 
-            toolbarOpened = false;
-
-            // reset barType, barCode, currentItem and currentAdapter
+            // reset barType, barCode
             barType = null;
             barCode = null;
-            currentItem = null;
         }
         else
         {
             expand(toolbar);
+            toolbarOpened = true;
 
-            searchView.setVisibility(View.GONE);
-            llEditItem.setVisibility(View.VISIBLE);
-
-            fabImageButton.setClickable(false);
-
-            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
-            scaleAnim.setFillAfter(true);
-            fabImageButton.startAnimation(scaleAnim);
-
+            // erase previous layout and replace it
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.done);
             toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
 
-            toolbarOpened = true;
+            // reset text fields
+            editTextName.setText(null);
+            textViewBarcode.setText(null);
+
+            // hide fields
+            searchView.setVisibility(View.GONE);
+            llEditItem.setVisibility(View.VISIBLE);
+
+            // remove fabButton
+            fabDown();
         }
     }
 
@@ -435,36 +433,45 @@ public class ActivityAdd extends ActionBarActivity
 
     public void pressSelect()
     {
-        if (AdapterAdd.selectedHolder.size() == 0)
+        if (!toolbarOpened && AdapterAdd.selectedHolder.size() == 0)
         {
             toolbar.getMenu().clear();
 
             // restore new item option removed to prevent bug abuse
-            if (!fabImageButton.isClickable() && !toolbarOpened)
-            {
-                fabImageButton.setClickable(true);
-
-                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
-                scaleAnim.setFillAfter(true);
-                fabImageButton.startAnimation(scaleAnim);
-            }
+            fabUp();
         }
-        else
+        else if (!toolbarOpened)
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.delete);
 
             // remove new item option to prevent bug abuse
-            if (fabImageButton.isClickable())
-            {
-                fabImageButton.setClickable(false);
-
-                Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
-                scaleAnim.setFillAfter(true);
-                fabImageButton.startAnimation(scaleAnim);
-            }
+            fabDown();
         }
+    }
 
+    private void fabUp()
+    {
+        if (!fabImageButton.isClickable())
+        {
+            fabImageButton.setClickable(true);
+
+            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_up);
+            scaleAnim.setFillAfter(true);
+            fabImageButton.startAnimation(scaleAnim);
+        }
+    }
+
+    private void fabDown()
+    {
+        if (fabImageButton.isClickable())
+        {
+            fabImageButton.setClickable(false);
+
+            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_down);
+            scaleAnim.setFillAfter(true);
+            fabImageButton.startAnimation(scaleAnim);
+        }
     }
 
     public void onBackPressed()
