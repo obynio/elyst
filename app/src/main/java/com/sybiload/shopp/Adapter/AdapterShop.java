@@ -150,7 +150,6 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         ((ActivityShop)ctx).pressSelect();
     }
 
-
     @Override
     public AdapterShop.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -159,7 +158,22 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
-    
+
+    public String getColor(int color)
+    {
+        if (color == 1)
+            return "#FF99CC00";
+        else if (color == 2)
+            return "#FFFF4444";
+        else if (color == 3)
+            return "#FFFFBB33";
+        else if (color == 4)
+            return "#FFAA66CC";
+        else if (color == 5)
+            return "#FF33B5E5";
+        else
+            return "#78909C";
+    }
     
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -175,15 +189,16 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             Item it = myItem;
 
             // when adapter is refreshing, check if the current row has a description or not and adapt the layout
+
             if (it.getDescription() == null || it.getDescription().equals(""))
             {
                 holder.txtFooter.setVisibility(View.GONE);
-                holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+                //holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             }
             else
             {
                 holder.txtFooter.setText(myItem.getDescription());
-                holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                //holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
                 holder.txtFooter.setVisibility(View.VISIBLE);
             }
 
@@ -215,13 +230,15 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             {
                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(0)));
+                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_nicon));
             }
             else
             {
                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(myItem.getColor())));
+                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_icon));
             }
 
             // when doing a click on the row, put it done
@@ -258,20 +275,23 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                             {
                                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#78909C"));
+                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(0)));
+                                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_nicon));
                             }
                             else
                             {
                                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                                holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(myItem.getColor())));
+                                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_icon));
                             }
                         }
                     }
                 }
             });
 
-            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(myItem.getIcon()));
+
+
 
         }
     }

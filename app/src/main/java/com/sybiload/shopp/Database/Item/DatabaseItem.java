@@ -47,7 +47,7 @@ public class DatabaseItem extends DatabaseItemH
         else
             stmt.bindString(2, newItem.getDescription());
 
-        stmt.bindLong(3, newItem.getIcon());
+        stmt.bindLong(3, newItem.getColor());
 
         if (newItem.getBarType() == null)
             stmt.bindNull(4);
@@ -74,7 +74,7 @@ public class DatabaseItem extends DatabaseItemH
         else
             stmt.bindString(2, newItem.getDescription());
 
-        stmt.bindLong(3, newItem.getIcon());
+        stmt.bindLong(3, newItem.getColor());
 
         if (newItem.getBarType() == null)
             stmt.bindNull(4);

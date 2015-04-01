@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.shopp.Adapter.AdapterAdd;
+import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.EditTextAdapter;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 import com.sybiload.shopp.Database.List.DatabaseList;
@@ -98,7 +99,8 @@ public class ActivityAdd extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item newItem = new Item(editTextName.getText().toString(), null, R.mipmap.ic_launcher, barType, barCode, false, false);
+                        // if there is a bug, it's here
+                        Item newItem = new Item(editTextName.getText().toString(), null, getResources().getColor(R.color.human), barType, barCode, false, false);
 
                         // add new item to the itemAvailable and sort the list
                         Static.currentList.itemAvailable.add(newItem);
@@ -266,6 +268,18 @@ public class ActivityAdd extends ActionBarActivity
         }, 200);
     }
 
+    @Override
+    public void onPause()
+    {
+        // solve bug while switching to another app and switching back to this one
+        if (!AdapterAdd.selectedHolder.isEmpty())
+        {
+            currAdap.clearSelected();
+        }
+
+        super.onPause();
+    }
+
     public static void expand(final View v) {
         final int targetHeight = 300;
         final int startHeight = v.getHeight();
@@ -426,7 +440,7 @@ public class ActivityAdd extends ActionBarActivity
             toolbar.getMenu().clear();
 
             // restore new item option removed to prevent bug abuse
-            if (!fabImageButton.isClickable())
+            if (!fabImageButton.isClickable() && !toolbarOpened)
             {
                 fabImageButton.setClickable(true);
 

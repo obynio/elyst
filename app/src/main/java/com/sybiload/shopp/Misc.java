@@ -86,10 +86,11 @@ public class Misc
     {
         ArrayList<Item> itemArray = new ArrayList<Item>();
         String[] defaultItemName = ctx.getResources().getStringArray(R.array.item_name);
+        int[] defaultItemColor = ctx.getResources().getIntArray(R.array.item_color);
 
         for (int i = 0; i < defaultItemName.length; i++)
         {
-            Item myItem = new Item(defaultItemName[i], null, Static.defaultItemIcon[i], null, null, false, false);
+            Item myItem = new Item(defaultItemName[i], null, defaultItemColor[i], null, null, false, false);
             itemArray.add(myItem);
         }
 

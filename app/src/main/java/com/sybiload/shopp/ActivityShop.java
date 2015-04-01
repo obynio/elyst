@@ -88,7 +88,7 @@ public class ActivityShop extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getIcon(), barType, barCode, currentItem.isToShop(), currentItem.isDone());
+                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getColor(), barType, barCode, currentItem.isToShop(), currentItem.isDone());
 
                         currAdap.update(currentItem, newItem);
 
@@ -159,7 +159,7 @@ public class ActivityShop extends ActionBarActivity
 
                     toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
                 }
-                else if (toolbarOpened && text.length() == 0)
+                else if (toolbarOpened && text.isEmpty())
                 {
                     toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
                 }
@@ -206,8 +206,20 @@ public class ActivityShop extends ActionBarActivity
         super.onResume();
     }
 
+    @Override
+    public void onPause()
+    {
+        // solve bug while switching to another app and switching back to this one
+        if (!AdapterShop.selectedHolder.isEmpty())
+        {
+            currAdap.clearSelected();
+        }
+
+        super.onPause();
+    }
+
     public static void expand(final View v) {
-        final int targetHeight = 400;
+        final int targetHeight = 500;
         final int startHeight = v.getHeight();
 
         Animation a = new Animation()
@@ -273,9 +285,6 @@ public class ActivityShop extends ActionBarActivity
             editTextDescription.setText(null);
             textViewBarcode.setText(null);
 
-            // unselect all selected items
-            currAdap.clearSelected();
-
             // erase previous layout and replace it
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.barcode);
@@ -303,12 +312,14 @@ public class ActivityShop extends ActionBarActivity
                 textViewBarcode.setText(currentItem.getBarType() + " - " + currentItem.getBarCode());
             }
 
+            toolbarOpened = true;
+
+            // unselect all selected items
+            currAdap.clearSelected();
 
             // erase previous layout and replace it
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.done);
-
-            toolbarOpened = true;
         }
     }
 
@@ -432,7 +443,7 @@ public class ActivityShop extends ActionBarActivity
             toolbar.inflateMenu(R.menu.barcode);
 
             // restore new item option removed to prevent bug abuse
-            if (!fabImageButton.isClickable())
+            if (!fabImageButton.isClickable() && !toolbarOpened)
             {
                 fabImageButton.setClickable(true);
 

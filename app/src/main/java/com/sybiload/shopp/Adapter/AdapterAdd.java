@@ -109,6 +109,22 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         }
     }
 
+    public String getColor(int color)
+    {
+        if (color == 1)
+            return "#FF99CC00";
+        else if (color == 2)
+            return "#FFFF4444";
+        else if (color == 3)
+            return "#FFFFBB33";
+        else if (color == 4)
+            return "#FFAA66CC";
+        else if (color == 5)
+            return "#FF33B5E5";
+        else
+            return "#78909C";
+    }
+
 
     @Override
     public AdapterAdd.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -187,8 +203,8 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             });
 
 
-            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(myItem.getIcon()));
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor("#2196F3"));
+            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_icon));
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(myItem.getColor())));
         }
     }
 

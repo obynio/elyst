@@ -5,17 +5,17 @@ public class Item
 {
     private String name;
     private String description;
-    private int icon;
+    private int color;
     private String barType;
     private String barCode;
     private boolean shop;
     private boolean done;
 
-    public Item(String name, String footer, int icon, String barType, String barCode, Boolean shop, Boolean done)
+    public Item(String name, String footer, int color, String barType, String barCode, Boolean shop, Boolean done)
     {
         this.name = name;
         this.description = footer;
-        this.icon = icon;
+        this.color = color;
         this.barType = barType;
         this.barCode = barCode;
         this.shop = shop;
@@ -40,13 +40,13 @@ public class Item
         this.description = description;
     }
 
-    public int getIcon()
+    public int getColor()
     {
-        return this.icon;
+        return this.color;
     }
-    public void setIcon(int icon)
+    public void setColor(int color)
     {
-        this.icon = icon;
+        this.color = color;
     }
 
     public String getBarType()
