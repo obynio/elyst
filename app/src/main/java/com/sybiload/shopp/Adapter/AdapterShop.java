@@ -172,7 +172,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         else if (color == 5)
             return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
         else
-            return "#78909C";
+            return "#9e9e9e";
     }
     
 
