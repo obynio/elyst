@@ -159,23 +159,6 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         return vh;
     }
 
-    public String getColor(int color)
-    {
-        if (color == 1)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.green));
-        else if (color == 2)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.orange));
-        else if (color == 3)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.red));
-        else if (color == 4)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.purple));
-        else if (color == 5)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
-        else
-            return "#9e9e9e";
-    }
-    
-
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
@@ -230,14 +213,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             {
                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(0)));
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
                 holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_nicon));
             }
             else
             {
                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(myItem.getColor())));
+                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getColor())));
                 holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_icon));
             }
 
@@ -275,14 +258,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                             {
                                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(0)));
+                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
                                 holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_nicon));
                             }
                             else
                             {
                                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                                 holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(myItem.getColor())));
+                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getColor())));
                                 holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_icon));
                             }
                         }

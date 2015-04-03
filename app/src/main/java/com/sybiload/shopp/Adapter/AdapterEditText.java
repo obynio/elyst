@@ -5,9 +5,9 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-public class EditTextAdapter extends EditText
+public class AdapterEditText extends EditText
 {
-    public EditTextAdapter(Context context, AttributeSet attrs)
+    public AdapterEditText(Context context, AttributeSet attrs)
     {
         super(context, attrs);
     }

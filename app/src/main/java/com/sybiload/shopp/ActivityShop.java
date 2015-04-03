@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.shopp.Adapter.AdapterShop;
-import com.sybiload.shopp.Adapter.EditTextAdapter;
+import com.sybiload.shopp.Adapter.AdapterEditText;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 
 
@@ -35,7 +35,7 @@ public class ActivityShop extends ActionBarActivity
     private RecyclerView.LayoutManager layoutManager;
 
     Toolbar toolbar;
-    private EditTextAdapter editTextName;
+    private AdapterEditText editTextName;
     private EditText editTextDescription;
     private TextView textViewBarcode;
     private ImageButton fabImageButton;
@@ -58,7 +58,7 @@ public class ActivityShop extends ActionBarActivity
         setContentView(R.layout.activity_item);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        editTextName = (EditTextAdapter)findViewById(R.id.editTextItemName);
+        editTextName = (AdapterEditText)findViewById(R.id.editTextItemName);
         editTextDescription = (EditText)findViewById(R.id.editTextItemDescription);
         textViewBarcode = (TextView)findViewById(R.id.textViewItemBarcode);
         imageViewColorGreen = (ImageView)findViewById(R.id.imageViewItemColorGreen);

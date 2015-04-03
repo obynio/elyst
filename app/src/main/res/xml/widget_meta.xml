@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:minWidth="200dp"
+                    android:minHeight="50dp"
+                    android:initialLayout="@layout/widget"
+                    android:previewImage="@drawable/preview_widget"
+                    android:updatePeriodMillis="0"
+                    android:configure="com.sybiload.shopp.Widget.WidgetConfigure"
+                    android:resizeMode="horizontal|vertical"
+                    android:widgetCategory="home_screen">
+</appwidget-provider>

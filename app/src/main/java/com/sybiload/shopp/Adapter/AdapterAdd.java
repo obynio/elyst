@@ -109,23 +109,6 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         }
     }
 
-    public String getColor(int color)
-    {
-        if (color == 1)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.green));
-        else if (color == 2)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.red));
-        else if (color == 3)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.orange));
-        else if (color == 4)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.purple));
-        else if (color == 5)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
-        else
-            return "#78909C";
-    }
-
-
     @Override
     public AdapterAdd.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -202,7 +185,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
 
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_icon));
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor(getColor(myItem.getColor())));
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getColor())));
         }
     }
 

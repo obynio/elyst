@@ -1,7 +1,6 @@
 package com.sybiload.shopp;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,7 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.sybiload.shopp.Adapter.EditTextAdapter;
+import com.sybiload.shopp.Adapter.AdapterEditText;
 import com.sybiload.shopp.Database.List.DatabaseList;
 
 import java.text.DateFormat;
@@ -27,7 +26,7 @@ import java.util.Calendar;
 public class ActivityNewList extends ActionBarActivity
 {
     public ImageButton fabImageButton;
-    public EditTextAdapter editTextNewListName;
+    public AdapterEditText editTextNewListName;
     public EditText editTextNewListDescription;
 
     protected void onCreate(Bundle paramBundle)
@@ -35,7 +34,7 @@ public class ActivityNewList extends ActionBarActivity
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_newlist);
 
-        editTextNewListName = (EditTextAdapter)findViewById(R.id.editTextNewListName);
+        editTextNewListName = (AdapterEditText)findViewById(R.id.editTextNewListName);
         editTextNewListDescription = (EditText)findViewById(R.id.editTextNewListDescription);
         fabImageButton = (ImageButton) findViewById(R.id.imageButtonNewListFab);
 

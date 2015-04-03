@@ -1,13 +1,10 @@
 package com.sybiload.shopp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,14 +12,12 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -32,10 +27,8 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.shopp.Adapter.AdapterAdd;
-import com.sybiload.shopp.Adapter.AdapterShop;
-import com.sybiload.shopp.Adapter.EditTextAdapter;
+import com.sybiload.shopp.Adapter.AdapterEditText;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
-import com.sybiload.shopp.Database.List.DatabaseList;
 
 import java.util.ArrayList;
 
@@ -54,7 +47,7 @@ public class ActivityAdd extends ActionBarActivity
     private ImageView imageViewColorBlue;
 
     Toolbar toolbar;
-    private EditTextAdapter editTextName;
+    private AdapterEditText editTextName;
 
     private AdapterAdd currAdap = null;
 
@@ -70,7 +63,7 @@ public class ActivityAdd extends ActionBarActivity
         setContentView(R.layout.activity_additem);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        editTextName = (EditTextAdapter)findViewById(R.id.editTextAddItemName);
+        editTextName = (AdapterEditText)findViewById(R.id.editTextAddItemName);
         fabImageButton = (ImageButton) findViewById(R.id.imageButtonAddItemFab);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
         searchView = (SearchView) toolbar.findViewById(R.id.searchViewAdd);

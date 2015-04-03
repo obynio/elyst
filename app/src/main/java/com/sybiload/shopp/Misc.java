@@ -138,13 +138,22 @@ public class Misc
             }
         }
 
-        /*
-        // sort items in the list
-        Static.currentList.sortAvailable();
-        Static.currentList.sortShop();
-        Static.currentList.sortShopDone();
-        */
-
         databaseItem.close();
+    }
+
+    public String getColor(Context ctx, int color)
+    {
+        if (color == 1)
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.green));
+        else if (color == 2)
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.orange));
+        else if (color == 3)
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.red));
+        else if (color == 4)
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.purple));
+        else if (color == 5)
+            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
+        else
+            return "#9e9e9e";
     }
 }
