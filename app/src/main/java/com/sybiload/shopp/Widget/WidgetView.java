@@ -5,13 +5,9 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
-import android.os.BatteryManager;
 import android.os.Vibrator;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.RemoteViews;
 
 import com.sybiload.shopp.Database.Item.DatabaseItem;
@@ -25,11 +21,16 @@ public class WidgetView extends AppWidgetProvider
     public static final String IS_DONE = "com.sybiload.shopp.action.IS_DONE";
     public static final String REFRESH = "com.sybiload.shopp.action.REFRESH";
     private static int currently = 0;
+    private static SharedPreferences mainPref;
 
     static RemoteViews updateTheWidget(Context context, boolean done)
     {
         // get layout views
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+        RemoteViews views;
+        if (mainPref.getString("listPreferenceWidgetTheme", "light").equals("light"))
+            views = new RemoteViews(context.getPackageName(), R.layout.widget_white);
+        else
+            views = new RemoteViews(context.getPackageName(), R.layout.widget_dark);
 
         new Misc().populateList(context);
 
@@ -76,8 +77,11 @@ public class WidgetView extends AppWidgetProvider
                     database.close();
 
                     // make vibration
-                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(20);
+                    Vibrator vbr = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    if (mainPref.getBoolean("checkBoxWidgetVibration", true) && vbr.hasVibrator())
+                    {
+                        vbr.vibrate(14);
+                    }
                 }
 
                 currentItem = Static.widgetList.itemShop.get(currently);
@@ -86,14 +90,22 @@ public class WidgetView extends AppWidgetProvider
 
                 // count item remaining and total items in the list
                 int total = Static.widgetList.itemShop.size();
-                int count = 0;
+                int countDone = 0;
+                int countRemaining = 0;
                 for (Item it : Static.widgetList.itemShop)
                 {
                     if (it.isDone())
-                        count++;
+                        countDone++;
+                    else
+                        countRemaining++;
                 }
 
-                views.setTextViewText(R.id.textViewWidgetNumber, count + "/" + total);
+                if (mainPref.getString("listPreferenceWidgetCount", "done").equals("done"))
+                    views.setTextViewText(R.id.textViewWidgetNumber, countDone + "/" + total);
+                else if (mainPref.getString("listPreferenceWidgetCount", "done").equals("remaining"))
+                    views.setTextViewText(R.id.textViewWidgetNumber, countRemaining + "/" + total);
+                else
+                    views.setTextViewText(R.id.textViewWidgetNumber, (currently + 1) + "/" + total);
 
                 if (currentItem.getDescription() != null && !currentItem.getDescription().equals(""))
                 {
@@ -130,26 +142,38 @@ public class WidgetView extends AppWidgetProvider
                 }
                 else
                 {
-                    if (currentItem.getColor() == 1)
+                    if (mainPref.getBoolean("checkBoxWidgetGreyIcon", false))
                     {
-                        views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_green);
+                        views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon);
                     }
-                    else if (currentItem.getColor() == 2)
+                    else
                     {
-                        views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_orange);
+                        if (currentItem.getColor() == 1)
+                        {
+                            views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_green);
+                        }
+                        else if (currentItem.getColor() == 2)
+                        {
+                            views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_orange);
+                        }
+                        else if (currentItem.getColor() == 3)
+                        {
+                            views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_red);
+                        }
+                        else if (currentItem.getColor() == 4)
+                        {
+                            views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_purple);
+                        }
+                        else if (currentItem.getColor() == 5)
+                        {
+                            views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_blue);
+                        }
+                        else
+                        {
+                            views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon);
+                        }
                     }
-                    else if (currentItem.getColor() == 3)
-                    {
-                        views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_red);
-                    }
-                    else if (currentItem.getColor() == 4)
-                    {
-                        views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_purple);
-                    }
-                    else if (currentItem.getColor() == 5)
-                    {
-                        views.setImageViewResource(R.id.imageViewWidget, R.drawable.ic_nicon_blue);
-                    }
+
                 }
             }
         }
@@ -160,21 +184,21 @@ public class WidgetView extends AppWidgetProvider
     {
         RemoteViews views = updateTheWidget(context, false);
 
-        // Prepare intent to launch on widget click
+        // Prepare intent to launch on widget_white click
         Intent intentRefresh = new Intent(context, WidgetView.class);
         intentRefresh.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intentRefresh.setAction(REFRESH);
 
-        // Launch intent on widget click
+        // Launch intent on widget_white click
         PendingIntent pendingIntentRefresh = PendingIntent.getBroadcast(context, 0, intentRefresh, 0);
         views.setOnClickPendingIntent(R.id.llWidget, pendingIntentRefresh);
 
-        // Prepare intent to launch on widget click
+        // Prepare intent to launch on widget_white click
         Intent intentIsDone = new Intent(context, WidgetView.class);
         intentIsDone.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intentIsDone.setAction(IS_DONE);
 
-        // Launch intent on widget click
+        // Launch intent on widget_white click
         PendingIntent pendingIntentIsDone = PendingIntent.getBroadcast(context, 0, intentIsDone, 0);
         views.setOnClickPendingIntent(R.id.imageViewWidget, pendingIntentIsDone);
 
@@ -184,8 +208,8 @@ public class WidgetView extends AppWidgetProvider
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
-
         final int N = appWidgetIds.length;
+        mainPref = context.getSharedPreferences("main", 0);
 
         // update each widgets
         for (int i = 0; i < N; i++)

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="checkBoxSystemBarcode"
+        android:title="Barcode"
+        android:summary="Enable barcode reading"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="checkBoxSystemVibration"
+        android:title="Enable vibrations"
+        android:summary="Vibrations when an item is clicked"/>
+
+    <CheckBoxPreference
+    android:defaultValue="false"
+    android:key="checkBoxSystemNoSleep"
+    android:title="Disable display timeout"
+    android:summary="Prevent the screen from turning off while you are in a shopping list"/>
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="checkBoxSystemNoLock"
+        android:title="Disable lock screen"
+        android:summary="Prevent the screen from locking when you are in a shopping list"/>
+
+
+</PreferenceScreen>

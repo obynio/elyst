@@ -44,6 +44,18 @@
         <activity
             android:name=".ActivityShop"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.sybiload.shopp.Pref.ActivityAppPref"
+            android:label="Settings"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.sybiload.shopp.Pref.ActivityWidgetPref"
+            android:label="Widget"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.sybiload.shopp.Pref.ActivitySystemPref"
+            android:label="Widget"
+            android:screenOrientation="portrait"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

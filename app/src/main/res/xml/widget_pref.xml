@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="categoryWidgetDesign"
+        android:title="Widget design">
+
+        <ListPreference
+            android:dialogTitle="Theme"
+            android:entries="@array/widget_pref_theme_entries"
+            android:entryValues="@array/widget_pref_theme_values"
+            android:defaultValue="light"
+            android:key="listPreferenceWidgetTheme"
+            android:title="Theme"
+            android:summary="You may need to reload the widget" />
+
+        <ListPreference
+            android:dialogTitle="Item count"
+            android:entries="@array/widget_pref_count_entries"
+            android:entryValues="@array/widget_pref_count_values"
+            android:defaultValue="done"
+            android:key="listPreferenceWidgetCount"
+            android:title="Item count"
+            android:summary="Choose the item count method" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="checkBoxWidgetGreyIcon"
+            android:title="Grey icon"
+            android:summary="Grey color for done items"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="categoryWidgetSetting"
+        android:title="Widget settings">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="checkBoxWidgetVibration"
+            android:title="Enable vibrations"
+            android:summary="Vibrations when an item is clicked"/>
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

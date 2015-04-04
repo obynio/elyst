@@ -20,10 +20,10 @@ public class WidgetConfigure extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        // If the user closes window, don't create the widget
+        // If the user closes window, don't create the widget_white
         setResult(RESULT_CANCELED);
 
-        // Find widget id from launching intent
+        // Find widget_white id from launching intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
@@ -32,7 +32,7 @@ public class WidgetConfigure extends Activity
             appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
-        // If they gave us an intent without the widget id, just bail.
+        // If they gave us an intent without the widget_white id, just bail.
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID)
         {
             new Misc().log("No appWidgetId provided");

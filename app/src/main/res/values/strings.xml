@@ -1,20 +1,46 @@
 <resources>
     <string name="app_name">Shopy</string>
 
+    <!-- activity_main.xml -->
+
     <string name="txt_open">open</string>
     <string name="txt_close">close</string>
 
     <string-array name="navdrawer_items">
         <item>My lists</item>
-        <item>Widget</item>
         <item>Settings</item>
     </string-array>
 
     <string-array name="navdrawer_views">
         <item>com.sybiload.shopp.FragmentList</item>
         <item>com.sybiload.shopp.FragmentList</item>
-        <item>com.sybiload.shopp.FragmentList</item>
     </string-array>
+
+    <!-- widget_pref.xml -->
+
+    <string-array name="widget_pref_theme_entries">
+        <item>Light theme</item>
+        <item>Dark theme</item>
+    </string-array>
+
+    <string-array name="widget_pref_theme_values">
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <string-array name="widget_pref_count_entries">
+        <item>Done / All</item>
+        <item>Remaining / All</item>
+        <item>Current / All</item>
+    </string-array>
+
+    <string-array name="widget_pref_count_values">
+        <item>done</item>
+        <item>remaining</item>
+        <item>current</item>
+    </string-array>
+
+    <!-- misc -->
 
     <string-array name="item_name">
         <item>Apple</item>

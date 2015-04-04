@@ -5,10 +5,12 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -17,12 +19,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sybiload.shopp.Adapter.AdapterListView;
 import com.sybiload.shopp.Adapter.ListViewItem;
 import com.sybiload.shopp.Database.List.DatabaseList;
+import com.sybiload.shopp.Pref.ActivityAppPref;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -39,7 +43,6 @@ import java.util.Calendar;
 
 public class ActivityMain extends ActionBarActivity
 {
-    int ids = -1;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -47,7 +50,7 @@ public class ActivityMain extends ActionBarActivity
     private String[] drawerItems;
     private String[] drawerFragments;
 
-    private SharedPreferences mainPrefs;
+    private SharedPreferences mainPref;
 
     ArrayList<ListViewItem> models = new ArrayList<ListViewItem>();
 
@@ -62,10 +65,10 @@ public class ActivityMain extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        mainPrefs = this.getSharedPreferences("main", 0);
+        mainPref = this.getSharedPreferences("main", 0);
         setContentView(R.layout.activity_main);
 
-        if (!mainPrefs.getBoolean("done", false) && isOnline())
+        if (!mainPref.getBoolean("done", false) && isOnline())
         {
             new doneAsync().execute();
         }
@@ -104,8 +107,7 @@ public class ActivityMain extends ActionBarActivity
         navList = (ListView) findViewById(R.id.drawer);
 
         models.add(new ListViewItem(drawerItems[0], getResources().getDrawable(R.mipmap.ic_shop)));
-        models.add(new ListViewItem(drawerItems[1], getResources().getDrawable(R.mipmap.ic_ratio)));
-        models.add(new ListViewItem(drawerItems[2], getResources().getDrawable(R.mipmap.ic_settings)));
+        models.add(new ListViewItem(drawerItems[1], getResources().getDrawable(R.mipmap.ic_settings)));
 
         navList.setAdapter(new AdapterListView(this, models));
 
@@ -115,9 +117,25 @@ public class ActivityMain extends ActionBarActivity
             public void onItemClick(AdapterView<?> parent, View view, final int pos, long id)
             {
 
-                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos]));
-                tx.commit();
+                new Handler().postDelayed(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        if (pos == 1)
+                        {
+                            Intent intent = new Intent(getApplicationContext(), ActivityAppPref.class);
+                            startActivity(intent);
+                            new Misc().leftTransition(ActivityMain.this);
+                        }
+                        else
+                        {
+                            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                            tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos]));
+                            tx.commit();
+                        }
+                    }
+                }, 240);
 
                 drawerLayout.closeDrawer(navList);
             }
@@ -169,7 +187,7 @@ public class ActivityMain extends ActionBarActivity
             if (ok)
             {
                 new Misc().log("auth_success");
-                mainPrefs.edit().putBoolean("done", true).commit();
+                mainPref.edit().putBoolean("done", true).commit();
             }
 
         }

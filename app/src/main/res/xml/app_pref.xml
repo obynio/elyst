@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceScreen
+        android:key="prefUi"
+        android:title="Design"
+        android:summary="Tweak the UI to match your preferences"/>
+
+    <PreferenceScreen
+        android:key="prefSystem"
+        android:title="System"
+        android:summary="Change the app behaviour"/>
+
+    <PreferenceScreen
+        android:key="prefWidget"
+        android:title="Widget"
+        android:summary="Configure the widget"/>
+
+</PreferenceScreen>

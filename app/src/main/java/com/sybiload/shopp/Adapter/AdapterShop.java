@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,16 +28,20 @@ import java.util.ArrayList;
 
 public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 {
-    DatabaseItem database;
-    Context ctx;
+    private DatabaseItem database;
+    private Context ctx;
 
     public static ArrayList<ViewHolder> selectedHolder = new ArrayList<ViewHolder>();
     public static ArrayList<Item> selectedItem = new ArrayList<Item>();
+
+    private SharedPreferences mainPref;
 
     public AdapterShop(Context ctx)
     {
         this.ctx = ctx;
         database = new DatabaseItem(ctx, Static.currentList.getDatabase());
+
+        mainPref = ctx.getSharedPreferences("main", 0);
 
         Static.currentList.sortShop();
         Static.currentList.sortShopDone();
@@ -208,7 +213,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 }
             });
 
-            // if current row is done, change the color or the icon and the style of the text
+            // if current row is barcode_done, change the color or the icon and the style of the text
             if (myItem.isDone())
             {
                 holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -224,7 +229,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                 holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_icon));
             }
 
-            // when doing a click on the row, put it done
+            // when doing a click on the row, put it barcode_done
             holder.itemView.setOnClickListener(new OnClickListener()
             {
                 @Override
@@ -253,6 +258,13 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                         else if (selectedHolder.size() == 0)
                         {
                             done(myItem);
+
+                            // make vibration
+                            Vibrator vbr = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
+                            if (mainPref.getBoolean("checkBoxSystemVibration", true) && vbr.hasVibrator())
+                            {
+                                vbr.vibrate(14);
+                            }
 
                             if (myItem.isDone())
                             {

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +28,10 @@ import java.util.ArrayList;
 
 public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 {
-    DatabaseItem database;
-    Context ctx;
+    private DatabaseItem database;
+    private Context ctx;
+
+    private SharedPreferences mainPref;
 
     public static ArrayList<ViewHolder> selectedHolder = new ArrayList<ViewHolder>();
     public static ArrayList<Item> selectedItem = new ArrayList<Item>();
@@ -37,6 +40,8 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     {
         this.ctx = ctx;
         database = new DatabaseItem(ctx, Static.currentList.getDatabase());
+
+        mainPref = ctx.getSharedPreferences("main", 0);
 
         Static.currentList.sortAvailable();
     }
@@ -178,6 +183,13 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
                         else if (selectedHolder.size() == 0)
                         {
                             remove(myItem);
+
+                            // make vibration
+                            Vibrator vbr = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
+                            if (mainPref.getBoolean("checkBoxSystemVibration", true) && vbr.hasVibrator())
+                            {
+                                vbr.vibrate(14);
+                            }
                         }
                     }
                 }

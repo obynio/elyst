@@ -2,6 +2,7 @@ package com.sybiload.shopp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
@@ -57,9 +59,12 @@ public class ActivityAdd extends ActionBarActivity
     private String barCode = null;
     private int color = 1;
 
+    private SharedPreferences mainPref;
+
     protected void onCreate(Bundle paramBundle)
     {
         super.onCreate(paramBundle);
+        mainPref = getApplicationContext().getSharedPreferences("main", 0);
         setContentView(R.layout.activity_additem);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -73,6 +78,16 @@ public class ActivityAdd extends ActionBarActivity
         imageViewColorRed = (ImageView)findViewById(R.id.imageViewAddItemColorRed);
         imageViewColorPurple = (ImageView)findViewById(R.id.imageViewAddItemColorPurple);
         imageViewColorBlue = (ImageView)findViewById(R.id.imageViewAddItemColorBlue);
+
+        if (mainPref.getBoolean("checkBoxSystemNoSleep", false))
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        if (mainPref.getBoolean("checkBoxSystemNoLock", false))
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        }
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setTitle("Add items");
@@ -420,7 +435,12 @@ public class ActivityAdd extends ActionBarActivity
 
             // erase previous layout and replace it
             toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.done);
+
+            if (mainPref.getBoolean("checkBoxSystemBarcode", false))
+                toolbar.inflateMenu(R.menu.barcode_done);
+            else
+                toolbar.inflateMenu(R.menu.done);
+
             toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
 
             // reset text fields and color

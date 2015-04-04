@@ -2,6 +2,7 @@ package com.sybiload.shopp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
@@ -52,9 +54,12 @@ public class ActivityShop extends ActionBarActivity
     private String barType = null;
     private String barCode = null;
 
+    private SharedPreferences mainPref;
+
     protected void onCreate(Bundle paramBundle)
     {
         super.onCreate(paramBundle);
+        mainPref = getApplicationContext().getSharedPreferences("main", 0);
         setContentView(R.layout.activity_item);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -67,8 +72,21 @@ public class ActivityShop extends ActionBarActivity
         imageViewColorPurple = (ImageView)findViewById(R.id.imageViewItemColorPurple);
         imageViewColorBlue = (ImageView)findViewById(R.id.imageViewItemColorBlue);
 
+        if (mainPref.getBoolean("checkBoxSystemNoSleep", false))
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        if (mainPref.getBoolean("checkBoxSystemNoLock", false))
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        }
+
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.inflateMenu(R.menu.barcode);
+
+        if (mainPref.getBoolean("checkBoxSystemBarcode", false))
+            toolbar.inflateMenu(R.menu.barcode);
+
         toolbar.setTitle(Static.currentList.getName());
         toolbar.setNavigationOnClickListener(new View.OnClickListener()
         {
@@ -344,7 +362,9 @@ public class ActivityShop extends ActionBarActivity
 
             // erase previous layout and replace it
             toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.barcode);
+
+            if (mainPref.getBoolean("checkBoxSystemBarcode", false))
+                toolbar.inflateMenu(R.menu.barcode);
 
             // reset text fields
             editTextName.setText(null);
@@ -374,7 +394,11 @@ public class ActivityShop extends ActionBarActivity
 
             // erase previous layout and replace it
             toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.done);
+
+            if (mainPref.getBoolean("checkBoxSystemBarcode", false))
+                toolbar.inflateMenu(R.menu.barcode_done);
+            else
+                toolbar.inflateMenu(R.menu.done);
 
             // set name, description editText and color imageView
             editTextName.setText(currentItem.getName());
@@ -516,7 +540,9 @@ public class ActivityShop extends ActionBarActivity
         if (!toolbarOpened && AdapterShop.selectedHolder.size() == 0)
         {
             toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.barcode);
+
+            if (mainPref.getBoolean("checkBoxSystemBarcode", false))
+                toolbar.inflateMenu(R.menu.barcode);
 
             // restore new item option removed to prevent bug abuse
             fabUp();
