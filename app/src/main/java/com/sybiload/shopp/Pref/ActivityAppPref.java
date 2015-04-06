@@ -53,7 +53,7 @@ public class ActivityAppPref extends PreferenceActivity
         {
             public boolean onPreferenceClick(Preference preference)
             {
-                Intent intent = new Intent(getApplicationContext(), null);
+                Intent intent = new Intent(getApplicationContext(), ActivityUiPref.class);
                 startActivity(intent);
                 new Misc().leftTransition(ActivityAppPref.this);
                 return true;

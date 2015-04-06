@@ -43,7 +43,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
         mainPref = ctx.getSharedPreferences("main", 0);
 
-        Static.currentList.sortAvailable();
+        Static.currentList.sortAvailable(ctx);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder

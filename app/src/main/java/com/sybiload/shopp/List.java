@@ -1,6 +1,7 @@
 package com.sybiload.shopp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,25 +56,53 @@ public class List
 
 
     // sort item in alphabetical order
-    public void sortShop()
+    public void sortShop(Context ctx)
     {
-        Collections.sort(itemShop, new Comparator<Item>()
+        SharedPreferences mainPref = ctx.getApplicationContext().getSharedPreferences("main", 0);
+
+        if (mainPref.getString("listPreferenceUiShopSort", "alphabetical").equals("alphabetical"))
         {
-            public int compare(Item v1, Item v2) {
-                return v1.getName().compareTo(v2.getName());
-            }
-        });
+            Collections.sort(itemShop, new Comparator<Item>()
+            {
+                public int compare(Item v1, Item v2) {
+                    return v1.getName().compareTo(v2.getName());
+                }
+            });
+        }
+        else if (mainPref.getString("listPreferenceUiShopSort", "alphabetical").equals("category"))
+        {
+            Collections.sort(itemShop, new Comparator<Item>()
+            {
+                public int compare(Item v1, Item v2) {
+                    return Integer.toString(v1.getColor()).compareTo(Integer.toString(v2.getColor()));
+                }
+            });
+        }
     }
 
     // sort item in alphabetical order
-    public void sortAvailable()
+    public void sortAvailable(Context ctx)
     {
-        Collections.sort(itemAvailable, new Comparator<Item>()
+        SharedPreferences mainPref = ctx.getApplicationContext().getSharedPreferences("main", 0);
+
+        if (mainPref.getString("listPreferenceUiAddSort", "alphabetical").equals("alphabetical"))
         {
-            public int compare(Item v1, Item v2) {
-                return v1.getName().compareTo(v2.getName());
-            }
-        });
+            Collections.sort(itemAvailable, new Comparator<Item>()
+            {
+                public int compare(Item v1, Item v2) {
+                    return v1.getName().compareTo(v2.getName());
+                }
+            });
+        }
+        else if (mainPref.getString("listPreferenceUiAddSort", "alphabetical").equals("category"))
+        {
+            Collections.sort(itemAvailable, new Comparator<Item>()
+            {
+                public int compare(Item v1, Item v2) {
+                    return Integer.toString(v1.getColor()).compareTo(Integer.toString(v2.getColor()));
+                }
+            });
+        }
     }
 
     // sort item in alphabetical order

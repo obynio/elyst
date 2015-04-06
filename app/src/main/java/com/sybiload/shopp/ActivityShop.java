@@ -499,7 +499,7 @@ public class ActivityShop extends ActionBarActivity
                     // copy the item to shopItem
                     Static.currentList.itemShop.add(myItem);
 
-                    Static.currentList.sortShop();
+                    Static.currentList.sortShop(getApplicationContext());
                     Static.currentList.sortShopDone();
 
                     Toast.makeText(getApplicationContext(), myItem.getName() + " added", Toast.LENGTH_SHORT).show();

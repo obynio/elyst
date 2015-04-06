@@ -43,7 +43,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
         mainPref = ctx.getSharedPreferences("main", 0);
 
-        Static.currentList.sortShop();
+        Static.currentList.sortShop(ctx);
         Static.currentList.sortShopDone();
     }
 
@@ -104,7 +104,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         int position = Static.currentList.itemShop.indexOf(myItem);
 
         // sort itemShop
-        Static.currentList.sortShop();
+        Static.currentList.sortShop(ctx);
         Static.currentList.sortShopDone();
 
         // move the item to the new position thanks to the previous position that we stored
@@ -133,7 +133,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         // possibility to remove this for the simple variable 'position' ?
         Item it = Static.currentList.itemShop.get(position);
 
-        Static.currentList.sortShop();
+        Static.currentList.sortShop(ctx);
         Static.currentList.sortShopDone();
 
         int orf = Static.currentList.itemShop.indexOf(it);

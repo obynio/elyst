@@ -123,7 +123,7 @@ public class ActivityAdd extends ActionBarActivity
 
                         // add new item to the itemAvailable and sort the list
                         Static.currentList.itemAvailable.add(newItem);
-                        Static.currentList.sortAvailable();
+                        Static.currentList.sortAvailable(getApplicationContext());
 
                         // update database with the new item
                         DatabaseItem database = new DatabaseItem(getApplicationContext(), Static.currentList.getDatabase());

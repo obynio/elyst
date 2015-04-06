@@ -56,6 +56,10 @@
             android:name="com.sybiload.shopp.Pref.ActivitySystemPref"
             android:label="Widget"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.sybiload.shopp.Pref.ActivityUiPref"
+            android:label="Widget"
+            android:screenOrientation="portrait"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

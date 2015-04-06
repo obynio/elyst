@@ -40,6 +40,28 @@
         <item>current</item>
     </string-array>
 
+    <!-- ui_pref.xml -->
+
+    <string-array name="ui_pref_add_sort_entries">
+        <item>Alphabetical sort</item>
+        <item>Category sort</item>
+    </string-array>
+
+    <string-array name="ui_pref_add_sort_values">
+        <item>alphabetical</item>
+        <item>category</item>
+    </string-array>
+
+    <string-array name="ui_pref_shop_sort_entries">
+        <item>Alphabetical sort</item>
+        <item>Category sort</item>
+    </string-array>
+
+    <string-array name="ui_pref_shop_sort_values">
+        <item>alphabetical</item>
+        <item>category</item>
+    </string-array>
+
     <!-- misc -->
 
     <string-array name="item_name">

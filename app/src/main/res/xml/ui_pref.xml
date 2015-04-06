@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="categoryUiSort"
+        android:title="Sort method">
+
+        <ListPreference
+            android:dialogTitle="Add sort"
+            android:entries="@array/ui_pref_add_sort_entries"
+            android:entryValues="@array/ui_pref_add_sort_values"
+            android:defaultValue="alphabetical"
+            android:key="listPreferenceUiAddSort"
+            android:title="Add sort"
+            android:summary="Sort method when you add items" />
+
+        <ListPreference
+            android:dialogTitle="Shop sort"
+            android:entries="@array/ui_pref_shop_sort_entries"
+            android:entryValues="@array/ui_pref_shop_sort_values"
+            android:defaultValue="alphabetical"
+            android:key="listPreferenceUiShopSort"
+            android:title="Shop sort"
+            android:summary="Sort method in your item lists" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

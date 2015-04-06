@@ -25,7 +25,9 @@ public class WidgetView extends AppWidgetProvider
 
     static RemoteViews updateTheWidget(Context context, boolean done)
     {
-        // get layout views
+        mainPref = context.getSharedPreferences("main", 0);
+
+        // get layout view
         RemoteViews views;
         if (mainPref.getString("listPreferenceWidgetTheme", "light").equals("light"))
             views = new RemoteViews(context.getPackageName(), R.layout.widget_white);
@@ -209,7 +211,6 @@ public class WidgetView extends AppWidgetProvider
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
         final int N = appWidgetIds.length;
-        mainPref = context.getSharedPreferences("main", 0);
 
         // update each widgets
         for (int i = 0; i < N; i++)
