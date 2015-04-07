@@ -30,6 +30,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.shopp.Adapter.AdapterAdd;
 import com.sybiload.shopp.Adapter.AdapterEditText;
+import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Database.Item.DatabaseItem;
 
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class ActivityAdd extends ActionBarActivity
     private ImageView imageViewColorRed;
     private ImageView imageViewColorPurple;
     private ImageView imageViewColorBlue;
+
+    public static Item currentItem;
 
     Toolbar toolbar;
     private AdapterEditText editTextName;
@@ -118,28 +121,43 @@ public class ActivityAdd extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        // if there is a bug, it's here
-                        Item newItem = new Item(editTextName.getText().toString(), null, color, barType, barCode, false, false);
 
-                        // add new item to the itemAvailable and sort the list
-                        Static.currentList.itemAvailable.add(newItem);
-                        Static.currentList.sortAvailable(getApplicationContext());
+                        if (currentItem == null)
+                        {
+                            // if there is a bug, it's here
+                            Item newItem = new Item(editTextName.getText().toString(), null, color, barType, barCode, false, false);
 
-                        // update database with the new item
-                        DatabaseItem database = new DatabaseItem(getApplicationContext(), Static.currentList.getDatabase());
-                        database.open();
+                            // add new item to the itemAvailable and sort the list
+                            Static.currentList.itemAvailable.add(newItem);
+                            Static.currentList.sortAvailable(getApplicationContext());
 
-                        database.insertItem(newItem);
+                            // update database with the new item
+                            DatabaseItem database = new DatabaseItem(getApplicationContext(), Static.currentList.getDatabase());
+                            database.open();
 
-                        database.close();
+                            database.insertItem(newItem);
 
-                        // update the recyclerView with the new item
-                        currAdap = new AdapterAdd(ActivityAdd.this);
-                        recyclerView.setAdapter(currAdap);
+                            database.close();
 
-                        // reset barType and barCode
-                        barType = null;
-                        barCode = null;
+                            // update the recyclerView with the new item
+                            currAdap = new AdapterAdd(ActivityAdd.this);
+                            recyclerView.setAdapter(currAdap);
+
+                            // reset barType and barCode
+                            barType = null;
+                            barCode = null;
+                        }
+                        else
+                        {
+                            Item newItem = new Item(editTextName.getText().toString(), null, currentItem.getColor(), barType, barCode, currentItem.isToShop(), currentItem.isDone());
+
+                            currAdap.update(currentItem, newItem);
+
+                            // reset barType and barCode
+                            barType = null;
+                            barCode = null;
+                        }
+
 
                         barAction();
 
@@ -160,9 +178,15 @@ public class ActivityAdd extends ActionBarActivity
                         currAdap.delete();
                         currAdap.clearSelected();
                         return true;
-                }
 
-                return false;
+                    case R.id.action_edit:
+
+                        barAction();
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
 
@@ -170,6 +194,7 @@ public class ActivityAdd extends ActionBarActivity
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                currentItem = null;
                 barAction();
             }
         });
@@ -179,7 +204,11 @@ public class ActivityAdd extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                color = 1;
+                if (currentItem != null)
+                    currentItem.setColor(1);
+                else
+                    color = 1;
+
                 setColorImageView(1);
             }
         });
@@ -189,7 +218,11 @@ public class ActivityAdd extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                color = 2;
+                if (currentItem != null)
+                    currentItem.setColor(2);
+                else
+                    color = 2;
+
                 setColorImageView(2);
             }
         });
@@ -199,7 +232,11 @@ public class ActivityAdd extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                color = 3;
+                if (currentItem != null)
+                    currentItem.setColor(3);
+                else
+                    color = 3;
+
                 setColorImageView(3);
             }
         });
@@ -209,7 +246,11 @@ public class ActivityAdd extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                color = 4;
+                if (currentItem != null)
+                    currentItem.setColor(4);
+                else
+                    color = 4;
+
                 setColorImageView(4);
             }
         });
@@ -219,7 +260,11 @@ public class ActivityAdd extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                color = 5;
+                if (currentItem != null)
+                    currentItem.setColor(5);
+                else
+                    color = 5;
+
                 setColorImageView(5);
             }
         });
@@ -270,11 +315,21 @@ public class ActivityAdd extends ActionBarActivity
                         }
                     }
 
+                    // hot job dude..
                     if (error)
                     {
-                        editTextName.setError("");
+                        if (currentItem != null && !text.equals(currentItem.getName()) || currentItem == null)
+                        {
+                            editTextName.setError("");
+                            toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+                        }
+                        else
+                        {
+                            editTextName.setError(null);
+                            toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
+                        }
 
-                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+
                     }
                     else if (text.isEmpty())
                     {
@@ -286,6 +341,7 @@ public class ActivityAdd extends ActionBarActivity
                         toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
                     }
                 }
+
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -441,16 +497,34 @@ public class ActivityAdd extends ActionBarActivity
             else
                 toolbar.inflateMenu(R.menu.done);
 
-            toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
+            if (AdapterAdd.selectedHolder.isEmpty())
+            {
+                // reset text fields and color
+                editTextName.setText(null);
+                textViewBarcode.setText(null);
+                setColorImageView(color);
+            }
+            else
+            {
+                // reset text fields and color
+                editTextName.setText(currentItem.getName());
+                setColorImageView(currentItem.getColor());
 
-            // reset text fields and color
-            editTextName.setText(null);
-            textViewBarcode.setText(null);
-            setColorImageView(color);
+                // check if a barcode exists and set visible if yes
+                if (currentItem.getBarType() != null && currentItem.getBarCode() != null)
+                {
+                    textViewBarcode.setVisibility(View.VISIBLE);
+                    textViewBarcode.setText(currentItem.getBarType() + " - " + currentItem.getBarCode());
+                }
+            }
+
 
             // hide fields
             searchView.setVisibility(View.GONE);
             llEditItem.setVisibility(View.VISIBLE);
+
+            // unselect all selected items
+            currAdap.clearSelected();
 
             // remove fabButton
             fabDown();
@@ -517,13 +591,18 @@ public class ActivityAdd extends ActionBarActivity
             // restore new item option removed to prevent bug abuse
             fabUp();
         }
+        else if (!toolbarOpened && AdapterAdd.selectedHolder.size() == 1)
+        {
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.edit_delete);
+
+            // remove new item option to prevent bug abuse
+            fabDown();
+        }
         else if (!toolbarOpened)
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.delete);
-
-            // remove new item option to prevent bug abuse
-            fabDown();
         }
     }
 

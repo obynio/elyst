@@ -114,6 +114,35 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         }
     }
 
+    public void update(Item oldItem, Item newItem)
+    {
+        // update database
+
+        database.open();
+        database.updateByName(oldItem.getName(), newItem);
+        database.close();
+
+
+        int position = Static.currentList.itemAvailable.indexOf(oldItem);
+
+        // prevent the 'not update on set list' bug
+        Static.currentList.itemAvailable.set(position, newItem);
+
+        // if there is a bug somewhere, be sure it's here !
+
+        notifyItemChanged(position);
+
+        // possibility to remove this for the simple variable 'position' ?
+        Item it = Static.currentList.itemAvailable.get(position);
+
+        Static.currentList.sortAvailable(ctx);
+
+        int orf = Static.currentList.itemAvailable.indexOf(it);
+
+
+        notifyItemMoved(position, orf);
+    }
+
     @Override
     public AdapterAdd.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -143,6 +172,8 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
                 {
                     if (!selectedHolder.contains(holder))
                     {
+                        ActivityAdd.currentItem = myItem;
+
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
