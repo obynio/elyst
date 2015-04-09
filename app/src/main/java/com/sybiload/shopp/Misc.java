@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class Misc
@@ -155,5 +156,20 @@ public class Misc
             return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
         else
             return "#9e9e9e";
+    }
+
+    public String generateSeed()
+    {
+        char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 10; i++)
+        {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        return sb.toString();
     }
 }

@@ -17,8 +17,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sybiload.shopp.ActivityShop;
+import com.sybiload.shopp.Database.Item.DatabaseItem;
+import com.sybiload.shopp.Database.List.DatabaseList;
 import com.sybiload.shopp.FragmentList;
 import com.sybiload.shopp.Item;
+import com.sybiload.shopp.List;
 import com.sybiload.shopp.Misc;
 import com.sybiload.shopp.R;
 import com.sybiload.shopp.Static;
@@ -27,11 +30,16 @@ import java.util.ArrayList;
 
 public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 {
-    FragmentList fm;
+    private FragmentList fm;
+    private DatabaseList database;
+
+    public static List selectedList;
+    public static ViewHolder selectedHolder;
 
     public AdapterList(FragmentList fm)
     {
         this.fm = fm;
+        database = new DatabaseList(fm.getActivity());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -48,6 +56,37 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
         }
     }
 
+    public void clearSelected()
+    {
+        if (selectedHolder != null && selectedList != null)
+        {
+            selectedHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            selectedHolder = null;
+            selectedList = null;
+        }
+
+    }
+
+    public void delete(List myList)
+    {
+        if (Static.allList.contains(myList))
+        {
+            // update database
+            database.open();
+            database.deleteItem(myList);
+            database.close();
+
+            // delete database
+            fm.getActivity().deleteDatabase(myList.getDatabase());
+
+            // remove item from list
+            int position = Static.allList.indexOf(myList);
+            Static.allList.remove(position);
+
+            notifyItemRemoved(position);
+        }
+    }
+
     @Override
     public AdapterList.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -61,29 +100,53 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        holder.txtHeader.setText(Static.allList.get(position).getName());
-        holder.txtFooter.setText(Static.allList.get(position).getDescription());
+        final List myList = Static.allList.get(position);
 
-        holder.itemView.setOnTouchListener(new View.OnTouchListener()
+        holder.txtHeader.setText(Static.allList.get(position).getName());
+
+        // hide footer if no description
+        if (myList.getDescription() == null || myList.getDescription().equals(""))
+        {
+            holder.txtFooter.setVisibility(View.GONE);
+        }
+        else
+        {
+            holder.txtFooter.setText(myList.getDescription());
+            holder.txtFooter.setVisibility(View.VISIBLE);
+        }
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
         {
             @Override
-            public boolean onTouch(View v, MotionEvent event)
+            public boolean onLongClick(View v)
             {
-                if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE)
-                    v.setBackgroundColor(Color.parseColor("#C3C3C3"));
-                else
-                    v.setBackgroundColor(Color.TRANSPARENT);
+                if (selectedHolder != null)
+                    clearSelected();
 
-                return false;
+                holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+
+                selectedHolder = holder;
+                selectedList = myList;
+
+                fm.pressSelect();
+
+                return true;
             }
         });
+
         holder.itemView.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                if (selectedHolder == null)
+                    fm.enterList(position);
+                else
+                {
+                    clearSelected();
+                    fm.pressSelect();
+                }
 
-                ((FragmentList)fm).enterList(position);
             }
         });
     }

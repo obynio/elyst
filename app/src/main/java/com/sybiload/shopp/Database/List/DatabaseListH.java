@@ -18,6 +18,7 @@ public class DatabaseListH extends SQLiteOpenHelper
 
     private static final String CREATE_LIST = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_NAME + " TEXT, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_TABL + " TEXT);";
     protected static final String INSERT_INTO = "INSERT INTO " + CURRENT_TABL + " VALUES (?, ?, ?);";
+    protected static final String UPDATE = "UPDATE " + CURRENT_TABL + " SET " + COLUMN_NAME + "=?, " + COLUMN_DESCRIPTION + "=?, " + COLUMN_TABL + "=? WHERE " + COLUMN_NAME + "=?;";
 
     public DatabaseListH(Context context)
     {

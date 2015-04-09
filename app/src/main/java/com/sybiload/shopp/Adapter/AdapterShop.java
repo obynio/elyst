@@ -174,19 +174,16 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
             holder.txtHeader.setText(myItem.getName());
 
-            Item it = myItem;
 
             // when adapter is refreshing, check if the current row has a description or not and adapt the layout
 
-            if (it.getDescription() == null || it.getDescription().equals(""))
+            if (myItem.getDescription() == null || myItem.getDescription().equals(""))
             {
                 holder.txtFooter.setVisibility(View.GONE);
-                //holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             }
             else
             {
                 holder.txtFooter.setText(myItem.getDescription());
-                //holder.txtHeader.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
                 holder.txtFooter.setVisibility(View.VISIBLE);
             }
 

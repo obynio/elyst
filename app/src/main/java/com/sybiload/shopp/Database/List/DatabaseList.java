@@ -33,6 +33,11 @@ public class DatabaseList extends DatabaseListH
         database = getWritableDatabase();
     }
 
+    public void deleteItem(List newList)
+    {
+        database.delete(CURRENT_TABL, COLUMN_TABL + "='" + newList.getDatabase() + "'", null);
+    }
+
     // insert a new list into the table
     public void insertList(List newList)
     {
@@ -45,6 +50,21 @@ public class DatabaseList extends DatabaseListH
             stmt.bindString(2, newList.getDescription());
 
         stmt.bindString(3, newList.getDatabase());
+        stmt.execute();
+    }
+
+    public void updateByName(String name, List newList)
+    {
+        SQLiteStatement stmt = database.compileStatement(UPDATE);
+        stmt.bindString(1, newList.getName());
+
+        if (newList.getDescription() == null)
+            stmt.bindNull(2);
+        else
+            stmt.bindString(2, newList.getDescription());
+
+        stmt.bindString(3, newList.getDatabase());
+        stmt.bindString(4, name);
         stmt.execute();
     }
 

@@ -23,7 +23,9 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.sybiload.shopp.Adapter.AdapterList;
 import com.sybiload.shopp.Adapter.AdapterListView;
+import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.ListViewItem;
 import com.sybiload.shopp.Database.List.DatabaseList;
 import com.sybiload.shopp.Pref.ActivityAppPref;
@@ -43,9 +45,9 @@ import java.util.Calendar;
 
 public class ActivityMain extends ActionBarActivity
 {
-    private Toolbar toolbar;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
+    public static Toolbar toolbar;
+    public static ActionBarDrawerToggle drawerToggle;
+    public static DrawerLayout drawerLayout;
     private ListView navList;
     private String[] drawerItems;
     private String[] drawerFragments;
@@ -84,6 +86,8 @@ public class ActivityMain extends ActionBarActivity
             setSupportActionBar(toolbar);
         }
 
+
+
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.txt_open, R.string.txt_close)
         {
 
@@ -101,6 +105,7 @@ public class ActivityMain extends ActionBarActivity
             }
         };
 
+        drawerToggle.setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
 

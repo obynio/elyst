@@ -1,6 +1,7 @@
 package com.sybiload.shopp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.sybiload.shopp.Database.List.DatabaseList;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Random;
 
 
 public class ActivityNewList extends ActionBarActivity
@@ -28,6 +30,8 @@ public class ActivityNewList extends ActionBarActivity
     public ImageButton fabImageButton;
     public AdapterEditText editTextNewListName;
     public EditText editTextNewListDescription;
+
+    private List selectedList;
 
     protected void onCreate(Bundle paramBundle)
     {
@@ -50,7 +54,20 @@ public class ActivityNewList extends ActionBarActivity
             }
         });
 
+        Intent intent = getIntent();
 
+        if (intent != null)
+        {
+            int index = intent.getIntExtra("LIST_NB", -1);
+
+            if (index >= 0)
+            {
+                selectedList = Static.allList.get(index);
+
+                editTextNewListName.setText(selectedList.getName());
+                editTextNewListDescription.setText(selectedList.getDescription());
+            }
+        }
 
         editTextNewListName.addTextChangedListener(new TextWatcher()
         {
@@ -61,18 +78,8 @@ public class ActivityNewList extends ActionBarActivity
 
                 if (text.toLowerCase().equals("main"))
                     error = true;
-                else
-                {
-                    for (List l : Static.allList)
-                    {
-                        if (text.toLowerCase().equals(l.getName().toLowerCase()))
-                        {
-                            error = true;
-                            break;
-                        }
-                    }
-                }
 
+                // hot job dude..
                 if (error)
                 {
                     editTextNewListName.setError("");
@@ -80,7 +87,7 @@ public class ActivityNewList extends ActionBarActivity
                     fabImageButton.setClickable(false);
                     fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
                 }
-                else if (text.length() == 0)
+                else if (text.isEmpty())
                 {
                     fabImageButton.setClickable(false);
                     fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
@@ -88,9 +95,11 @@ public class ActivityNewList extends ActionBarActivity
                 else
                 {
                     editTextNewListName.setError(null);
+
                     fabImageButton.setClickable(true);
                     fabImageButton.setColorFilter(Color.TRANSPARENT);
                 }
+
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -102,14 +111,21 @@ public class ActivityNewList extends ActionBarActivity
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new createListAsync().execute();
+                if (selectedList == null)
+                    new createListAsync().execute();
+                else
+                {
+                    new updateListAsync().execute();
+                }
             }
         });
 
         // disable the button to avoid null input
-        fabImageButton.setClickable(false);
-        fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
-
+        if (selectedList == null)
+        {
+            fabImageButton.setClickable(false);
+            fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
+        }
 
         new Handler().postDelayed(new Runnable()
         {
@@ -149,28 +165,54 @@ public class ActivityNewList extends ActionBarActivity
             DatabaseList databaseList = new DatabaseList(getApplicationContext());
             databaseList.open();
 
-            String des = editTextNewListDescription.getText().toString();
-
-            if (des.equals(""))
-            {
-                Calendar cal = Calendar.getInstance();
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM");
-                des = "Created on " + dateFormat.format(cal.getTime());
-            }
-
-            String dbName = editTextNewListName.getText().toString().toLowerCase();
-            dbName = dbName.replaceAll(" ", "_");
-            dbName = dbName.replaceAll("\\\\", "");
-            dbName = dbName.replaceAll("/", "");
-            dbName = dbName.replaceAll("\'", "");
-            dbName = dbName.replaceAll("\"", "");
-            List myList = new List(editTextNewListName.getText().toString(), des, dbName + ".db");
+            List myList = new List(editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), new Misc().generateSeed() + ".db");
 
             new Misc().addList(getApplicationContext(), myList);
 
             databaseList.close();
 
 
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused)
+        {
+            Dialog.dismiss();
+
+            finish();
+        }
+    }
+
+
+    public class updateListAsync extends AsyncTask<Void, Void, Void>
+    {
+        protected ProgressDialog Dialog;
+
+        @Override
+        protected void onPreExecute()
+        {
+            Dialog = new ProgressDialog(ActivityNewList.this);
+            Dialog.setMessage("Just a moment..");
+            Dialog.setCancelable(false);
+            Dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            DatabaseList databaseList = new DatabaseList(getApplicationContext());
+            databaseList.open();
+
+            String name = selectedList.getName();
+
+            selectedList.setName(editTextNewListName.getText().toString());
+            selectedList.setDescription(editTextNewListDescription.getText().toString());
+
+            databaseList.updateByName(name, selectedList);
+
+            databaseList.close();
 
             return null;
         }
