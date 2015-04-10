@@ -5,7 +5,7 @@
                     android:initialLayout="@layout/widget_white"
                     android:previewImage="@drawable/preview_widget"
                     android:updatePeriodMillis="0"
-                    android:configure="com.sybiload.shopp.Widget.WidgetConfigure"
+                    android:configure="com.sybiload.elyst.Widget.WidgetConfigure"
                     android:resizeMode="horizontal|vertical"
                     android:widgetCategory="home_screen">
 </appwidget-provider>

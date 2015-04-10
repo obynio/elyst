@@ -19,8 +19,8 @@ import com.sybiload.elyst.Static;
 
 public class WidgetView extends AppWidgetProvider
 {
-    public static final String IS_DONE = "com.sybiload.shopp.action.IS_DONE";
-    public static final String REFRESH = "com.sybiload.shopp.action.REFRESH";
+    public static final String IS_DONE = "com.sybiload.elyst.action.IS_DONE";
+    public static final String REFRESH = "com.sybiload.elyst.action.REFRESH";
     private static int currently = 0;
     private static SharedPreferences mainPref;
 
