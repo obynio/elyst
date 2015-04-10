@@ -18,6 +18,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -29,6 +31,10 @@ import com.sybiload.shopp.Adapter.AdapterShop;
 import com.sybiload.shopp.Adapter.ListViewItem;
 import com.sybiload.shopp.Database.List.DatabaseList;
 import com.sybiload.shopp.Pref.ActivityAppPref;
+import com.sybiload.shopp.Util.IabHelper;
+import com.sybiload.shopp.Util.IabResult;
+import com.sybiload.shopp.Util.Inventory;
+import com.sybiload.shopp.Util.Purchase;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -56,10 +62,75 @@ public class ActivityMain extends ActionBarActivity
 
     ArrayList<ListViewItem> models = new ArrayList<ListViewItem>();
 
+    private Boolean isPremium = false;
+    IabHelper helper;
+
+    IabHelper.QueryInventoryFinishedListener receivedInventoryListener = new IabHelper.QueryInventoryFinishedListener()
+    {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory)
+        {
+
+            if (result.isFailure())
+            {
+                new Misc().log("In App query inventory failed");
+            }
+            else
+            {
+                isPremium = inventory.hasPurchase(IabHelper.getSku());
+                new Misc().log("In App query inventory successfull");
+                new Misc().log("In App user " + (isPremium ? "has full version" : "has free version"));
+
+                mainPref.edit().putInt("deviceLoop", isPremium ? 8238 : 2895).commit();
+                invalidateOptionsMenu();
+            }
+        }
+    };
+
+    IabHelper.OnIabPurchaseFinishedListener purchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener()
+    {
+        public void onIabPurchaseFinished(IabResult result, Purchase purchase)
+        {
+            if (result.isFailure())
+            {
+                new Misc().log("In App payment failed");
+            }
+            else if (purchase.getSku().equals(IabHelper.getSku()))
+            {
+                new Misc().log("In App payment successfull");
+                helper.queryInventoryAsync(receivedInventoryListener);
+            }
+        }
+    };
+
     private boolean isOnline()
     {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    private boolean checkPrefs()
+    {
+        if (mainPref.getInt("deviceLoop", 2895) == 8238)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void buy()
+    {
+        helper.launchPurchaseFlow(ActivityMain.this, IabHelper.getSku(), 10001, purchaseFinishedListener, "utask.fullversion");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        toolbar.inflateMenu(R.menu.buy);
+
+        return true;
     }
 
 
@@ -70,6 +141,34 @@ public class ActivityMain extends ActionBarActivity
         mainPref = this.getSharedPreferences("main", 0);
         setContentView(R.layout.activity_main);
 
+        helper = new IabHelper(this, IabHelper.getPublicKey());
+
+        helper.startSetup(new IabHelper.OnIabSetupFinishedListener()
+        {
+            public void onIabSetupFinished(IabResult result)
+            {
+
+                if (!result.isSuccess())
+                {
+                    new Misc().log("In App setup failed (" + result + ")");
+                }
+                else
+                {
+                    new Misc().log("In App setup sucessfull");
+
+                    if (isOnline())
+                    {
+                        helper.queryInventoryAsync(receivedInventoryListener);
+                    }
+                    else
+                    {
+                        isPremium = checkPrefs();
+                        invalidateOptionsMenu();
+                    }
+                }
+            }
+        });
+
         if (!mainPref.getBoolean("done", false) && isOnline())
         {
             new doneAsync().execute();
@@ -79,6 +178,8 @@ public class ActivityMain extends ActionBarActivity
         drawerFragments = getResources().getStringArray(R.array.navdrawer_views);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         if (toolbar != null)
@@ -146,9 +247,32 @@ public class ActivityMain extends ActionBarActivity
             }
         });
 
+
+
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, "com.sybiload.shopp.FragmentList"));
         tx.commit();
+
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if (helper != null)
+        {
+            helper.dispose();
+        }
+        helper = null;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (!helper.handleActivityResult(requestCode, resultCode, data))
+        {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     public class doneAsync extends AsyncTask<Void, Void, Void>

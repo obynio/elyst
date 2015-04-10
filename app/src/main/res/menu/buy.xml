@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:kernell="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_buy"
+        android:icon="@mipmap/ic_buy"
+        android:title="buy"
+        kernell:showAsAction="ifRoom" />
+
+</menu>

@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.sybiload.shopp.Adapter.AdapterList;
 import com.sybiload.shopp.Adapter.AdapterShop;
+import com.sybiload.shopp.Util.IabHelper;
 
 public class FragmentList extends Fragment
 {
@@ -52,6 +53,7 @@ public class FragmentList extends Fragment
             }
         });
 
+
         ActivityMain.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener()
         {
             @Override
@@ -75,6 +77,10 @@ public class FragmentList extends Fragment
                         currAdapter.clearSelected();
                         pressSelect();
 
+                        return true;
+
+                    case R.id.action_buy:
+                        ((ActivityMain)getActivity()).buy();
                         return true;
 
                     default:
@@ -121,6 +127,7 @@ public class FragmentList extends Fragment
         if (AdapterList.selectedHolder == null)
         {
             ActivityMain.toolbar.getMenu().clear();
+            ActivityMain.toolbar.inflateMenu(R.menu.buy);
 
             ActivityMain.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
