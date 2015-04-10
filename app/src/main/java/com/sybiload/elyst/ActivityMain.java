@@ -129,7 +129,6 @@ public class ActivityMain extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu)
     {
         toolbar.inflateMenu(R.menu.buy);
-
         return true;
     }
 
