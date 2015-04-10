@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sybiload.shopp" >
+    package="com.sybiload.elyst" >
 
 
 
@@ -13,8 +13,8 @@
         <receiver android:name=".Widget.WidgetView">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.sybiload.shopp.action.IS_DONE" />
-                <action android:name="com.sybiload.shopp.action.REFRESH" />
+                <action android:name="com.sybiload.elyst.action.IS_DONE" />
+                <action android:name="com.sybiload.elyst.action.REFRESH" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_meta" />
         </receiver>
@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sybiload.shopp.ActivityAdd"
+            android:name="com.sybiload.elyst.ActivityAdd"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ActivityNewList"
@@ -45,19 +45,19 @@
             android:name=".ActivityShop"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.sybiload.shopp.Pref.ActivityAppPref"
+            android:name="com.sybiload.elyst.Pref.ActivityAppPref"
             android:label="Settings"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.sybiload.shopp.Pref.ActivityWidgetPref"
+            android:name="com.sybiload.elyst.Pref.ActivityWidgetPref"
             android:label="Widget"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.sybiload.shopp.Pref.ActivitySystemPref"
+            android:name="com.sybiload.elyst.Pref.ActivitySystemPref"
             android:label="Widget"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.sybiload.shopp.Pref.ActivityUiPref"
+            android:name="com.sybiload.elyst.Pref.ActivityUiPref"
             android:label="Widget"
             android:screenOrientation="portrait"/>
     </application>

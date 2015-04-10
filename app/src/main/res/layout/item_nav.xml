@@ -17,6 +17,6 @@
         android:textSize="16dp"
         android:layout_marginLeft="20dp"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/iconNav"/>
+        android:layout_toRightOf="@id/iconNav"/>
 
 </RelativeLayout>

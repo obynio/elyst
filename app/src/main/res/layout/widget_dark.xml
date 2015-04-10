@@ -33,7 +33,7 @@
             android:layout_height="?android:attr/listPreferredItemHeight"
             android:layout_marginRight="6dip"
             android:contentDescription="TODO"
-            android:src="@drawable/ic_icon" />
+            android:src="@mipmap/ic_icon" />
 
         <RelativeLayout
             android:layout_width="wrap_content"

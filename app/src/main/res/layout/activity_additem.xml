@@ -27,7 +27,7 @@
             android:id="@+id/llEditAddItem"
             android:visibility="gone">
 
-            <com.sybiload.shopp.Adapter.AdapterEditText
+            <com.sybiload.elyst.Adapter.AdapterEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLength="20"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:tint="@color/green"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_icon" />
+                    android:src="@mipmap/ic_icon" />
 
                 <ImageView
                     android:id="@+id/imageViewAddItemColorOrange"
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:tint="@color/orange"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_icon" />
+                    android:src="@mipmap/ic_icon" />
 
                 <ImageView
                     android:id="@+id/imageViewAddItemColorRed"
@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:tint="@color/red"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_icon" />
+                    android:src="@mipmap/ic_icon" />
 
                 <ImageView
                     android:id="@+id/imageViewAddItemColorPurple"
@@ -90,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:tint="@color/purple"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_icon" />
+                    android:src="@mipmap/ic_icon" />
 
                 <ImageView
                     android:id="@+id/imageViewAddItemColorBlue"
@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:tint="@color/blue"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_icon" />
+                    android:src="@mipmap/ic_icon" />
 
             </LinearLayout>
 

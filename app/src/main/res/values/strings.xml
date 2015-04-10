@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Shopy</string>
+    <string name="app_name">Elyst</string>
 
     <!-- activity_main.xml -->
 
@@ -12,8 +12,8 @@
     </string-array>
 
     <string-array name="navdrawer_views">
-        <item>com.sybiload.shopp.FragmentList</item>
-        <item>com.sybiload.shopp.FragmentList</item>
+        <item>com.sybiload.elyst.FragmentList</item>
+        <item>com.sybiload.elyst.FragmentList</item>
     </string-array>
 
     <!-- widget_pref.xml -->
