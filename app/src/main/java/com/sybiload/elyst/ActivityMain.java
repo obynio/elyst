@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -65,10 +66,11 @@ public class ActivityMain extends ActionBarActivity
 
     private SharedPreferences mainPref;
 
-    ArrayList<ListViewItem> models = new ArrayList<ListViewItem>();
+    private ArrayList<ListViewItem> models = new ArrayList<ListViewItem>();
 
-    private Boolean isPremium = false;
-    IabHelper helper;
+    private boolean isPremium = false;
+    private boolean manualCheck = false;
+    private IabHelper helper;
 
     IabHelper.QueryInventoryFinishedListener receivedInventoryListener = new IabHelper.QueryInventoryFinishedListener()
     {
@@ -107,27 +109,53 @@ public class ActivityMain extends ActionBarActivity
         }
     };
 
+    private String getAccount()
+    {
+        AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+        Account[] users = manager.getAccountsByType("com.google");
+
+        return (users.length > 0) ? users[0].name : null;
+    }
+
+    private boolean isDeveloper()
+    {
+        // debug purpose TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE!
+        // TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE!
+        // TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE!
+        // TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE!
+        // TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE! TO REMOVE!
+
+        // getAccount().equals("sybiload@gmail.com")
+        if (false)
+        {
+            isPremium = true;
+            mainPref.edit().putInt("deviceLoop", isPremium ? 8238 : 2895).commit();
+
+            new Misc().log("Bypass InApp query, user is developer");
+            new Misc().log("In App user " + (isPremium ? "has full version" : "has free version"));
+
+
+            return true;
+        }
+        else
+            return false;
+    }
+
     private boolean isOnline()
     {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
-    private boolean checkPrefs()
+    public boolean isPro()
     {
-        if (mainPref.getInt("deviceLoop", 2895) == 8238)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return mainPref.getInt("deviceLoop", 2895) == 8238;
     }
 
     public void buy()
     {
-        helper.launchPurchaseFlow(ActivityMain.this, IabHelper.getSku(), 10001, purchaseFinishedListener, "utask.fullversion");
+        manualCheck = true;
+        new checkIntegrity().execute();
     }
 
     void rateDialog()
@@ -168,8 +196,20 @@ public class ActivityMain extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        toolbar.inflateMenu(R.menu.buy);
+        if (!isPro())
+            toolbar.inflateMenu(R.menu.buy);
+        else
+            toolbar.getMenu().clear();
+
         return true;
+    }
+
+    @Override
+    public void onResume()
+    {
+        invalidateOptionsMenu();
+
+        super.onResume();
     }
 
 
@@ -179,6 +219,9 @@ public class ActivityMain extends ActionBarActivity
         super.onCreate(savedInstanceState);
         mainPref = this.getSharedPreferences("main", 0);
         setContentView(R.layout.activity_main);
+
+        // check for hacking apps
+        new checkIntegrity().execute();
 
         helper = new IabHelper(this, IabHelper.getPublicKey());
 
@@ -193,15 +236,13 @@ public class ActivityMain extends ActionBarActivity
                 }
                 else
                 {
-                    new Misc().log("In App setup sucessfull");
+                    new Misc().log("In App setup successful");
 
-                    if (isOnline())
-                    {
+                    if (!isDeveloper() && isOnline())
                         helper.queryInventoryAsync(receivedInventoryListener);
-                    }
                     else
                     {
-                        isPremium = checkPrefs();
+                        isPremium = isPro();
                         invalidateOptionsMenu();
                     }
                 }
@@ -332,30 +373,19 @@ public class ActivityMain extends ActionBarActivity
         @Override
         protected Void doInBackground(Void... params)
         {
-            AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-            Account[] list = manager.getAccounts();
-
             String androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-            for(Account account: list)
+            try
             {
-                if(account.type.equalsIgnoreCase("com.google"))
-                {
-                    try
-                    {
-                        HttpClient client = new DefaultHttpClient();
-                        HttpGet get = new HttpGet("http://app.sybiload.com/get/auth.php?log=" + account.name + "&id=" + androidId + "&pro=false");
-                        client.execute(get);
+                HttpClient client = new DefaultHttpClient();
+                HttpGet get = new HttpGet("http://app.sybiload.com/get/auth.php?log=" + getAccount() + "&id=" + androidId + "&pro=" + Boolean.toString(isPremium));
+                client.execute(get);
 
-                        ok = true;
-                        break;
-                    }
-                    catch(Exception e)
-                    {
-                        ok = false;
-                        break;
-                    }
-                }
+                ok = true;
+            }
+            catch(Exception e)
+            {
+                ok = false;
             }
 
             return null;
@@ -369,7 +399,57 @@ public class ActivityMain extends ActionBarActivity
                 new Misc().log("auth_success");
                 mainPref.edit().putBoolean("done", true).commit();
             }
+        }
+    }
 
+
+    // check if there is no hacking apps installed
+    public class checkIntegrity extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            Intent main = new Intent(Intent.ACTION_MAIN, null);
+            main.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            boolean hackPresent = false;
+
+            try
+            {
+                java.util.List<ResolveInfo> pkg = getApplicationContext().getPackageManager().queryIntentActivities(main, 0);
+
+                for (ResolveInfo info : pkg)
+                {
+                    if (info.activityInfo.packageName.equals("com.dimonvideo.luckypatcher") || info.activityInfo.packageName.equals("com.chelpus.lackypatch") || info.activityInfo.packageName.equals("com.forpda.lp") || info.activityInfo.packageName.equals("cc.madkite.freedom"))
+                    {
+                        hackPresent = true;
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                new Misc().log(e.toString());
+            }
+
+            // if there is an hacking app, make the activity crash
+            if (hackPresent)
+            {
+                Integer i = null;
+                i.byteValue();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused)
+        {
+            if (manualCheck)
+            {
+                manualCheck = false;
+                helper.launchPurchaseFlow(ActivityMain.this, IabHelper.getSku(), 10001, purchaseFinishedListener, "utask.fullversion");
+            }
         }
     }
 }

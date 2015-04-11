@@ -53,7 +53,6 @@ public class FragmentList extends Fragment
             }
         });
 
-
         ActivityMain.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener()
         {
             @Override
@@ -126,8 +125,8 @@ public class FragmentList extends Fragment
     {
         if (AdapterList.selectedHolder == null)
         {
-            ActivityMain.toolbar.getMenu().clear();
-            ActivityMain.toolbar.inflateMenu(R.menu.buy);
+            // check if isPro
+            getActivity().invalidateOptionsMenu();
 
             ActivityMain.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
