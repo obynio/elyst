@@ -16,10 +16,10 @@
         android:summary="Vibrations when an item is clicked"/>
 
     <CheckBoxPreference
-    android:defaultValue="false"
-    android:key="checkBoxSystemNoSleep"
-    android:title="Disable display timeout"
-    android:summary="Prevent the screen from turning off while you are in a shopping list"/>
+        android:defaultValue="false"
+        android:key="checkBoxSystemNoSleep"
+        android:title="Disable display timeout"
+        android:summary="Prevent the screen from turning off while you are in a shopping list"/>
 
     <CheckBoxPreference
         android:defaultValue="false"

@@ -30,7 +30,7 @@
         <ImageView
             android:id="@+id/imageViewWidget"
             android:layout_width="wrap_content"
-            android:layout_height="?android:attr/lis²tPreferredItemHeight"
+            android:layout_height="?android:attr/listPreferredItemHeight"
             android:layout_marginRight="6dip"
             android:contentDescription="TODO"
             android:src="@mipmap/ic_icon" />

@@ -60,6 +60,15 @@
             android:name="com.sybiload.elyst.Pref.ActivityUiPref"
             android:label="Widget"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.sybiload.elyst.Welcome.ActivityOne"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.sybiload.elyst.Welcome.ActivityTwo"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.sybiload.elyst.Welcome.ActivityThree"
+            android:screenOrientation="portrait"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

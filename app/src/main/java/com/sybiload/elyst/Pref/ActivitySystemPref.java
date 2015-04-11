@@ -2,8 +2,11 @@ package com.sybiload.elyst.Pref;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
@@ -23,6 +26,9 @@ import com.sybiload.elyst.R;
 
 public class ActivitySystemPref extends PreferenceActivity
 {
+    CheckBoxPreference prefBarcode;
+    CheckBoxPreference prefVibration;
+
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -52,6 +58,23 @@ public class ActivitySystemPref extends PreferenceActivity
                 new Misc().rightTransition(ActivitySystemPref.this);
             }
         });
+
+        prefBarcode = (CheckBoxPreference) findPreference("checkBoxSystemBarcode");
+        prefVibration = (CheckBoxPreference) findPreference("checkBoxSystemVibration");
+
+        if (!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA))
+        {
+            prefBarcode.setChecked(false);
+            prefBarcode.setEnabled(false);
+        }
+
+        Vibrator vbr = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (!vbr.hasVibrator())
+        {
+            prefVibration.setChecked(false);
+            prefVibration.setEnabled(false);
+        }
+
     }
 
     @Override

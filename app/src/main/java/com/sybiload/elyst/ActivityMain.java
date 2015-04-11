@@ -3,11 +3,15 @@ package com.sybiload.elyst;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +39,7 @@ import com.sybiload.elyst.Util.IabHelper;
 import com.sybiload.elyst.Util.IabResult;
 import com.sybiload.elyst.Util.Inventory;
 import com.sybiload.elyst.Util.Purchase;
+import com.sybiload.elyst.Welcome.ActivityOne;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -125,6 +130,41 @@ public class ActivityMain extends ActionBarActivity
         helper.launchPurchaseFlow(ActivityMain.this, IabHelper.getSku(), 10001, purchaseFinishedListener, "utask.fullversion");
     }
 
+    void rateDialog()
+    {
+        int appLaunch = mainPref.getInt("appLaunch", 0);
+        mainPref.edit().putInt("appLaunch", appLaunch += 1).commit();
+
+        if (!mainPref.getBoolean("appRated", false))
+        {
+            if (appLaunch % 100 == 0)
+            {
+                AlertDialog.Builder alert = new AlertDialog.Builder(ActivityMain.this);
+
+                alert.setMessage("It would nice to rate this app as a reward for my hard work");
+
+                alert.setPositiveButton("Rate", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton)
+                    {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse("market://details?id=com.sybiload.elyst"));
+                        startActivity(browserIntent);
+
+                        mainPref.edit().putBoolean("appRated", true).commit();
+                    }
+                });
+
+                alert.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton)
+                    {
+                        dialog.cancel();
+                    }
+                });
+
+                alert.show();
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -168,16 +208,27 @@ public class ActivityMain extends ActionBarActivity
             }
         });
 
+        // send data
         if (!mainPref.getBoolean("done", false) && isOnline())
         {
             new doneAsync().execute();
         }
 
+        // if it's the first launch, start the intro
+        if (mainPref.getBoolean("firstLaunch", true))
+        {
+            Intent intent = new Intent(getApplication(), ActivityOne.class);
+            startActivity(intent);
+            finish();
+        }
+
+        // show rate dialog
+        rateDialog();
+
         drawerItems = getResources().getStringArray(R.array.navdrawer_items);
         drawerFragments = getResources().getStringArray(R.array.navdrawer_views);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
@@ -297,11 +348,12 @@ public class ActivityMain extends ActionBarActivity
                         client.execute(get);
 
                         ok = true;
+                        break;
                     }
                     catch(Exception e)
                     {
                         ok = false;
-                        new Misc().log(e.toString());
+                        break;
                     }
                 }
             }
