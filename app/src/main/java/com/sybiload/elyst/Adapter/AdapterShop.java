@@ -196,7 +196,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             public boolean onLongClick(View v)
             {
 
-                if (!selectedIndex.contains(position))
+                if (!selectedIndex.contains(position) && !ActivityShop.toolbarOpened)
                 {
                     ActivityShop.currentItem = myItem;
 

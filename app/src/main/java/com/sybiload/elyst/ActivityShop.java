@@ -100,11 +100,16 @@ public class ActivityShop extends ActionBarActivity
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toolbarOpened) {
+                if (toolbarOpened)
+                {
                     barAction();
-                } else if (AdapterShop.selectedIndex.size() > 0) {
+                }
+                else if (AdapterShop.selectedIndex.size() > 0)
+                {
                     currAdap.clearSelected();
-                } else {
+                }
+                else
+                {
                     finish();
                     new Misc().rightTransition(ActivityShop.this);
                 }
