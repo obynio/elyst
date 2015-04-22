@@ -14,15 +14,15 @@ public class List
 {
     private String name;
     private String description;
-    private String database;
+    private String idDb;
     public static ArrayList<Item> itemShop;
     public static ArrayList<Item> itemAvailable;
 
-    public List(String name, String description, String database)
+    public List(String idDb, String name, String description)
     {
+        this.idDb = idDb;
         this.name = name;
         this.description = description;
-        this.database = database;
         itemShop = new ArrayList<Item>();
         itemAvailable = new ArrayList<Item>();
     }
@@ -45,13 +45,13 @@ public class List
         this.description= description;
     }
 
-    public String getDatabase()
+    public String getIdDb()
     {
-        return this.database;
+        return this.idDb;
     }
-    public void setDatabase(String database)
+    public void setIdDb(String idDb)
     {
-        this.database = database;
+        this.idDb = idDb;
     }
 
 
@@ -74,7 +74,7 @@ public class List
             Collections.sort(itemShop, new Comparator<Item>()
             {
                 public int compare(Item v1, Item v2) {
-                    return Integer.toString(v1.getColor()).compareTo(Integer.toString(v2.getColor()));
+                    return Integer.toString(v1.getCategory()).compareTo(Integer.toString(v2.getCategory()));
                 }
             });
         }
@@ -99,7 +99,7 @@ public class List
             Collections.sort(itemAvailable, new Comparator<Item>()
             {
                 public int compare(Item v1, Item v2) {
-                    return Integer.toString(v1.getColor()).compareTo(Integer.toString(v2.getColor()));
+                    return Integer.toString(v1.getCategory()).compareTo(Integer.toString(v2.getCategory()));
                 }
             });
         }
@@ -111,7 +111,7 @@ public class List
         Collections.sort(itemShop, new Comparator<Item>()
         {
             public int compare(Item v1, Item v2) {
-                return v1.isDone().compareTo(v2.isDone());
+                return v1.getDone().compareTo(v2.getDone());
             }
         });
     }

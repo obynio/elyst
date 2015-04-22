@@ -7,8 +7,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Vibrator;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -28,18 +31,17 @@ import java.util.ArrayList;
 
 public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 {
-    private DatabaseItem database;
     private Context ctx;
 
-    public static ArrayList<ViewHolder> selectedHolder = new ArrayList<ViewHolder>();
-    public static ArrayList<Item> selectedItem = new ArrayList<Item>();
+    public static ArrayList<ViewHolder> selectedHolder = new ArrayList<>();
+    public static ArrayList<Integer> selectedIndex = new ArrayList<>();
+    public static ArrayList<Item> selectedItem = new ArrayList<>();
 
     private SharedPreferences mainPref;
 
     public AdapterShop(Context ctx)
     {
         this.ctx = ctx;
-        database = new DatabaseItem(ctx, Static.currentList.getDatabase());
 
         mainPref = ctx.getSharedPreferences("main", 0);
 
@@ -68,13 +70,10 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         for (Item myItem : selectedItem)
         {
             // set new attributes
-            myItem.toShop(false);
             myItem.setDescription(null);
 
             // update database
-            database.open();
-            database.updateByName(myItem.getName(), myItem);
-            database.close();
+            new Misc().removeItem(ctx, myItem);
 
             // remove item from itemShop
             int position = Static.currentList.itemShop.indexOf(myItem);
@@ -90,15 +89,13 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     public void done(Item myItem)
     {
         // set new attributes
-        if (!myItem.isDone())
-            myItem.done(true);
+        if (!myItem.getDone())
+            myItem.setDone(true);
         else
-            myItem.done(false);
+            myItem.setDone(false);
 
         // update database
-        database.open();
-        database.updateByName(myItem.getName(), myItem);
-        database.close();
+        new Misc().updateItem(ctx, myItem);
 
         // get current position of the item
         int position = Static.currentList.itemShop.indexOf(myItem);
@@ -116,9 +113,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     {
         // update database
 
-        database.open();
-        database.updateByName(oldItem.getName(), newItem);
-        database.close();
+        new Misc().updateItem(ctx, newItem);
 
 
         int position = Static.currentList.itemShop.indexOf(oldItem);
@@ -144,13 +139,13 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
 
     public void clearSelected()
     {
-        for (int i = 0; i < selectedHolder.size(); i++)
+        for (ViewHolder hold : selectedHolder)
         {
-            selectedHolder.get(i).itemView.setBackgroundColor(Color.TRANSPARENT);
+            hold.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
-
         selectedHolder.clear();
+        selectedIndex.clear();
         selectedItem.clear();
         ((ActivityShop)ctx).pressSelect();
     }
@@ -168,130 +163,141 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        if (Static.currentList.itemShop.get(position).isToShop())
+        final Item myItem = Static.currentList.itemShop.get(position);
+
+        if (!selectedIndex.contains(position))
         {
-            final Item myItem = Static.currentList.itemShop.get(position);
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+        else
+        {
+            holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+        }
 
-            holder.txtHeader.setText(myItem.getName());
+        holder.txtHeader.setText(myItem.getName());
+
+        // when adapter is refreshing, check if the current row has a description or not and adapt the layout
+        if (myItem.getDescription() == null || myItem.getDescription().equals(""))
+        {
+            holder.txtFooter.setVisibility(View.GONE);
+        }
+        else
+        {
+            holder.txtFooter.setText(myItem.getDescription());
+            holder.txtFooter.setVisibility(View.VISIBLE);
+        }
 
 
-            // when adapter is refreshing, check if the current row has a description or not and adapt the layout
 
-            if (myItem.getDescription() == null || myItem.getDescription().equals(""))
+        // when there is a long click on a row, either remove item if the toolbar of the activity is not opened, or hide the toolbar if it is opened. More details below
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
             {
-                holder.txtFooter.setVisibility(View.GONE);
-            }
-            else
-            {
-                holder.txtFooter.setText(myItem.getDescription());
-                holder.txtFooter.setVisibility(View.VISIBLE);
-            }
 
-
-            // when there is a long click on a row, either remove item if the toolbar of the activity is not opened, or hide the toolbar if it is opened. More details below
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
-            {
-                @Override
-                public boolean onLongClick(View v)
+                if (!selectedIndex.contains(position))
                 {
-                    if (!selectedHolder.contains(holder))
-                    {
-                        ActivityShop.currentItem = myItem;
+                    ActivityShop.currentItem = myItem;
 
+                    v.setBackgroundColor(Color.parseColor("#C3C3C3"));
+                    selectedItem.add(myItem);
+                    selectedHolder.add(holder);
+                    selectedIndex.add(position);
+
+                    ((ActivityShop)ctx).pressSelect();
+                }
+
+                return true;
+            }
+        });
+
+
+
+
+
+        // if current row is barcode_done, change the color or the icon and the style of the text
+        if (myItem.getDone())
+        {
+            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
+            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
+        }
+        else
+        {
+            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getCategory())));
+            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
+        }
+
+
+
+        // when doing a click on the row, put it barcode_done
+        holder.itemView.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (!ActivityShop.toolbarOpened)
+                {
+                    if (selectedIndex.contains(position))
+                    {
+                        holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+
+                        selectedHolder.remove(holder);
+                        selectedIndex.remove(selectedIndex.indexOf(position));
+                        selectedItem.remove(myItem);
+
+                        ((ActivityShop)ctx).pressSelect();
+                    }
+                    else if (!selectedIndex.contains(position) && selectedIndex.size() != 0)
+                    {
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
+                        selectedIndex.add(position);
                         selectedItem.add(myItem);
 
                         ((ActivityShop)ctx).pressSelect();
                     }
-
-                    return true;
-                }
-            });
-
-            // if current row is barcode_done, change the color or the icon and the style of the text
-            if (myItem.isDone())
-            {
-                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
-                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
-            }
-            else
-            {
-                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getColor())));
-                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
-            }
-
-            // when doing a click on the row, put it barcode_done
-            holder.itemView.setOnClickListener(new OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    if (!ActivityShop.toolbarOpened)
+                    else if (selectedIndex.size() == 0)
                     {
-                        if (selectedHolder.contains(holder))
+                        done(myItem);
+
+                        // make vibration
+                        Vibrator vbr = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
+                        if (mainPref.getBoolean("checkBoxSystemVibration", true) && vbr.hasVibrator())
                         {
-                            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-
-                            selectedHolder.remove(holder);
-                            selectedItem.remove(myItem);
-
-                            ((ActivityShop)ctx).pressSelect();
+                            vbr.vibrate(14);
                         }
-                        else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
+
+                        if (myItem.getDone())
                         {
-                            holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
-
-                            selectedHolder.add(holder);
-                            selectedItem.add(myItem);
-
-                            ((ActivityShop)ctx).pressSelect();
+                            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
+                            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
                         }
-                        else if (selectedHolder.size() == 0)
+                        else
                         {
-                            done(myItem);
-
-                            // make vibration
-                            Vibrator vbr = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
-                            if (mainPref.getBoolean("checkBoxSystemVibration", true) && vbr.hasVibrator())
-                            {
-                                vbr.vibrate(14);
-                            }
-
-                            if (myItem.isDone())
-                            {
-                                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
-                                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
-                            }
-                            else
-                            {
-                                holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                                holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                                holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getColor())));
-                                holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
-                            }
+                            holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                            holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getCategory())));
+                            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
                         }
                     }
                 }
-            });
+            }
+        });
 
-
-
-
-        }
     }
+
 
     @Override
     public int getItemCount()
     {
         return Static.currentList.itemShop.size();
     }
-
 }

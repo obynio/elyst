@@ -9,6 +9,9 @@
 
     <color name="colorHighlight">#B6B6B6</color>
     <color name="defaultColorBackground">#EEEEEE</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorAccent">#03A9F4</color>
 
 
 </resources>

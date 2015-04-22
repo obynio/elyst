@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.provider.CalendarContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
@@ -74,10 +75,10 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             // update database
             database.open();
             database.deleteItem(myList);
-            database.close();
+            database.dbList.close();
 
             // delete database
-            fm.getActivity().deleteDatabase(myList.getDatabase());
+            fm.getActivity().deleteDatabase(myList.getIdDb());
 
             // remove item from list
             int position = Static.allList.indexOf(myList);

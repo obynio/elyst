@@ -165,11 +165,11 @@ public class ActivityNewList extends ActionBarActivity
             DatabaseList databaseList = new DatabaseList(getApplicationContext());
             databaseList.open();
 
-            List myList = new List(editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), new Misc().generateSeed() + ".db");
+            List myList = new List(new Misc().generateSeed() + ".db", editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString());
 
             new Misc().addList(getApplicationContext(), myList);
 
-            databaseList.close();
+            databaseList.dbList.close();
 
 
 
@@ -210,9 +210,9 @@ public class ActivityNewList extends ActionBarActivity
             selectedList.setName(editTextNewListName.getText().toString());
             selectedList.setDescription(editTextNewListDescription.getText().toString());
 
-            databaseList.updateByName(name, selectedList);
+            databaseList.updateByName(selectedList);
 
-            databaseList.close();
+            databaseList.dbList.close();
 
             return null;
         }

@@ -38,7 +38,6 @@ public class Misc
         }
 
     }
-
     // sort list in alphabetical order
     public void sortList(ArrayList<List> list)
     {
@@ -51,53 +50,6 @@ public class Misc
         });
     }
 
-    public void addList(Context ctx, List myList)
-    {
-        // open list tabl database
-        DatabaseList databaseList = new DatabaseList(ctx);
-        databaseList.open();
-
-        log("creating test list..");
-
-        // fill it with all default item
-        myList.itemAvailable = populateDefaultItem(ctx);
-
-
-
-        // insert list in the root tabl database
-        databaseList.insertList(myList);
-        databaseList.close();
-
-        DatabaseItem databaseItem = new DatabaseItem(ctx, myList.getDatabase());
-        databaseItem.open();
-        //databaseItem.createNewTabl();
-
-        for (Item newItem : myList.itemAvailable)
-        {
-            databaseItem.insertItem(newItem);
-        }
-
-        databaseItem.close();
-
-        populateList(ctx);
-    }
-
-    // get default item and send back an arraylist with all the default items
-    public ArrayList<Item> populateDefaultItem(Context ctx)
-    {
-        ArrayList<Item> itemArray = new ArrayList<Item>();
-        String[] defaultItemName = ctx.getResources().getStringArray(R.array.item_name);
-        int[] defaultItemColor = ctx.getResources().getIntArray(R.array.item_color);
-
-        for (int i = 0; i < defaultItemName.length; i++)
-        {
-            Item myItem = new Item(defaultItemName[i], null, defaultItemColor[i], null, null, false, false);
-            itemArray.add(myItem);
-        }
-
-        return itemArray;
-    }
-
     public void populateList(Context ctx)
     {
         DatabaseList databaseList = new DatabaseList(ctx);
@@ -106,8 +58,8 @@ public class Misc
 
         // read all list in the database and populate static list array
         databaseList.open();
-        Static.allList = databaseList.readAllList();
-        databaseList.close();
+        Static.allList = databaseList.readList();
+        databaseList.dbList.close();
 
         // sort all this stuff
         sortList(Static.allList);
@@ -115,7 +67,7 @@ public class Misc
 
     public void populateItem(Context ctx, List list)
     {
-        DatabaseItem databaseItem = new DatabaseItem(ctx, list.getDatabase());
+        DatabaseItem databaseItem = new DatabaseItem(ctx, list.getIdDb());
         databaseItem.open();
 
         // reset list fields
@@ -123,23 +75,156 @@ public class Misc
         Static.currentList.itemAvailable = new ArrayList<Item>();
 
         // read all item in database
-        ArrayList<Item> allItem = databaseItem.readAllItem();
+        Static.currentList.itemShop = databaseItem.readChildItem();
 
+        ArrayList<Item> tmpList = databaseItem.readIndexItem();
 
-        // sort items depending if they are to shop or not
-        for (Item it : allItem)
+        // so shitty !
+        for (Item tmp : tmpList)
         {
-            if (it.isToShop())
+            boolean test = false;
+
+            for (Item tmpbis : Static.currentList.itemShop)
             {
-                Static.currentList.itemShop.add(it);
+                if (tmp.getIdItem().equals(tmpbis.getIdItem()))
+                {
+                    test = true;
+                    break;
+                }
             }
-            else
+
+            if (!test)
             {
-                Static.currentList.itemAvailable.add(it);
+                Static.currentList.itemAvailable.add(tmp);
             }
         }
 
-        databaseItem.close();
+        // close databases
+        databaseItem.dbIndex.close();
+        databaseItem.dbChild.close();
+    }
+
+    public String generateSeed()
+    {
+        char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 10; i++)
+        {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+    public void addList(Context ctx, List myList)
+    {
+        // open list tabl database
+        DatabaseList databaseList = new DatabaseList(ctx);
+        databaseList.open();
+
+        log("creating test list..");
+
+        // insert list in the root tabl database
+        databaseList.insertList(myList);
+        databaseList.dbList.close();
+
+        populateList(ctx);
+    }
+
+    // get default item and send back an arraylist with all the default items
+    public void populateDefaultItem(Context ctx)
+    {
+        ArrayList<Item> itemArray = new ArrayList<Item>();
+        String[] defaultItemName = ctx.getResources().getStringArray(R.array.item_name);
+        int[] defaultItemCategory = ctx.getResources().getIntArray(R.array.item_color);
+
+        DatabaseItem databaseItem = new DatabaseItem(ctx, null);
+        databaseItem.open();
+
+        for (int i = 0; i < defaultItemName.length; i++)
+        {
+            Item myItem = new Item(generateSeed(), defaultItemName[i], null, defaultItemCategory[i], 0.0, 0.0, null, null, null, false);
+            databaseItem.createItem(myItem);
+        }
+
+        databaseItem.dbIndex.close();
+    }
+
+    public void createItem(Context ctx, Item myItem)
+    {
+        // adding item to the database
+        DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
+        databaseItem.open();
+
+        databaseItem.createItem(myItem);
+
+        databaseItem.dbIndex.close();
+        databaseItem.dbChild.close();
+
+        // adding item to the current list
+        //populateItem(ctx, Static.currentList);
+    }
+
+    public void insertItem(Context ctx, Item myItem)
+    {
+        // adding item to the database
+        DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
+        databaseItem.open();
+
+        databaseItem.insertItem(myItem);
+
+        databaseItem.dbIndex.close();
+        databaseItem.dbChild.close();
+
+        // adding item to the current list
+        //populateItem(ctx, Static.currentList);
+    }
+
+    public void removeItem(Context ctx, Item myItem)
+    {
+        // removing item from the database
+        DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
+        databaseItem.open();
+
+        databaseItem.removeItem(myItem);
+
+        databaseItem.dbIndex.close();
+        databaseItem.dbChild.close();
+
+        // removing item from the current list
+        //populateItem(ctx, Static.currentList);
+    }
+
+    public void deleteItem(Context ctx, Item myItem)
+    {
+        // removing item from the database
+        DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
+        databaseItem.open();
+
+        databaseItem.deleteItem(myItem);
+
+        databaseItem.dbIndex.close();
+        databaseItem.dbChild.close();
+
+        // removing item from the current list
+        //populateItem(ctx, Static.currentList);
+    }
+
+    public void updateItem(Context ctx, Item myItem)
+    {
+        // removing item from the database
+        DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
+        databaseItem.open();
+
+        databaseItem.updateItem(myItem);
+
+        databaseItem.dbIndex.close();
+        databaseItem.dbChild.close();
+
+        // removing item from the current list
+        //populateItem(ctx, Static.currentList);
     }
 
     public String getColor(Context ctx, int color)
@@ -156,20 +241,5 @@ public class Misc
             return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
         else
             return "#9e9e9e";
-    }
-
-    public String generateSeed()
-    {
-        char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 10; i++)
-        {
-            char c = chars[random.nextInt(chars.length)];
-            sb.append(c);
-        }
-        return sb.toString();
     }
 }

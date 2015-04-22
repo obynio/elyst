@@ -1,5 +1,7 @@
 package com.sybiload.elyst;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -37,7 +40,7 @@ public class ActivityShop extends ActionBarActivity
     private RecyclerView.LayoutManager layoutManager;
 
     Toolbar toolbar;
-    private AdapterEditText editTextName;
+    private EditText editTextName;
     private EditText editTextDescription;
     private TextView textViewBarcode;
     private ImageButton fabImageButton;
@@ -54,6 +57,9 @@ public class ActivityShop extends ActionBarActivity
     private String barType = null;
     private String barCode = null;
 
+    // test
+    public static ActivityShop activity;
+
     private SharedPreferences mainPref;
 
     protected void onCreate(Bundle paramBundle)
@@ -62,8 +68,11 @@ public class ActivityShop extends ActionBarActivity
         mainPref = getApplicationContext().getSharedPreferences("main", 0);
         setContentView(R.layout.activity_item);
 
+        //test
+        activity = this;
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        editTextName = (AdapterEditText)findViewById(R.id.editTextItemName);
+        editTextName = (EditText)findViewById(R.id.editTextItemName);
         editTextDescription = (EditText)findViewById(R.id.editTextItemDescription);
         textViewBarcode = (TextView)findViewById(R.id.textViewItemBarcode);
         imageViewColorGreen = (ImageView)findViewById(R.id.imageViewItemColorGreen);
@@ -88,26 +97,20 @@ public class ActivityShop extends ActionBarActivity
             toolbar.inflateMenu(R.menu.barcode);
 
         toolbar.setTitle(Static.currentList.getName());
-        toolbar.setNavigationOnClickListener(new View.OnClickListener()
-        {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                if (toolbarOpened)
-                {
+            public void onClick(View v) {
+                if (toolbarOpened) {
                     barAction();
-                }
-                else if (AdapterShop.selectedHolder.size() > 0)
-                {
+                } else if (AdapterShop.selectedIndex.size() > 0) {
                     currAdap.clearSelected();
-                }
-                else
-                {
+                } else {
                     finish();
                     new Misc().rightTransition(ActivityShop.this);
                 }
             }
         });
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener()
         {
             @Override
@@ -117,7 +120,7 @@ public class ActivityShop extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item newItem = new Item(editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getColor(), barType, barCode, currentItem.isToShop(), currentItem.isDone());
+                        Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getCategory(), currentItem.getPrice(), currentItem.getQuantity(), currentItem.getUnit(), barType, barCode, currentItem.getDone());
 
                         currAdap.update(currentItem, newItem);
 
@@ -156,44 +159,15 @@ public class ActivityShop extends ActionBarActivity
             }
         });
 
-
-
         editTextName.addTextChangedListener(new TextWatcher()
         {
             public void afterTextChanged(Editable s)
             {
-                boolean error = false;
                 String text = editTextName.getText().toString();
 
-                if (!text.equals(currentItem.getName()) && toolbarOpened)
+                if (toolbarOpened)
                 {
-                    // check if an item to shop already exists
-                    for (Item it : Static.currentList.itemShop)
-                    {
-                        if (text.toLowerCase().equals(it.getName().toLowerCase()))
-                        {
-                            error = true;
-                            break;
-                        }
-                    }
-
-                    // check if an item available already exists
-                    for (Item it : Static.currentList.itemAvailable)
-                    {
-                        if (text.toLowerCase().equals(it.getName().toLowerCase()))
-                        {
-                            error = true;
-                            break;
-                        }
-                    }
-
-                    if (error)
-                    {
-                        editTextName.setError("");
-
-                        toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
-                    }
-                    else if (text.isEmpty())
+                    if (text.isEmpty())
                     {
                         toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
                     }
@@ -225,7 +199,7 @@ public class ActivityShop extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                currentItem.setColor(1);
+                currentItem.setCategory(1);
                 setColorImageView(1);
             }
         });
@@ -235,7 +209,7 @@ public class ActivityShop extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                currentItem.setColor(2);
+                currentItem.setCategory(2);
                 setColorImageView(2);
             }
         });
@@ -245,7 +219,7 @@ public class ActivityShop extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                currentItem.setColor(3);
+                currentItem.setCategory(3);
                 setColorImageView(3);
             }
         });
@@ -255,7 +229,7 @@ public class ActivityShop extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                currentItem.setColor(4);
+                currentItem.setCategory(4);
                 setColorImageView(4);
             }
         });
@@ -265,7 +239,7 @@ public class ActivityShop extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                currentItem.setColor(5);
+                currentItem.setCategory(5);
                 setColorImageView(5);
             }
         });
@@ -295,7 +269,7 @@ public class ActivityShop extends ActionBarActivity
     public void onPause()
     {
         // solve bug while switching to another app and switching back to this one
-        if (!AdapterShop.selectedHolder.isEmpty())
+        if (!AdapterShop.selectedIndex.isEmpty())
         {
             currAdap.clearSelected();
         }
@@ -303,51 +277,34 @@ public class ActivityShop extends ActionBarActivity
         super.onPause();
     }
 
-    public static void expand(final View v) {
-        final int targetHeight = 500;
-        final int startHeight = v.getHeight();
-
-        Animation a = new Animation()
-        {
-
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1 ? v.getHeight() : (int)(targetHeight * interpolatedTime + startHeight);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration(200);
-        v.startAnimation(a);
+    private void expand(View v)
+    {
+        ValueAnimator mAnimator = slideAnimator(v, 168, 600);
+        mAnimator.start();
     }
 
-    public static void collapse(final View v) {
-        final int targetHeight = 168;
-        final int initialHeight = v.getHeight() - targetHeight;
+    private void collapse(View v)
+    {
+        ValueAnimator mAnimator = slideAnimator(v, 600, 168);
+        mAnimator.start();
+    }
 
-        Animation a = new Animation()
+    private ValueAnimator slideAnimator(final View v, int start, int end) {
+
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
         {
-
             @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1 ? targetHeight : targetHeight + initialHeight -  (int)(initialHeight * interpolatedTime);
-                v.requestLayout();
+            public void onAnimationUpdate(ValueAnimator valueAnimator)
+            {
+                int value = (Integer) valueAnimator.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+                layoutParams.height = value;
+                v.setLayoutParams(layoutParams);
             }
+        });
 
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration(200);
-        v.startAnimation(a);
+        return animator;
     }
 
     public void barAction()
@@ -403,7 +360,7 @@ public class ActivityShop extends ActionBarActivity
             // set name, description editText and color imageView
             editTextName.setText(currentItem.getName());
             editTextDescription.setText(currentItem.getDescription());
-            setColorImageView(currentItem.getColor());
+            setColorImageView(currentItem.getCategory());
 
             // visible editText field
             llEditItem.setVisibility(View.VISIBLE);
@@ -482,15 +439,12 @@ public class ActivityShop extends ActionBarActivity
 
                 if (myItem != null)
                 {
-                    myItem.toShop(true);
-                    myItem.done(false);
+                    myItem.setDone(false);
 
-                    DatabaseItem databaseItem = new DatabaseItem(getApplicationContext(), Static.currentList.getDatabase());
+                    DatabaseItem databaseItem = new DatabaseItem(getApplicationContext(), Static.currentList.getIdDb());
 
                     // update database
-                    databaseItem.open();
-                    databaseItem.updateByName(myItem.getName(), myItem);
-                    databaseItem.close();
+                    new Misc().updateItem(getApplicationContext(), myItem);
 
                     // get position of our item in the availableItem and remove it
                     int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -537,7 +491,7 @@ public class ActivityShop extends ActionBarActivity
 
     public void pressSelect()
     {
-        if (!toolbarOpened && AdapterShop.selectedHolder.size() == 0)
+        if (!toolbarOpened && AdapterShop.selectedIndex.size() == 0)
         {
             toolbar.getMenu().clear();
 
@@ -547,7 +501,7 @@ public class ActivityShop extends ActionBarActivity
             // restore new item option removed to prevent bug abuse
             fabUp();
         }
-        else if (!toolbarOpened && AdapterShop.selectedHolder.size() == 1)
+        else if (!toolbarOpened && AdapterShop.selectedIndex.size() == 1)
         {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.edit_remove);
@@ -621,7 +575,7 @@ public class ActivityShop extends ActionBarActivity
         {
             barAction();
         }
-        else if (!AdapterShop.selectedHolder.isEmpty())
+        else if (!AdapterShop.selectedIndex.isEmpty())
         {
             currAdap.clearSelected();
         }

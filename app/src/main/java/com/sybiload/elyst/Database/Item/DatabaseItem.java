@@ -1,7 +1,5 @@
 package com.sybiload.elyst.Database.Item;
 
-
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -9,87 +7,161 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import com.sybiload.elyst.Item;
+import com.sybiload.elyst.List;
+import com.sybiload.elyst.Static;
 
 import java.util.ArrayList;
 
-public class DatabaseItem extends DatabaseItemH
+public class DatabaseItem
 {
-    private SQLiteDatabase database;
+    HandlerIndex handlerIndex;
+    public SQLiteDatabase dbIndex;
+
+    HandlerChild handlerChild;
+    public SQLiteDatabase dbChild;
 
     Context ctx;
+    String idDb;
 
-    public DatabaseItem(Context ctx, String name)
+    public DatabaseItem(Context ctx, String idDb)
     {
-        super(ctx, name);
         this.ctx = ctx;
+
+        handlerIndex = new HandlerIndex(ctx);
+
+        this.idDb = idDb;
+
+        if (this.idDb != null)
+            handlerChild = new HandlerChild(ctx, idDb);
     }
 
     // allow to open list tabl
     public void open() throws SQLException
     {
-        database = getWritableDatabase();
+        dbIndex = handlerIndex.getWritableDatabase();
+
+        if (this.idDb != null)
+            dbChild = handlerChild.getWritableDatabase();
     }
 
-    // insert a new list into the table
+    // delete item from all databases
     public void deleteItem(Item newItem)
     {
-        database.delete(CURRENT_TABL, COLUMN_NAME + "='" + newItem.getName() + "'", null);
+        dbChild.close();
+
+        for (List mylist : Static.allList)
+        {
+            HandlerChild handlerCurrent = new HandlerChild(ctx, mylist.getIdDb());
+            SQLiteDatabase dbCurrent = handlerCurrent.getWritableDatabase();
+            dbCurrent.delete(HandlerChild.CURRENT_TABL, HandlerChild.COLUMN_ID_ITEM + "='" + newItem.getIdItem() + "'", null);
+        }
+
+        dbIndex.delete(HandlerIndex.CURRENT_TABL, HandlerIndex.COLUMN_ID_ITEM + "='" + newItem.getIdItem() + "'", null);
     }
 
-    // insert a new list into the table
+    // remove item from current list
+    public void removeItem(Item newItem)
+    {
+        dbChild.delete(HandlerChild.CURRENT_TABL, HandlerChild.COLUMN_ID_ITEM + "='" + newItem.getIdItem() + "'", null);
+    }
+
+    // create a new item into the table
+    public void createItem(Item newItem)
+    {
+        // insert into HandlerIndex database
+        SQLiteStatement stmtIndex = dbIndex.compileStatement(HandlerIndex.ITEM_INSERT);
+
+        stmtIndex.bindString(1, newItem.getIdItem());
+        stmtIndex.bindString(2, newItem.getName());
+        stmtIndex.bindLong(3, newItem.getCategory());
+        stmtIndex.bindDouble(4, newItem.getPrice());
+
+        if (newItem.getBarType() == null)
+            stmtIndex.bindNull(5);
+        else
+            stmtIndex.bindString(5, newItem.getBarType());
+
+        if (newItem.getBarCode() == null)
+            stmtIndex.bindNull(6);
+        else
+            stmtIndex.bindString(6, newItem.getBarCode());
+
+        // execute all this stuff
+        stmtIndex.execute();
+    }
+
+    // insert a new item into the table
     public void insertItem(Item newItem)
     {
-        SQLiteStatement stmt = database.compileStatement(INSERT_INTO);
-        stmt.bindString(1, newItem.getName());
+        // insert HandlerChild database
+        SQLiteStatement stmtChild = dbChild.compileStatement(HandlerChild.ITEM_INSERT);
+        stmtChild.bindString(1, newItem.getIdItem());
 
         if (newItem.getDescription() == null)
-            stmt.bindNull(2);
+            stmtChild.bindNull(2);
         else
-            stmt.bindString(2, newItem.getDescription());
+            stmtChild.bindString(2, newItem.getDescription());
 
-        stmt.bindLong(3, newItem.getColor());
+        stmtChild.bindDouble(3, newItem.getQuantity());
 
-        if (newItem.getBarType() == null)
-            stmt.bindNull(4);
+        if (newItem.getUnit() == null)
+            stmtChild.bindNull(4);
         else
-            stmt.bindString(4, newItem.getBarType());
+            stmtChild.bindString(4, newItem.getUnit());
 
-        if (newItem.getBarCode() == null)
-            stmt.bindNull(5);
-        else
-            stmt.bindString(5, newItem.getBarCode());
+        stmtChild.bindLong(5, newItem.getDone() ? 1 : 0);
 
-        stmt.bindLong(6, newItem.isToShop() ? 1 : 0);
-        stmt.bindLong(7, newItem.isDone() ? 1 : 0);
-        stmt.execute();
+        // execute all this stuff
+        stmtChild.execute();
     }
 
-    public void updateByName(String name, Item newItem)
+    public void updateItem(Item newItem)
     {
-        SQLiteStatement stmt = database.compileStatement(UPDATE);
-        stmt.bindString(1, newItem.getName());
+        // update HandlerIndex database
+        SQLiteStatement stmtIndex = dbIndex.compileStatement(HandlerIndex.ITEM_UPDATE);
 
-        if (newItem.getDescription() == null)
-            stmt.bindNull(2);
-        else
-            stmt.bindString(2, newItem.getDescription());
-
-        stmt.bindLong(3, newItem.getColor());
+        stmtIndex.bindString(1, newItem.getIdItem());
+        stmtIndex.bindString(2, newItem.getName());
+        stmtIndex.bindLong(3, newItem.getCategory());
+        stmtIndex.bindDouble(4, newItem.getPrice());
 
         if (newItem.getBarType() == null)
-            stmt.bindNull(4);
+            stmtIndex.bindNull(5);
         else
-            stmt.bindString(4, newItem.getBarType());
+            stmtIndex.bindString(5, newItem.getBarType());
 
         if (newItem.getBarCode() == null)
-            stmt.bindNull(5);
+            stmtIndex.bindNull(6);
         else
-            stmt.bindString(5, newItem.getBarCode());
+            stmtIndex.bindString(6, newItem.getBarCode());
 
-        stmt.bindLong(6, newItem.isToShop() ? 1 : 0);
-        stmt.bindLong(7, newItem.isDone() ? 1 : 0);
-        stmt.bindString(8, name);
-        stmt.execute();
+        // value to search old item
+        stmtIndex.bindString(7, newItem.getIdItem());
+
+        // update HandlerChild database
+        SQLiteStatement stmtChild = dbChild.compileStatement(HandlerChild.ITEM_UPDATE);
+        stmtChild.bindString(1, newItem.getIdItem());
+
+        if (newItem.getDescription() == null)
+            stmtChild.bindNull(2);
+        else
+            stmtChild.bindString(2, newItem.getDescription());
+
+        stmtChild.bindDouble(3, newItem.getQuantity());
+
+        if (newItem.getUnit() == null)
+            stmtChild.bindNull(4);
+        else
+            stmtChild.bindString(4, newItem.getUnit());
+
+        stmtChild.bindLong(5, newItem.getDone() ? 1 : 0);
+
+        // value to search old item
+        stmtChild.bindString(6, newItem.getIdItem());
+
+        // execute all this stuff
+        stmtIndex.execute();
+        stmtChild.execute();
     }
 
     public ArrayList<Item> searchItem(String s)
@@ -98,35 +170,60 @@ public class DatabaseItem extends DatabaseItemH
         ArrayList<Item> arrayItem = new ArrayList<Item>();
 
         // only select the row which have the first letters of the name in common and that are not available to shop
-        Cursor c = database.rawQuery("SELECT * FROM " + CURRENT_TABL + " WHERE name LIKE '" + s + "%' AND shop LIKE 0", null);
+        Cursor cIndex = dbIndex.rawQuery("SELECT * FROM " + HandlerIndex.CURRENT_TABL + " WHERE name LIKE '" + s + "%'", null);
 
-        while (c.moveToNext())
+        while (cIndex.moveToNext())
         {
             // for each row, create a new list object and add it to the list array
-            Item myItem = new Item(c.getString(0), c.getString(1), c.getInt(2), c.getString(3), c.getString(4), (c.getInt(5) != 0), (c.getInt(6) != 0));
+            Item myItem = new Item(cIndex.getString(0), cIndex.getString(1), null, cIndex.getInt(2), cIndex.getDouble(3), 0.0, null, cIndex.getString(4), cIndex.getString(5), false);
             arrayItem.add(myItem);
         }
 
         // return the result of the research
-        c.close();
+        cIndex.close();
         return arrayItem;
     }
 
-    // read all list from the table
-    public ArrayList<Item> readAllItem()
+    // read index item from database
+    public ArrayList<Item> readIndexItem()
     {
         // get all the rows
         ArrayList<Item> arrayItem = new ArrayList<Item>();
-        Cursor c = database.rawQuery("SELECT * FROM " + CURRENT_TABL, null);
+        Cursor cIndex = dbIndex.rawQuery("SELECT * FROM " + HandlerIndex.CURRENT_TABL, null);
 
-        while (c.moveToNext())
+        while (cIndex.moveToNext())
         {
             // for each row, create a new list object and add it to the list array
-            Item myItem = new Item(c.getString(0), c.getString(1), c.getInt(2), c.getString(3), c.getString(4), (c.getInt(5) != 0), (c.getInt(6) != 0));
+            Item myItem = new Item(cIndex.getString(0), cIndex.getString(1), null, cIndex.getInt(2), cIndex.getDouble(3), 0.0, null, cIndex.getString(4), cIndex.getString(5), false);
             arrayItem.add(myItem);
         }
 
-        c.close();
+        cIndex.close();
+        return arrayItem;
+    }
+
+    // read child item from database
+    public ArrayList<Item> readChildItem()
+    {
+        // get all the rows
+        ArrayList<Item> arrayItem = new ArrayList<Item>();
+        Cursor cChild = dbChild.rawQuery("SELECT * FROM " + HandlerChild.CURRENT_TABL, null);
+
+        while (cChild.moveToNext())
+        {
+            String hllo = cChild.getString(0);
+            Cursor cIndex = dbIndex.rawQuery("SELECT * FROM " + HandlerIndex.CURRENT_TABL + " WHERE id_item='" + cChild.getString(0) + "'", null);
+            cIndex.moveToFirst();
+
+            // for each row, create a new list object and add it to the list array
+            Item myItem = new Item(cChild.getString(0), cIndex.getString(1), cChild.getString(1), cIndex.getInt(2), cIndex.getDouble(3), cChild.getDouble(2), cChild.getString(3), cIndex.getString(4), cIndex.getString(5), cChild.getInt(4) != 0);
+            arrayItem.add(myItem);
+
+            cIndex.close();
+        }
+
+
+        cChild.close();
         return arrayItem;
     }
 }

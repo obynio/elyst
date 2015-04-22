@@ -33,13 +33,14 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
     private SharedPreferences mainPref;
 
-    public static ArrayList<ViewHolder> selectedHolder = new ArrayList<ViewHolder>();
-    public static ArrayList<Item> selectedItem = new ArrayList<Item>();
+    public static ArrayList<ViewHolder> selectedHolder = new ArrayList<>();
+    public static ArrayList<Integer> selectedIndex = new ArrayList<>();
+    public static ArrayList<Item> selectedItem = new ArrayList<>();
 
     public AdapterAdd(Context ctx)
     {
         this.ctx = ctx;
-        database = new DatabaseItem(ctx, Static.currentList.getDatabase());
+        database = new DatabaseItem(ctx, Static.currentList.getIdDb());
 
         mainPref = ctx.getSharedPreferences("main", 0);
 
@@ -65,9 +66,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         for (Item myItem : selectedItem)
         {
             // update database
-            database.open();
-            database.deleteItem(myItem);
-            database.close();
+            new Misc().removeItem(ctx, myItem);
 
             // remove item from itemShop
             int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -80,12 +79,13 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     public void clearSelected()
     {
 
-        for (int i = 0; i < selectedHolder.size(); i++)
+        for (ViewHolder hold : selectedHolder)
         {
-            selectedHolder.get(i).itemView.setBackgroundColor(Color.TRANSPARENT);
+            hold.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
 
+        selectedIndex.clear();
         selectedHolder.clear();
         selectedItem.clear();
         ((ActivityAdd)ctx).pressSelect();
@@ -95,13 +95,10 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     {
         if (Static.currentList.itemAvailable.contains(myItem))
         {
-            myItem.toShop(true);
-            myItem.done(false);
+            myItem.setDone(false);
 
             // update database
-            database.open();
-            database.updateByName(myItem.getName(), myItem);
-            database.close();
+            new Misc().insertItem(ctx, myItem);
 
             // get position of our item in the availableItem and remove it
             int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -118,9 +115,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     {
         // update database
 
-        database.open();
-        database.updateByName(oldItem.getName(), newItem);
-        database.close();
+        new Misc().updateItem(ctx, newItem);
 
 
         int position = Static.currentList.itemAvailable.indexOf(oldItem);
@@ -156,80 +151,87 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        if (!Static.currentList.itemAvailable.get(position).isToShop())
+        final Item myItem = Static.currentList.itemAvailable.get(position);
+
+        if (!selectedIndex.contains(position))
         {
-            final Item myItem = Static.currentList.itemAvailable.get(position);
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+        else
+        {
+            holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+        }
 
+        holder.txtHeader.setText(myItem.getName());
 
-            holder.txtHeader.setText(myItem.getName());
-
-
-            // when there is a long click on a row, either remove item if the toolbar of the activity is not opened, or hide the toolbar if it is opened. More details below
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
+        // when there is a long click on a row, either remove item if the toolbar of the activity is not opened, or hide the toolbar if it is opened. More details below
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
             {
-                @Override
-                public boolean onLongClick(View v)
+                if (!selectedIndex.contains(position))
                 {
-                    if (!selectedHolder.contains(holder))
-                    {
-                        ActivityAdd.currentItem = myItem;
+                    ActivityAdd.currentItem = myItem;
 
+                    holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
+
+                    selectedHolder.add(holder);
+                    selectedIndex.add(position);
+                    selectedItem.add(myItem);
+
+                    ((ActivityAdd)ctx).pressSelect();
+                }
+
+                return true;
+            }
+        });
+
+        holder.itemView.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (!ActivityAdd.toolbarOpened)
+                {
+                    if (selectedIndex.contains(position))
+                    {
+                        holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+
+                        selectedHolder.remove(holder);
+                        selectedIndex.remove(selectedIndex.indexOf(position));
+                        selectedItem.remove(myItem);
+
+                        ((ActivityAdd)ctx).pressSelect();
+                    }
+                    else if (!selectedIndex.contains(position) && selectedIndex.size() != 0)
+                    {
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
+                        selectedIndex.add(position);
                         selectedItem.add(myItem);
 
                         ((ActivityAdd)ctx).pressSelect();
                     }
-
-                    return true;
-                }
-            });
-
-            holder.itemView.setOnClickListener(new OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    if (!ActivityAdd.toolbarOpened)
+                    else if (selectedIndex.size() == 0)
                     {
-                        if (selectedHolder.contains(holder))
+                        remove(myItem);
+
+                        // make vibration
+                        Vibrator vbr = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
+                        if (mainPref.getBoolean("checkBoxSystemVibration", true) && vbr.hasVibrator())
                         {
-                            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-
-                            selectedHolder.remove(holder);
-                            selectedItem.remove(myItem);
-
-                            ((ActivityAdd)ctx).pressSelect();
-                        }
-                        else if (!selectedHolder.contains(holder) && selectedHolder.size() != 0)
-                        {
-                            holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
-
-                            selectedHolder.add(holder);
-                            selectedItem.add(myItem);
-
-                            ((ActivityAdd)ctx).pressSelect();
-                        }
-                        else if (selectedHolder.size() == 0)
-                        {
-                            remove(myItem);
-
-                            // make vibration
-                            Vibrator vbr = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
-                            if (mainPref.getBoolean("checkBoxSystemVibration", true) && vbr.hasVibrator())
-                            {
-                                vbr.vibrate(14);
-                            }
+                            vbr.vibrate(14);
                         }
                     }
                 }
-            });
+            }
+        });
 
 
-            holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getColor())));
-        }
+        holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
+        holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getCategory())));
     }
 
     @Override

@@ -66,18 +66,16 @@ public class WidgetView extends AppWidgetProvider
 
                 if (done)
                 {
-                    if (currentItem.isDone())
-                        currentItem.done(false);
+                    if (currentItem.getDone())
+                        currentItem.setDone(false);
                     else
-                        currentItem.done(true);
+                        currentItem.setDone(true);
 
 
-                    DatabaseItem database = new DatabaseItem(context, Static.allList.get(0).getDatabase());
+                    DatabaseItem database = new DatabaseItem(context, Static.allList.get(0).getIdDb());
 
                     // update database
-                    database.open();
-                    database.updateByName(currentItem.getName(), currentItem);
-                    database.close();
+                    new Misc().updateItem(context, currentItem);
 
                     // make vibration
                     Vibrator vbr = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -97,7 +95,7 @@ public class WidgetView extends AppWidgetProvider
                 int countRemaining = 0;
                 for (Item it : Static.widgetList.itemShop)
                 {
-                    if (it.isDone())
+                    if (it.getDone())
                         countDone++;
                     else
                         countRemaining++;
@@ -120,25 +118,25 @@ public class WidgetView extends AppWidgetProvider
                     views.setViewVisibility(R.id.textViewWidgetSecondLine, View.GONE);
                 }
 
-                if (!currentItem.isDone())
+                if (!currentItem.getDone())
                 {
-                    if (currentItem.getColor() == 1)
+                    if (currentItem.getCategory() == 1)
                     {
                         views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_icon_green);
                     }
-                    else if (currentItem.getColor() == 2)
+                    else if (currentItem.getCategory() == 2)
                     {
                         views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_icon_orange);
                     }
-                    else if (currentItem.getColor() == 3)
+                    else if (currentItem.getCategory() == 3)
                     {
                         views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_icon_red);
                     }
-                    else if (currentItem.getColor() == 4)
+                    else if (currentItem.getCategory() == 4)
                     {
                         views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_icon_purple);
                     }
-                    else if (currentItem.getColor() == 5)
+                    else if (currentItem.getCategory() == 5)
                     {
                         views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_icon_blue);
                     }
@@ -151,23 +149,23 @@ public class WidgetView extends AppWidgetProvider
                     }
                     else
                     {
-                        if (currentItem.getColor() == 1)
+                        if (currentItem.getCategory() == 1)
                         {
                             views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_nicon_green);
                         }
-                        else if (currentItem.getColor() == 2)
+                        else if (currentItem.getCategory() == 2)
                         {
                             views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_nicon_orange);
                         }
-                        else if (currentItem.getColor() == 3)
+                        else if (currentItem.getCategory() == 3)
                         {
                             views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_nicon_red);
                         }
-                        else if (currentItem.getColor() == 4)
+                        else if (currentItem.getCategory() == 4)
                         {
                             views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_nicon_purple);
                         }
-                        else if (currentItem.getColor() == 5)
+                        else if (currentItem.getCategory() == 5)
                         {
                             views.setImageViewResource(R.id.imageViewWidget, R.mipmap.ic_nicon_blue);
                         }

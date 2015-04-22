@@ -15,65 +15,69 @@ import com.sybiload.elyst.Static;
 
 import java.util.ArrayList;
 
-public class DatabaseList extends DatabaseListH
+public class DatabaseList
 {
-    private SQLiteDatabase database;
+    private HandlerList handlerList;
+    public SQLiteDatabase dbList;
 
     Context ctx;
 
     public DatabaseList(Context ctx)
     {
-        super(ctx);
         this.ctx = ctx;
+
+        handlerList = new HandlerList(ctx);
     }
 
     // allow to open list tabl
     public void open() throws SQLException
     {
-        database = getWritableDatabase();
+        dbList = handlerList.getWritableDatabase();
     }
 
     public void deleteItem(List newList)
     {
-        database.delete(CURRENT_TABL, COLUMN_TABL + "='" + newList.getDatabase() + "'", null);
+        dbList.delete(HandlerList.CURRENT_TABL, HandlerList.COLUMN_ID_DB + "='" + newList.getIdDb() + "'", null);
     }
 
     // insert a new list into the table
     public void insertList(List newList)
     {
-        SQLiteStatement stmt = database.compileStatement(INSERT_INTO);
-        stmt.bindString(1, newList.getName());
+        SQLiteStatement stmtList = dbList.compileStatement(HandlerList.LIST_INSERT);
+        stmtList.bindString(1, newList.getIdDb());
+        stmtList.bindString(2, newList.getName());
 
         if (newList.getDescription() == null)
-            stmt.bindNull(2);
+            stmtList.bindNull(3);
         else
-            stmt.bindString(2, newList.getDescription());
+            stmtList.bindString(3, newList.getDescription());
 
-        stmt.bindString(3, newList.getDatabase());
-        stmt.execute();
+        stmtList.execute();
     }
 
-    public void updateByName(String name, List newList)
+    public void updateByName(List newList)
     {
-        SQLiteStatement stmt = database.compileStatement(UPDATE);
-        stmt.bindString(1, newList.getName());
+        SQLiteStatement stmtList = dbList.compileStatement(HandlerList.LIST_UPDATE);
+        stmtList.bindString(1, newList.getIdDb());
+        stmtList.bindString(2, newList.getName());
 
         if (newList.getDescription() == null)
-            stmt.bindNull(2);
+            stmtList.bindNull(3);
         else
-            stmt.bindString(2, newList.getDescription());
+            stmtList.bindString(3, newList.getDescription());
 
-        stmt.bindString(3, newList.getDatabase());
-        stmt.bindString(4, name);
-        stmt.execute();
+        // value to search old list
+        stmtList.bindString(4, newList.getIdDb());
+
+        stmtList.execute();
     }
 
     // read all list from the table
-    public ArrayList<List> readAllList()
+    public ArrayList<List> readList()
     {
         ArrayList<List> allList = new ArrayList<List>();
         // get all the rows
-        Cursor c = database.rawQuery("SELECT * FROM " + CURRENT_TABL, null);
+        Cursor c = dbList.rawQuery("SELECT * FROM " + HandlerList.CURRENT_TABL, null);
 
         while (c.moveToNext())
         {

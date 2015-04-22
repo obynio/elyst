@@ -258,6 +258,8 @@ public class ActivityMain extends ActionBarActivity
         // if it's the first launch, start the intro
         if (mainPref.getBoolean("firstLaunch", true))
         {
+            new Misc().populateDefaultItem(getApplicationContext());
+
             Intent intent = new Intent(getApplication(), ActivityOne.class);
             startActivity(intent);
             finish();

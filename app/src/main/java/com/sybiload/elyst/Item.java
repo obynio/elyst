@@ -3,23 +3,38 @@ package com.sybiload.elyst;
 
 public class Item
 {
+    private String idItem;
     private String name;
     private String description;
-    private int color;
+    private int category;
+    private double price;
+    private double quantity;
+    private String unit;
     private String barType;
     private String barCode;
-    private boolean shop;
     private boolean done;
 
-    public Item(String name, String footer, int color, String barType, String barCode, Boolean shop, Boolean done)
+    public Item(String idItem, String name, String description, int category, double price, double quantity,  String unit, String barType, String barCode, Boolean done)
     {
+        this.idItem = idItem;
         this.name = name;
-        this.description = footer;
-        this.color = color;
+        this.description = description;
+        this.category = category;
+        this.price = price;
+        this.quantity = quantity;
+        this.unit = unit;
         this.barType = barType;
         this.barCode = barCode;
-        this.shop = shop;
         this.done = done;
+    }
+
+    public String getIdItem()
+    {
+        return this.idItem;
+    }
+    public void setIdItem(String idItem)
+    {
+        this.idItem = idItem;
     }
 
     public String getName()
@@ -40,13 +55,40 @@ public class Item
         this.description = description;
     }
 
-    public int getColor()
+    public int getCategory()
     {
-        return this.color;
+        return this.category;
     }
-    public void setColor(int color)
+    public void setCategory(int category)
     {
-        this.color = color;
+        this.category = category;
+    }
+
+    public double getPrice()
+    {
+        return this.price;
+    }
+    public void setPrice(double price)
+    {
+        this.price = price;
+    }
+
+    public double getQuantity()
+    {
+        return this.quantity;
+    }
+    public void setQuantity(double quantity)
+    {
+        this.quantity = quantity;
+    }
+
+    public String getUnit()
+    {
+        return this.unit;
+    }
+    public void setUnit (String unit)
+    {
+        this.unit = unit;
     }
 
     public String getBarType()
@@ -67,20 +109,11 @@ public class Item
         this.barCode = barCode;
     }
 
-    public Boolean isToShop()
-    {
-        return this.shop;
-    }
-    public void toShop(Boolean shop)
-    {
-        this.shop = shop;
-    }
-
-    public Boolean isDone()
+    public Boolean getDone()
     {
         return this.done;
     }
-    public void done(Boolean done)
+    public void setDone(Boolean done)
     {
         this.done = done;
     }
