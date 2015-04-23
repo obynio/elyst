@@ -16,6 +16,23 @@
         <item>com.sybiload.elyst.FragmentList</item>
     </string-array>
 
+    <!-- activity_shop.xml -->
+
+    <string-array name="unit_entries">
+        <item>Unit</item>
+        <item>mg</item>
+        <item>g</item>
+        <item>kg</item>
+        <item>ml</item>
+        <item>cl</item>
+        <item>l</item>
+        <item>Bottle</item>
+        <item>Box</item>
+        <item>Can</item>
+        <item>Grape</item>
+        <item>Pack</item>
+    </string-array>
+
     <!-- widget_pref.xml -->
 
     <string-array name="widget_pref_theme_entries">
@@ -60,6 +77,18 @@
     <string-array name="ui_pref_shop_sort_values">
         <item>alphabetical</item>
         <item>category</item>
+    </string-array>
+
+    <string-array name="ui_pref_bg_res_entries">
+        <item>1024 x 344</item>
+        <item>512 x 172</item>
+        <item>256 x 86</item>
+    </string-array>
+
+    <string-array name="ui_pref_bg_res_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
     <!-- misc -->

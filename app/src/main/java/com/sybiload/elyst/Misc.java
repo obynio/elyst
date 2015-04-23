@@ -145,7 +145,7 @@ public class Misc
 
         for (int i = 0; i < defaultItemName.length; i++)
         {
-            Item myItem = new Item(generateSeed(), defaultItemName[i], null, defaultItemCategory[i], 0.0, 0.0, null, null, null, false);
+            Item myItem = new Item(generateSeed(), defaultItemName[i], null, defaultItemCategory[i], 0.0, 0.0, 0, null, null, false);
             databaseItem.createItem(myItem);
         }
 

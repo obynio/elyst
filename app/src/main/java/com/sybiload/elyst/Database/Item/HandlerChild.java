@@ -17,7 +17,7 @@ public class HandlerChild extends SQLiteOpenHelper
     private static final int DATABASE_VERSION = 1;
 
     protected static final String CURRENT_TABL = "root";
-    protected static final String ITEM_CREATE = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_ID_ITEM + " TEXT, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_QUANTITY + " REAL DEFAULT 0.0, " + COLUMN_UNIT + " TEXT, " + COLUMN_DONE + " INTEGER DEFAULT 0);";
+    protected static final String ITEM_CREATE = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_ID_ITEM + " TEXT, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_QUANTITY + " REAL DEFAULT 0.0, " + COLUMN_UNIT + " INTEGER DEFAULT 0, " + COLUMN_DONE + " INTEGER DEFAULT 0);";
     protected static final String ITEM_INSERT = "INSERT INTO " + CURRENT_TABL + " VALUES (?, ?, ?, ?, ?);";
     protected static final String ITEM_UPDATE = "UPDATE " + CURRENT_TABL + " SET " + COLUMN_ID_ITEM + "=?, " + COLUMN_DESCRIPTION + "=?, " + COLUMN_QUANTITY + "=?, " + COLUMN_UNIT + "=?, " + COLUMN_DONE + "=? WHERE " + COLUMN_ID_ITEM + "=?;";
 

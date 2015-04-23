@@ -1,9 +1,11 @@
 package com.sybiload.elyst.Welcome;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +18,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.sybiload.elyst.ActivityMain;
+import com.sybiload.elyst.Database.List.DatabaseList;
 import com.sybiload.elyst.Misc;
 import com.sybiload.elyst.R;
 
@@ -68,11 +71,7 @@ public class ActivityThree extends Activity
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainPref.edit().putBoolean("firstLaunch", false).commit();
-
-                Intent intent = new Intent(getApplication(), ActivityMain.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                new newItemAsync().execute();
             }
         });
 
@@ -100,4 +99,37 @@ public class ActivityThree extends Activity
         finish();
         new Misc().rightTransition(ActivityThree.this);
     }
+
+    public class newItemAsync extends AsyncTask<Void, Void, Void>
+    {
+        protected ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(ActivityThree.this);
+            dialog.setMessage("Just a moment..");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            new Misc().populateDefaultItem(getApplicationContext());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused)
+        {
+            mainPref.edit().putBoolean("firstLaunch", false).commit();
+            dialog.dismiss();
+
+            Intent intent = new Intent(getApplication(), ActivityMain.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
+    }
+
+
 }

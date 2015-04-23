@@ -27,7 +27,7 @@
             android:id="@+id/llEditAddItem"
             android:visibility="gone">
 
-            <com.sybiload.elyst.Adapter.AdapterEditText
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLength="20"
@@ -36,7 +36,7 @@
                 android:textColor="#FFFFFF"
                 android:textColorHint="#C5CAE9"
                 android:background="@null"
-                android:textSize="26dp"
+                android:textSize="28dp"
                 android:textColorHighlight="#2196F3"
                 android:hint="Name"
                 android:inputType="textCapSentences"
@@ -47,17 +47,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:textSize="12dp"
+                android:layout_marginTop="6dp"
+                android:textSize="10dp"
                 android:visibility="gone"
                 android:layout_below="@id/editTextAddItemName"
                 android:id="@+id/textViewAddItemBarcode"
                 android:textColor="#C5CAE9"/>
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="6"
+                android:layout_below="@+id/textViewAddItemBarcode"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="8dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C5CAE9"
+                android:background="@null"
+                android:textSize="18dp"
+                android:textColorHighlight="#2196F3"
+                android:hint="Price"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:id="@+id/editTextAddItemPrice"/>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textViewAddItemBarcode"
+                android:layout_below="@+id/editTextAddItemPrice"
                 android:layout_marginTop="20dp">
 
                 <ImageView

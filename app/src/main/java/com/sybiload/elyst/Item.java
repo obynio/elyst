@@ -9,12 +9,12 @@ public class Item
     private int category;
     private double price;
     private double quantity;
-    private String unit;
+    private int unit;
     private String barType;
     private String barCode;
     private boolean done;
 
-    public Item(String idItem, String name, String description, int category, double price, double quantity,  String unit, String barType, String barCode, Boolean done)
+    public Item(String idItem, String name, String description, int category, double price, double quantity,  int unit, String barType, String barCode, Boolean done)
     {
         this.idItem = idItem;
         this.name = name;
@@ -82,11 +82,11 @@ public class Item
         this.quantity = quantity;
     }
 
-    public String getUnit()
+    public int getUnit()
     {
         return this.unit;
     }
-    public void setUnit (String unit)
+    public void setUnit (int unit)
     {
         this.unit = unit;
     }

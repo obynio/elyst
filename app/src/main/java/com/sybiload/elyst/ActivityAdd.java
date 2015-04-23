@@ -22,6 +22,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -31,12 +32,9 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.elyst.Adapter.AdapterAdd;
-import com.sybiload.elyst.Adapter.AdapterEditText;
-import com.sybiload.elyst.Adapter.AdapterShop;
 import com.sybiload.elyst.Database.Item.DatabaseItem;
 
 import java.util.ArrayList;
-
 
 public class ActivityAdd extends ActionBarActivity
 {
@@ -50,16 +48,17 @@ public class ActivityAdd extends ActionBarActivity
     private ImageView imageViewColorRed;
     private ImageView imageViewColorPurple;
     private ImageView imageViewColorBlue;
+    private EditText editTextName;
+    private EditText editTextPrice;
 
     public static Item currentItem;
 
     Toolbar toolbar;
-    private AdapterEditText editTextName;
+
 
     private AdapterAdd currAdap = null;
 
     public static boolean toolbarOpened = false;
-    public static boolean editMode = false;
     private String barType = null;
     private String barCode = null;
     private int color = 1;
@@ -73,7 +72,8 @@ public class ActivityAdd extends ActionBarActivity
         setContentView(R.layout.activity_additem);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        editTextName = (AdapterEditText)findViewById(R.id.editTextAddItemName);
+        editTextName = (EditText)findViewById(R.id.editTextAddItemName);
+        editTextPrice = (EditText)findViewById(R.id.editTextAddItemPrice);
         fabImageButton = (ImageButton) findViewById(R.id.imageButtonAddItemFab);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
         searchView = (SearchView) toolbar.findViewById(R.id.searchViewAdd);
@@ -83,8 +83,6 @@ public class ActivityAdd extends ActionBarActivity
         imageViewColorRed = (ImageView)findViewById(R.id.imageViewAddItemColorRed);
         imageViewColorPurple = (ImageView)findViewById(R.id.imageViewAddItemColorPurple);
         imageViewColorBlue = (ImageView)findViewById(R.id.imageViewAddItemColorBlue);
-
-
 
         if (mainPref.getBoolean("checkBoxSystemNoSleep", false))
         {
@@ -97,7 +95,6 @@ public class ActivityAdd extends ActionBarActivity
         }
 
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        //toolbar.setSubtitle("Let's dance !");
         toolbar.setNavigationOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -135,8 +132,11 @@ public class ActivityAdd extends ActionBarActivity
 
                         if (currentItem == null)
                         {
+                            String priceStr = editTextPrice.getText().toString();
+                            double price = (priceStr != null && !priceStr.equals("")) ? Double.parseDouble(priceStr) : 0.0;
+
                             // if there is a bug, it's here
-                            Item newItem = new Item(new Misc().generateSeed(), editTextName.getText().toString(), null, color, 0.0, 0.0, null, barType, barCode, false);
+                            Item newItem = new Item(new Misc().generateSeed(), editTextName.getText().toString(), null, color, price, 0.0, 0, barType, barCode, false);
 
                             // add new item to the itemAvailable and sort the list
                             Static.currentList.itemAvailable.add(newItem);
@@ -155,7 +155,10 @@ public class ActivityAdd extends ActionBarActivity
                         }
                         else
                         {
-                            Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), null, currentItem.getCategory(), currentItem.getPrice(), 0.0, null, barType, barCode, currentItem.getDone());
+                            String priceStr = editTextPrice.getText().toString();
+                            double price = (priceStr != null && !priceStr.equals("")) ? Double.parseDouble(priceStr) : 0.0;
+
+                            Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), null, currentItem.getCategory(), price, 0.0, 0, currentItem.getBarType(), currentItem.getBarCode(), currentItem.getDone());
 
                             currAdap.update(currentItem, newItem);
 
@@ -163,7 +166,6 @@ public class ActivityAdd extends ActionBarActivity
                             barType = null;
                             barCode = null;
                         }
-
 
                         barAction();
 
@@ -296,11 +298,9 @@ public class ActivityAdd extends ActionBarActivity
         {
             public void afterTextChanged(Editable s)
             {
-                String text = editTextName.getText().toString();
-
                 if (toolbarOpened)
                 {
-                    if (text.isEmpty())
+                    if (s.toString().isEmpty())
                     {
                         toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
                     }
@@ -379,13 +379,13 @@ public class ActivityAdd extends ActionBarActivity
 
     private void expand(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 168, 600);
+        ValueAnimator mAnimator = slideAnimator(v, 168, 700);
         mAnimator.start();
     }
 
     private void collapse(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 600, 168);
+        ValueAnimator mAnimator = slideAnimator(v, 700, 168);
         mAnimator.start();
     }
 
@@ -453,6 +453,7 @@ public class ActivityAdd extends ActionBarActivity
             {
                 // reset text fields and color
                 editTextName.setText(null);
+                editTextPrice.setText(null);
                 textViewBarcode.setText(null);
                 setColorImageView(color);
             }
@@ -460,6 +461,7 @@ public class ActivityAdd extends ActionBarActivity
             {
                 // reset text fields and color
                 editTextName.setText(currentItem.getName());
+                editTextPrice.setText(currentItem.getPrice() == 0.0 ? null : Double.toString(currentItem.getPrice()));
                 setColorImageView(currentItem.getCategory());
 
                 // check if a barcode exists and set visible if yes
@@ -469,7 +471,6 @@ public class ActivityAdd extends ActionBarActivity
                     textViewBarcode.setText(currentItem.getBarType() + " - " + currentItem.getBarCode());
                 }
             }
-
 
             // hide fields
             searchView.setVisibility(View.GONE);
@@ -489,11 +490,11 @@ public class ActivityAdd extends ActionBarActivity
 
         if (scanningResult.getContents() != null)
         {
-            Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
+            Item myItem = null;
 
             barType = scanningResult.getFormatName();
             barCode = scanningResult.getContents();
-            Item myItem = null;
+
 
             for (Item it : Static.currentList.itemAvailable)
             {
@@ -515,7 +516,7 @@ public class ActivityAdd extends ActionBarActivity
 
             if (myItem != null)
             {
-                Toast.makeText(getApplicationContext(), "This barcode is already assigned", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Barcode already assigned to " + myItem.getName(), Toast.LENGTH_SHORT).show();
 
                 // reset barcode strings
                 barType = null;
@@ -523,6 +524,9 @@ public class ActivityAdd extends ActionBarActivity
             }
             else
             {
+                currentItem.setBarType(barType);
+                currentItem.setBarCode(barCode);
+
                 Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
                 textViewBarcode.setVisibility(View.VISIBLE);
                 textViewBarcode.setText(barType + " - " + barCode);
@@ -614,7 +618,6 @@ public class ActivityAdd extends ActionBarActivity
 
     public void onBackPressed()
     {
-
         // if research is opened, reset the field and close it, otherwise finish the activity
         if (toolbarOpened)
         {

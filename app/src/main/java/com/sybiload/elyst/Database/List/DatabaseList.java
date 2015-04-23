@@ -52,6 +52,8 @@ public class DatabaseList
         else
             stmtList.bindString(3, newList.getDescription());
 
+        stmtList.bindLong(4, newList.getBackground());
+
         stmtList.execute();
     }
 
@@ -66,8 +68,10 @@ public class DatabaseList
         else
             stmtList.bindString(3, newList.getDescription());
 
+        stmtList.bindLong(4, newList.getBackground());
+
         // value to search old list
-        stmtList.bindString(4, newList.getIdDb());
+        stmtList.bindString(5, newList.getIdDb());
 
         stmtList.execute();
     }
@@ -82,7 +86,7 @@ public class DatabaseList
         while (c.moveToNext())
         {
             // for each row, create a new list object and add it to the list array
-            List myList = new List(c.getString(0), c.getString(1), c.getString(2));
+            List myList = new List(c.getString(0), c.getString(1), c.getString(2), c.getInt(3));
 
             allList.add(myList);
         }

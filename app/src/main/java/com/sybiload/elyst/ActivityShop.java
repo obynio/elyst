@@ -1,8 +1,9 @@
 package com.sybiload.elyst;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,19 +30,20 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.elyst.Adapter.AdapterShop;
-import com.sybiload.elyst.Adapter.AdapterEditText;
 import com.sybiload.elyst.Database.Item.DatabaseItem;
-
 
 public class ActivityShop extends ActionBarActivity
 {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    Toolbar toolbar;
+    private Toolbar toolbar;
     private EditText editTextName;
     private EditText editTextDescription;
+    private EditText editTextPrice;
+    private EditText editTextQuantity;
     private TextView textViewBarcode;
+    private TextView textViewUnit;
     private ImageButton fabImageButton;
     private ImageView imageViewColorGreen;
     private ImageView imageViewColorOrange;
@@ -54,11 +55,6 @@ public class ActivityShop extends ActionBarActivity
     private AdapterShop currAdap = null;
 
     public static boolean toolbarOpened = false;
-    private String barType = null;
-    private String barCode = null;
-
-    // test
-    public static ActivityShop activity;
 
     private SharedPreferences mainPref;
 
@@ -66,15 +62,15 @@ public class ActivityShop extends ActionBarActivity
     {
         super.onCreate(paramBundle);
         mainPref = getApplicationContext().getSharedPreferences("main", 0);
-        setContentView(R.layout.activity_item);
-
-        //test
-        activity = this;
+        setContentView(R.layout.activity_shop);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         editTextName = (EditText)findViewById(R.id.editTextItemName);
         editTextDescription = (EditText)findViewById(R.id.editTextItemDescription);
+        editTextPrice = (EditText)findViewById(R.id.editTextItemPrice);
+        editTextQuantity = (EditText)findViewById(R.id.editTextItemQuantity);
         textViewBarcode = (TextView)findViewById(R.id.textViewItemBarcode);
+        textViewUnit = (TextView)findViewById(R.id.textViewItemUnit);
         imageViewColorGreen = (ImageView)findViewById(R.id.imageViewItemColorGreen);
         imageViewColorOrange = (ImageView)findViewById(R.id.imageViewItemColorOrange);
         imageViewColorRed = (ImageView)findViewById(R.id.imageViewItemColorRed);
@@ -125,15 +121,21 @@ public class ActivityShop extends ActionBarActivity
                 switch (item.getItemId())
                 {
                     case R.id.action_done:
-                        Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getCategory(), currentItem.getPrice(), currentItem.getQuantity(), currentItem.getUnit(), barType, barCode, currentItem.getDone());
+                        String priceStr = editTextPrice.getText().toString();
+                        String quantityStr = editTextQuantity.getText().toString();
 
+                        // set 0.0 as default value for double
+                        double price = (priceStr != null && !priceStr.equals("")) ? Double.parseDouble(priceStr) : 0.0;
+                        double quantity = (quantityStr != null && !quantityStr.equals("")) ? Double.parseDouble(quantityStr) : 0.0;
+
+                        // create new item
+                        Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getCategory(), price, quantity, currentItem.getUnit(), currentItem.getBarType(), currentItem.getBarCode(), currentItem.getDone());
+
+                        // update the recyclerView for changes
                         currAdap.update(currentItem, newItem);
 
+                        // collapse bar
                         barAction();
-
-                        // reset barType and barCode
-                        barType = null;
-                        barCode = null;
 
                         return true;
 
@@ -168,11 +170,9 @@ public class ActivityShop extends ActionBarActivity
         {
             public void afterTextChanged(Editable s)
             {
-                String text = editTextName.getText().toString();
-
                 if (toolbarOpened)
                 {
-                    if (text.isEmpty())
+                    if (s.toString().isEmpty())
                     {
                         toolbar.getMenu().findItem(R.id.action_done).setEnabled(false);
                     }
@@ -182,6 +182,22 @@ public class ActivityShop extends ActionBarActivity
                         toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
                     }
                 }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        });
+
+        // listener to show the unit edit text when text is entered
+        editTextQuantity.addTextChangedListener(new TextWatcher()
+        {
+            public void afterTextChanged(Editable s)
+            {
+                if (s.toString().isEmpty())
+                    textViewUnit.setVisibility(View.GONE);
+                else
+                    textViewUnit.setVisibility(View.VISIBLE);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -249,6 +265,28 @@ public class ActivityShop extends ActionBarActivity
             }
         });
 
+        // to finish
+        textViewUnit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final CharSequence[] entries = getApplicationContext().getResources().getStringArray(R.array.unit_entries);
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(ActivityShop.this);
+                alert.setTitle("Choose unit");
+
+                AlertDialog.Builder builder = alert.setItems(entries, new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        currentItem.setUnit(which);
+                        textViewUnit.setText(entries[which]);
+                    }
+                });
+
+                alert.show();
+            }
+        });
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewItem);
 
@@ -256,8 +294,6 @@ public class ActivityShop extends ActionBarActivity
 
         layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
-
-
     }
 
     @Override
@@ -284,13 +320,13 @@ public class ActivityShop extends ActionBarActivity
 
     private void expand(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 168, 600);
+        ValueAnimator mAnimator = slideAnimator(v, 168, 900);
         mAnimator.start();
     }
 
     private void collapse(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 600, 168);
+        ValueAnimator mAnimator = slideAnimator(v, 900, 168);
         mAnimator.start();
     }
 
@@ -331,7 +367,10 @@ public class ActivityShop extends ActionBarActivity
             // reset text fields
             editTextName.setText(null);
             editTextDescription.setText(null);
+            editTextPrice.setText(null);
+            editTextQuantity.setText(null);
             textViewBarcode.setText(null);
+            textViewUnit.setText(null);
 
             // hide fields
             llEditItem.setVisibility(View.GONE);
@@ -345,8 +384,6 @@ public class ActivityShop extends ActionBarActivity
             fabUp();
 
             // reset barType, barCode, currentItem
-            barType = null;
-            barCode = null;
             currentItem = null;
         }
         else
@@ -365,6 +402,11 @@ public class ActivityShop extends ActionBarActivity
             // set name, description editText and color imageView
             editTextName.setText(currentItem.getName());
             editTextDescription.setText(currentItem.getDescription());
+            editTextPrice.setText(currentItem.getPrice() == 0.0 ? null : Double.toString(currentItem.getPrice()));
+            editTextQuantity.setText(currentItem.getQuantity() == 0.0 ? null : Double.toString(currentItem.getQuantity()));
+
+            CharSequence[] entries = getApplicationContext().getResources().getStringArray(R.array.unit_entries);
+            textViewUnit.setText(entries[currentItem.getUnit()]);
             setColorImageView(currentItem.getCategory());
 
             // visible editText field
@@ -391,10 +433,10 @@ public class ActivityShop extends ActionBarActivity
 
         if (scanningResult.getContents() != null)
         {
-            barType = scanningResult.getFormatName();
-            barCode = scanningResult.getContents();
-
             Item myItem = null;
+
+            String barType = scanningResult.getFormatName();
+            String barCode = scanningResult.getContents();
 
             if (toolbarOpened)
             {
@@ -418,14 +460,13 @@ public class ActivityShop extends ActionBarActivity
 
                 if (myItem != null)
                 {
-                    Toast.makeText(getApplicationContext(), "This barcode is already assigned", Toast.LENGTH_SHORT).show();
-
-                    // reset barcode strings
-                    barType = null;
-                    barCode = null;
+                    Toast.makeText(getApplicationContext(), "Barcode already assigned to " + myItem.getName(), Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
+                    currentItem.setBarType(barType);
+                    currentItem.setBarCode(barCode);
+
                     Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
                     textViewBarcode.setVisibility(View.VISIBLE);
                     textViewBarcode.setText(barType + " - " + barCode);
@@ -449,7 +490,7 @@ public class ActivityShop extends ActionBarActivity
                     DatabaseItem databaseItem = new DatabaseItem(getApplicationContext(), Static.currentList.getIdDb());
 
                     // update database
-                    new Misc().updateItem(getApplicationContext(), myItem);
+                    new Misc().insertItem(getApplicationContext(), myItem);
 
                     // get position of our item in the availableItem and remove it
                     int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -483,9 +524,6 @@ public class ActivityShop extends ActionBarActivity
                         Toast.makeText(getApplicationContext(), "Item unknown", Toast.LENGTH_SHORT).show();
                     }
                 }
-
-                barType = null;
-                barCode = null;
             }
         }
         else

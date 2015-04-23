@@ -26,5 +26,20 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="categoryUiList"
+        android:title="List UI">
+
+        <ListPreference
+            android:dialogTitle="Choose resolution"
+            android:entries="@array/ui_pref_bg_res_entries"
+            android:entryValues="@array/ui_pref_bg_res_values"
+            android:defaultValue="2"
+            android:key="listPreferenceUiBgRes"
+            android:title="Card resolution"
+            android:summary="High values may affect performances" />
+
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

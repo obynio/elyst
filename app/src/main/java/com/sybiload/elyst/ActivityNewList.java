@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,20 +18,19 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.sybiload.elyst.Adapter.AdapterEditText;
+import com.sybiload.elyst.Adapter.AdapterList;
+import com.sybiload.elyst.Adapter.AdapterNewList;
 import com.sybiload.elyst.Database.List.DatabaseList;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Random;
-
 
 public class ActivityNewList extends ActionBarActivity
 {
-    public ImageButton fabImageButton;
-    public AdapterEditText editTextNewListName;
-    public EditText editTextNewListDescription;
+    private ImageButton fabImageButton;
+    private EditText editTextNewListName;
+    private EditText editTextNewListDescription;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private AdapterNewList currAdapter;
 
     private List selectedList;
 
@@ -38,7 +39,7 @@ public class ActivityNewList extends ActionBarActivity
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_newlist);
 
-        editTextNewListName = (AdapterEditText)findViewById(R.id.editTextNewListName);
+        editTextNewListName = (EditText)findViewById(R.id.editTextNewListName);
         editTextNewListDescription = (EditText)findViewById(R.id.editTextNewListDescription);
         fabImageButton = (ImageButton) findViewById(R.id.imageButtonNewListFab);
 
@@ -73,21 +74,8 @@ public class ActivityNewList extends ActionBarActivity
         {
             public void afterTextChanged(Editable s)
             {
-                boolean error = false;
-                String text = editTextNewListName.getText().toString();
-
-                if (text.toLowerCase().equals("main"))
-                    error = true;
-
                 // hot job dude..
-                if (error)
-                {
-                    editTextNewListName.setError("");
-
-                    fabImageButton.setClickable(false);
-                    fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
-                }
-                else if (text.isEmpty())
+                if (s.toString().isEmpty())
                 {
                     fabImageButton.setClickable(false);
                     fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
@@ -120,6 +108,14 @@ public class ActivityNewList extends ActionBarActivity
             }
         });
 
+        // set up recyclerView parameters
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerViewNewList);
+
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+
         // disable the button to avoid null input
         if (selectedList == null)
         {
@@ -141,6 +137,16 @@ public class ActivityNewList extends ActionBarActivity
         }, 200);
     }
 
+    @Override
+    public void onResume()
+    {
+        // add all items to shop
+        currAdapter = new AdapterNewList(this);
+        recyclerView.setAdapter(currAdapter);
+
+        super.onResume();
+    }
+
     public void onBackPressed()
     {
         finish();
@@ -148,30 +154,18 @@ public class ActivityNewList extends ActionBarActivity
 
     public class createListAsync extends AsyncTask<Void, Void, Void>
     {
-        protected ProgressDialog Dialog;
-
-        @Override
-        protected void onPreExecute()
-        {
-            Dialog = new ProgressDialog(ActivityNewList.this);
-            Dialog.setMessage("Just a moment..");
-            Dialog.setCancelable(false);
-            Dialog.show();
-        }
-
         @Override
         protected Void doInBackground(Void... params)
         {
             DatabaseList databaseList = new DatabaseList(getApplicationContext());
             databaseList.open();
 
-            List myList = new List(new Misc().generateSeed() + ".db", editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString());
+            new Misc().log(Integer.toString(currAdapter.selectedIndex));
+            List myList = new List(new Misc().generateSeed() + ".db", editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), currAdapter.selectedIndex);
 
             new Misc().addList(getApplicationContext(), myList);
 
             databaseList.dbList.close();
-
-
 
             return null;
         }
@@ -179,8 +173,6 @@ public class ActivityNewList extends ActionBarActivity
         @Override
         protected void onPostExecute(Void unused)
         {
-            Dialog.dismiss();
-
             finish();
         }
     }
@@ -188,27 +180,15 @@ public class ActivityNewList extends ActionBarActivity
 
     public class updateListAsync extends AsyncTask<Void, Void, Void>
     {
-        protected ProgressDialog Dialog;
-
-        @Override
-        protected void onPreExecute()
-        {
-            Dialog = new ProgressDialog(ActivityNewList.this);
-            Dialog.setMessage("Just a moment..");
-            Dialog.setCancelable(false);
-            Dialog.show();
-        }
-
         @Override
         protected Void doInBackground(Void... params)
         {
             DatabaseList databaseList = new DatabaseList(getApplicationContext());
             databaseList.open();
 
-            String name = selectedList.getName();
-
             selectedList.setName(editTextNewListName.getText().toString());
             selectedList.setDescription(editTextNewListDescription.getText().toString());
+            selectedList.setBackground(currAdapter.selectedIndex);
 
             databaseList.updateByName(selectedList);
 
@@ -220,8 +200,6 @@ public class ActivityNewList extends ActionBarActivity
         @Override
         protected void onPostExecute(Void unused)
         {
-            Dialog.dismiss();
-
             finish();
         }
     }

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.sybiload.elyst.Adapter.AdapterEditText
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
@@ -56,6 +56,14 @@
 
 
     </android.support.v7.widget.Toolbar>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewNewList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:scrollbars="vertical" />
 
     <ImageButton
         android:id="@+id/imageButtonNewListFab"

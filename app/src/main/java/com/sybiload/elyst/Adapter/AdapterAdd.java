@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 {
-    private DatabaseItem database;
     private Context ctx;
 
     private SharedPreferences mainPref;
@@ -40,10 +39,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     public AdapterAdd(Context ctx)
     {
         this.ctx = ctx;
-        database = new DatabaseItem(ctx, Static.currentList.getIdDb());
-
         mainPref = ctx.getSharedPreferences("main", 0);
-
         Static.currentList.sortAvailable(ctx);
     }
 
@@ -78,12 +74,10 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
     public void clearSelected()
     {
-
         for (ViewHolder hold : selectedHolder)
         {
             hold.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
-
 
         selectedIndex.clear();
         selectedHolder.clear();
@@ -114,9 +108,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     public void update(Item oldItem, Item newItem)
     {
         // update database
-
         new Misc().updateItem(ctx, newItem);
-
 
         int position = Static.currentList.itemAvailable.indexOf(oldItem);
 
@@ -124,16 +116,13 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         Static.currentList.itemAvailable.set(position, newItem);
 
         // if there is a bug somewhere, be sure it's here !
-
         notifyItemChanged(position);
 
         // possibility to remove this for the simple variable 'position' ?
         Item it = Static.currentList.itemAvailable.get(position);
 
         Static.currentList.sortAvailable(ctx);
-
         int orf = Static.currentList.itemAvailable.indexOf(it);
-
 
         notifyItemMoved(position, orf);
     }
@@ -170,7 +159,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             @Override
             public boolean onLongClick(View v)
             {
-                if (!selectedIndex.contains(position) && !ActivityShop.toolbarOpened)
+                if (!selectedIndex.contains(position) && !ActivityAdd.toolbarOpened)
                 {
                     ActivityAdd.currentItem = myItem;
 

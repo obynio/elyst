@@ -54,11 +54,11 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.sybiload.elyst.Pref.ActivitySystemPref"
-            android:label="Widget"
+            android:label="System"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.sybiload.elyst.Pref.ActivityUiPref"
-            android:label="Widget"
+            android:label="UI"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.sybiload.elyst.Welcome.ActivityOne"

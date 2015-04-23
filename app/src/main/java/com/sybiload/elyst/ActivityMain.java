@@ -1,6 +1,5 @@
 package com.sybiload.elyst;
 
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -53,7 +52,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 
 public class ActivityMain extends ActionBarActivity
 {
@@ -258,8 +256,6 @@ public class ActivityMain extends ActionBarActivity
         // if it's the first launch, start the intro
         if (mainPref.getBoolean("firstLaunch", true))
         {
-            new Misc().populateDefaultItem(getApplicationContext());
-
             Intent intent = new Intent(getApplication(), ActivityOne.class);
             startActivity(intent);
             finish();
@@ -280,8 +276,6 @@ public class ActivityMain extends ActionBarActivity
             setSupportActionBar(toolbar);
         }
 
-
-
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.txt_open, R.string.txt_close)
         {
 
@@ -289,7 +283,6 @@ public class ActivityMain extends ActionBarActivity
             public void onDrawerClosed(View drawerView)
             {
                 super.onDrawerClosed(drawerView);
-
             }
 
             @Override
@@ -352,11 +345,19 @@ public class ActivityMain extends ActionBarActivity
     public void onDestroy()
     {
         super.onDestroy();
-        if (helper != null)
-        {
-            helper.dispose();
+        try {
+            if (helper != null)
+            {
+                helper.dispose();
+            }
+            helper = null;
         }
-        helper = null;
+        catch(Exception e)
+        {
+            // avoid a bug with billing library which cause a crash if google play has never been launched
+            new Misc().log("InApp billing onDestroy exception raised");
+        }
+
     }
 
     @Override
@@ -403,7 +404,6 @@ public class ActivityMain extends ActionBarActivity
             }
         }
     }
-
 
     // check if there is no hacking apps installed
     public class checkIntegrity extends AsyncTask<Void, Void, Void>

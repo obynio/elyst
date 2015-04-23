@@ -104,10 +104,7 @@ public class DatabaseItem
 
         stmtChild.bindDouble(3, newItem.getQuantity());
 
-        if (newItem.getUnit() == null)
-            stmtChild.bindNull(4);
-        else
-            stmtChild.bindString(4, newItem.getUnit());
+        stmtChild.bindLong(4, newItem.getUnit());
 
         stmtChild.bindLong(5, newItem.getDone() ? 1 : 0);
 
@@ -149,10 +146,7 @@ public class DatabaseItem
 
         stmtChild.bindDouble(3, newItem.getQuantity());
 
-        if (newItem.getUnit() == null)
-            stmtChild.bindNull(4);
-        else
-            stmtChild.bindString(4, newItem.getUnit());
+        stmtChild.bindLong(4, newItem.getUnit());
 
         stmtChild.bindLong(5, newItem.getDone() ? 1 : 0);
 
@@ -175,7 +169,7 @@ public class DatabaseItem
         while (cIndex.moveToNext())
         {
             // for each row, create a new list object and add it to the list array
-            Item myItem = new Item(cIndex.getString(0), cIndex.getString(1), null, cIndex.getInt(2), cIndex.getDouble(3), 0.0, null, cIndex.getString(4), cIndex.getString(5), false);
+            Item myItem = new Item(cIndex.getString(0), cIndex.getString(1), null, cIndex.getInt(2), cIndex.getDouble(3), 0.0, 0, cIndex.getString(4), cIndex.getString(5), false);
             arrayItem.add(myItem);
         }
 
@@ -194,7 +188,7 @@ public class DatabaseItem
         while (cIndex.moveToNext())
         {
             // for each row, create a new list object and add it to the list array
-            Item myItem = new Item(cIndex.getString(0), cIndex.getString(1), null, cIndex.getInt(2), cIndex.getDouble(3), 0.0, null, cIndex.getString(4), cIndex.getString(5), false);
+            Item myItem = new Item(cIndex.getString(0), cIndex.getString(1), null, cIndex.getInt(2), cIndex.getDouble(3), 0.0, 0, cIndex.getString(4), cIndex.getString(5), false);
             arrayItem.add(myItem);
         }
 
@@ -216,7 +210,7 @@ public class DatabaseItem
             cIndex.moveToFirst();
 
             // for each row, create a new list object and add it to the list array
-            Item myItem = new Item(cChild.getString(0), cIndex.getString(1), cChild.getString(1), cIndex.getInt(2), cIndex.getDouble(3), cChild.getDouble(2), cChild.getString(3), cIndex.getString(4), cIndex.getString(5), cChild.getInt(4) != 0);
+            Item myItem = new Item(cChild.getString(0), cIndex.getString(1), cChild.getString(1), cIndex.getInt(2), cIndex.getDouble(3), cChild.getDouble(2), cChild.getInt(3), cIndex.getString(4), cIndex.getString(5), cChild.getInt(4) != 0);
             arrayItem.add(myItem);
 
             cIndex.close();
