@@ -27,8 +27,8 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
     private Context ctx;
     private SharedPreferences mainPref;
 
-    public static int selectedIndex = 0;
-    public static ViewHolder selectedHolder = null;
+    public int selectedIndex = 0;
+    public ViewHolder selectedHolder = null;
 
     public AdapterNewList(Context ctx)
     {
@@ -54,9 +54,6 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
         ViewHolder vh = new ViewHolder(v);
 
-
-
-
         return vh;
     }
 
@@ -64,7 +61,13 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        if (selectedIndex == position)
+        if (Static.currentList == null && selectedIndex == position)
+        {
+            holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
+            selectedHolder = holder;
+            selectedIndex = position;
+        }
+        else if (Static.currentList != null && Static.currentList.getBackground() == position)
         {
             holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
             selectedHolder = holder;
@@ -81,8 +84,6 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
             {
                 selectedHolder.imageView.setColorFilter(Color.TRANSPARENT);
                 holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
-
-                new Misc().log(Integer.toString(position));
 
                 selectedHolder = holder;
                 selectedIndex = position;

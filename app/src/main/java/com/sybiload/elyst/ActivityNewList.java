@@ -32,8 +32,6 @@ public class ActivityNewList extends ActionBarActivity
     private RecyclerView.LayoutManager layoutManager;
     private AdapterNewList currAdapter;
 
-    private List selectedList;
-
     protected void onCreate(Bundle paramBundle)
     {
         super.onCreate(paramBundle);
@@ -57,17 +55,10 @@ public class ActivityNewList extends ActionBarActivity
 
         Intent intent = getIntent();
 
-        if (intent != null)
+        if (Static.currentList != null)
         {
-            int index = intent.getIntExtra("LIST_NB", -1);
-
-            if (index >= 0)
-            {
-                selectedList = Static.allList.get(index);
-
-                editTextNewListName.setText(selectedList.getName());
-                editTextNewListDescription.setText(selectedList.getDescription());
-            }
+            editTextNewListName.setText(Static.currentList.getName());
+            editTextNewListDescription.setText(Static.currentList.getDescription());
         }
 
         editTextNewListName.addTextChangedListener(new TextWatcher()
@@ -99,7 +90,7 @@ public class ActivityNewList extends ActionBarActivity
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedList == null)
+                if (Static.currentList == null)
                     new createListAsync().execute();
                 else
                 {
@@ -117,7 +108,7 @@ public class ActivityNewList extends ActionBarActivity
         recyclerView.setLayoutManager(layoutManager);
 
         // disable the button to avoid null input
-        if (selectedList == null)
+        if (Static.currentList == null)
         {
             fabImageButton.setClickable(false);
             fabImageButton.setColorFilter(Color.parseColor("#90CAF9"));
@@ -160,7 +151,6 @@ public class ActivityNewList extends ActionBarActivity
             DatabaseList databaseList = new DatabaseList(getApplicationContext());
             databaseList.open();
 
-            new Misc().log(Integer.toString(currAdapter.selectedIndex));
             List myList = new List(new Misc().generateSeed() + ".db", editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), currAdapter.selectedIndex);
 
             new Misc().addList(getApplicationContext(), myList);
@@ -186,11 +176,11 @@ public class ActivityNewList extends ActionBarActivity
             DatabaseList databaseList = new DatabaseList(getApplicationContext());
             databaseList.open();
 
-            selectedList.setName(editTextNewListName.getText().toString());
-            selectedList.setDescription(editTextNewListDescription.getText().toString());
-            selectedList.setBackground(currAdapter.selectedIndex);
+            Static.currentList.setName(editTextNewListName.getText().toString());
+            Static.currentList.setDescription(editTextNewListDescription.getText().toString());
+            Static.currentList.setBackground(currAdapter.selectedIndex);
 
-            databaseList.updateByName(selectedList);
+            databaseList.updateByName(Static.currentList);
 
             databaseList.dbList.close();
 

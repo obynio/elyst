@@ -63,8 +63,9 @@ public class FragmentList extends Fragment
                 {
                     case R.id.action_edit:
 
+                        Static.currentList = AdapterList.selectedList;
+
                         Intent intent = new Intent(getActivity(), ActivityNewList.class);
-                        intent.putExtra("LIST_NB", Static.allList.indexOf(AdapterList.selectedList));
                         startActivity(intent);
 
                         return true;
@@ -94,6 +95,8 @@ public class FragmentList extends Fragment
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Static.currentList = null;
+
                 Intent intent = new Intent(getActivity(), ActivityNewList.class);
                 startActivity(intent);
             }
