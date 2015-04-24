@@ -40,7 +40,6 @@ import java.util.ArrayList;
 public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 {
     private FragmentList fm;
-    private DatabaseList database;
     private SharedPreferences mainPref;
 
     public List selectedList;
@@ -49,7 +48,6 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     public AdapterList(FragmentList fm)
     {
         this.fm = fm;
-        database = new DatabaseList(fm.getActivity());
         mainPref = fm.getActivity().getSharedPreferences("main", 0);
     }
 
@@ -80,12 +78,45 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 
     }
 
+    public void update(List myList)
+    {
+        // update database
+        new Misc().updateList(fm.getActivity(), myList);
+
+        // get oldpos in recyclerview
+        int oldpos = 0;
+        for (int i = 0; i < Static.allList.size(); i++)
+        {
+            if (Static.allList.get(i).getIdDb().equals(myList.getIdDb()))
+            {
+                oldpos = i;
+                break;
+            }
+        }
+
+        new Misc().sortList(Static.allList);
+
+        // change data in the fragmentlist recyclerview
+        int newpos = 0;
+        for (int i = 0; i < Static.allList.size(); i++)
+        {
+            if (Static.allList.get(i).getIdDb().equals(myList.getIdDb()))
+            {
+                newpos = i;
+                break;
+            }
+        }
+
+        // change data
+        notifyItemChanged(oldpos);
+        // reorganize list
+        notifyItemMoved(oldpos, newpos);
+    }
+
     public void delete(List myList)
     {
         // update database
-        database.open();
-        database.deleteItem(myList);
-        database.dbList.close();
+        new Misc().deleteList(fm.getActivity(), myList);
 
         // delete database
         fm.getActivity().deleteDatabase(myList.getIdDb());
@@ -156,9 +187,6 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             @Override
             public void onClick(View v)
             {
-                new Misc().log("holder: " + Integer.toString(holder.getPosition()));
-                new Misc().log("positi: " + Integer.toString(position));
-
 
                 if (selectedHolder == null)
                     fm.enterList(holder.getPosition());

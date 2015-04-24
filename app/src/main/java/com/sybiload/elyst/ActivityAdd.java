@@ -160,7 +160,7 @@ public class ActivityAdd extends ActionBarActivity
 
                             Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), null, currentItem.getCategory(), price, 0.0, 0, currentItem.getBarType(), currentItem.getBarCode(), currentItem.getDone());
 
-                            currAdap.update(currentItem, newItem);
+                            currAdap.update(newItem);
 
                             // reset barType and barCode
                             barType = null;

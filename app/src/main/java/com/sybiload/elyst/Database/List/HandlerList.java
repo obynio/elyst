@@ -14,7 +14,7 @@ public class HandlerList extends SQLiteOpenHelper
     public static final String COLUMN_BACKGROUND = "background";
 
     public static final String CURRENT_TABL = "root";
-    private static final String DATABASE_NAME = "main.db";
+    private static final String DATABASE_NAME = "main";
     private static final int DATABASE_VERSION = 1;
 
     private static final String LIST_CREATE = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_ID_DB + " TEXT, " + COLUMN_NAME + " TEXT, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_BACKGROUND + " INTEGER DEFAULT 0);";

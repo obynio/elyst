@@ -151,13 +151,8 @@ public class ActivityNewList extends ActionBarActivity
         @Override
         protected Void doInBackground(Void... params)
         {
-            DatabaseList databaseList = new DatabaseList(getApplicationContext());
-            databaseList.open();
-
-            Static.currentList = new List(new Misc().generateSeed() + ".db", editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), currAdapter.selectedIndex);
-            new Misc().addList(getApplicationContext(), Static.currentList);
-
-            databaseList.dbList.close();
+            Static.currentList = new List(new Misc().generateSeed(), editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), currAdapter.selectedIndex);
+            new Misc().createList(getApplicationContext(), Static.currentList);
 
             // search and add data in the fragmentlist recyclerview
             for (int i = 0; i < Static.allList.size(); i++)
@@ -185,45 +180,11 @@ public class ActivityNewList extends ActionBarActivity
         @Override
         protected Void doInBackground(Void... params)
         {
-            DatabaseList databaseList = new DatabaseList(getApplicationContext());
-            databaseList.open();
-
             Static.currentList.setName(editTextNewListName.getText().toString());
             Static.currentList.setDescription(editTextNewListDescription.getText().toString());
             Static.currentList.setBackground(currAdapter.selectedIndex);
 
-            databaseList.updateByName(Static.currentList);
-
-            databaseList.dbList.close();
-
-            // get oldpos in recyclerview
-            int oldpos = 0;
-            for (int i = 0; i < Static.allList.size(); i++)
-            {
-                if (Static.allList.get(i).getIdDb().equals(Static.currentList.getIdDb()))
-                {
-                    oldpos = i;
-                    break;
-                }
-            }
-
-            new Misc().sortList(Static.allList);
-
-            // change data in the fragmentlist recyclerview
-            int newpos = 0;
-            for (int i = 0; i < Static.allList.size(); i++)
-            {
-                if (Static.allList.get(i).getIdDb().equals(Static.currentList.getIdDb()))
-                {
-                    newpos = i;
-                    break;
-                }
-            }
-
-            // change data
-            FragmentList.currAdapter.notifyItemChanged(oldpos);
-            // reorganize list
-            FragmentList.currAdapter.notifyItemMoved(oldpos, newpos);
+            FragmentList.currAdapter.update(Static.currentList);
 
             return null;
         }

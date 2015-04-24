@@ -62,7 +62,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         for (Item myItem : selectedItem)
         {
             // update database
-            new Misc().removeItem(ctx, myItem);
+            new Misc().deleteItem(ctx, myItem);
 
             // remove item from itemShop
             int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -105,7 +105,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         }
     }
 
-    public void update(Item oldItem, Item newItem)
+    public void update(Item newItem)
     {
         // update database
         new Misc().updateItem(ctx, newItem);
@@ -114,7 +114,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         int oldpos = 0;
         for (int i = 0; i < Static.currentList.itemAvailable.size(); i++)
         {
-            if (Static.currentList.itemAvailable.get(i).getIdItem().equals(oldItem.getIdItem()))
+            if (Static.currentList.itemAvailable.get(i).getIdItem().equals(newItem.getIdItem()))
             {
                 oldpos = i;
                 break;
@@ -132,7 +132,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         int newpos = 0;
         for (int i = 0; i < Static.currentList.itemAvailable.size(); i++)
         {
-            if (Static.currentList.itemAvailable.get(i).getIdItem().equals(oldItem.getIdItem()))
+            if (Static.currentList.itemAvailable.get(i).getIdItem().equals(newItem.getIdItem()))
             {
                 newpos = i;
                 break;

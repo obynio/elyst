@@ -104,35 +104,6 @@ public class Misc
         databaseItem.dbChild.close();
     }
 
-    public String generateSeed()
-    {
-        char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 10; i++)
-        {
-            char c = chars[random.nextInt(chars.length)];
-            sb.append(c);
-        }
-        return sb.toString();
-    }
-    public void addList(Context ctx, List myList)
-    {
-        // open list tabl database
-        DatabaseList databaseList = new DatabaseList(ctx);
-        databaseList.open();
-
-        log("creating test list..");
-
-        // insert list in the root tabl database
-        databaseList.insertList(myList);
-        databaseList.dbList.close();
-
-        populateList(ctx);
-    }
-
     // get default item and send back an arraylist with all the default items
     public void populateDefaultItem(Context ctx)
     {
@@ -152,6 +123,21 @@ public class Misc
         databaseItem.dbIndex.close();
     }
 
+    public String generateSeed()
+    {
+        char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 10; i++)
+        {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
     public void createItem(Context ctx, Item myItem)
     {
         // adding item to the database
@@ -162,9 +148,6 @@ public class Misc
 
         databaseItem.dbIndex.close();
         databaseItem.dbChild.close();
-
-        // adding item to the current list
-        //populateItem(ctx, Static.currentList);
     }
 
     public void insertItem(Context ctx, Item myItem)
@@ -177,9 +160,6 @@ public class Misc
 
         databaseItem.dbIndex.close();
         databaseItem.dbChild.close();
-
-        // adding item to the current list
-        //populateItem(ctx, Static.currentList);
     }
 
     public void removeItem(Context ctx, Item myItem)
@@ -192,9 +172,6 @@ public class Misc
 
         databaseItem.dbIndex.close();
         databaseItem.dbChild.close();
-
-        // removing item from the current list
-        //populateItem(ctx, Static.currentList);
     }
 
     public void deleteItem(Context ctx, Item myItem)
@@ -207,9 +184,6 @@ public class Misc
 
         databaseItem.dbIndex.close();
         databaseItem.dbChild.close();
-
-        // removing item from the current list
-        //populateItem(ctx, Static.currentList);
     }
 
     public void updateItem(Context ctx, Item myItem)
@@ -222,9 +196,38 @@ public class Misc
 
         databaseItem.dbIndex.close();
         databaseItem.dbChild.close();
+    }
 
-        // removing item from the current list
-        //populateItem(ctx, Static.currentList);
+    public void createList(Context ctx, List myList)
+    {
+        // open list tabl database
+        DatabaseList databaseList = new DatabaseList(ctx);
+        databaseList.open();
+
+        // insert list in the root tabl database
+        databaseList.insertList(myList);
+        databaseList.dbList.close();
+
+        populateList(ctx);
+    }
+
+    public void updateList(Context ctx, List myList)
+    {
+        DatabaseList databaseList = new DatabaseList(ctx);
+        databaseList.open();
+
+        databaseList.updateByName(myList);
+
+        databaseList.dbList.close();
+    }
+
+    public void deleteList(Context ctx, List myList)
+    {
+        DatabaseList databaseList = new DatabaseList(ctx);
+        databaseList.open();
+
+        databaseList.deleteItem(myList);
+        databaseList.dbList.close();
     }
 
     public String getColor(Context ctx, int color)

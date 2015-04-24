@@ -132,7 +132,7 @@ public class ActivityShop extends ActionBarActivity
                         Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getCategory(), price, quantity, currentItem.getUnit(), currentItem.getBarType(), currentItem.getBarCode(), currentItem.getDone());
 
                         // update the recyclerView for changes
-                        currAdap.update(currentItem, newItem);
+                        currAdap.update(newItem);
 
                         // collapse bar
                         barAction();

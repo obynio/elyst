@@ -128,7 +128,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     }
 
 
-    public void update(Item oldItem, Item newItem)
+    public void update(Item newItem)
     {
         // update database
         new Misc().updateItem(ctx, newItem);
@@ -137,7 +137,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         int oldpos = 0;
         for (int i = 0; i < Static.currentList.itemShop.size(); i++)
         {
-            if (Static.currentList.itemShop.get(i).getIdItem().equals(oldItem.getIdItem()))
+            if (Static.currentList.itemShop.get(i).getIdItem().equals(newItem.getIdItem()))
             {
                 oldpos = i;
                 break;
@@ -156,7 +156,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         int newpos = 0;
         for (int i = 0; i < Static.currentList.itemShop.size(); i++)
         {
-            if (Static.currentList.itemShop.get(i).getIdItem().equals(oldItem.getIdItem()))
+            if (Static.currentList.itemShop.get(i).getIdItem().equals(newItem.getIdItem()))
             {
                 newpos = i;
                 break;

@@ -15,7 +15,7 @@ public class HandlerIndex extends SQLiteOpenHelper
     public static final String COLUMN_BAR_TYPE = "bar_type";
     public static final String COLUMN_BAR_CODE = "bar_code";
 
-    private static final String DATABASE_NAME = "index.db";
+    private static final String DATABASE_NAME = "index";
     private static final int DATABASE_VERSION = 1;
 
     protected static final String CURRENT_TABL = "ind";
