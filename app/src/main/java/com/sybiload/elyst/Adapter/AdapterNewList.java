@@ -34,6 +34,8 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
     {
         this.ctx = ctx;
         mainPref = ctx.getSharedPreferences("main", 0);
+
+        selectedIndex = (Static.currentList == null) ? 0 : Static.currentList.getBackground();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -61,32 +63,29 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        if (Static.currentList == null && selectedIndex == position)
+        if (selectedIndex == holder.getPosition())
         {
             holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
             selectedHolder = holder;
-            selectedIndex = position;
-        }
-        else if (Static.currentList != null && Static.currentList.getBackground() == position)
-        {
-            holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
-            selectedHolder = holder;
-            selectedIndex = position;
+            selectedIndex = holder.getPosition();
         }
 
         holder.setIsRecyclable(false);
-        new updateBmpAsync().execute(Static.cardDrw[position], holder);
+        new updateBmpAsync().execute(Static.cardDrw[holder.getPosition()], holder);
 
         holder.itemView.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                selectedHolder.imageView.setColorFilter(Color.TRANSPARENT);
+                // avoid this fucking not already shown bug
+                if (selectedHolder != null)
+                    selectedHolder.imageView.setColorFilter(Color.TRANSPARENT);
+
                 holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
 
                 selectedHolder = holder;
-                selectedIndex = position;
+                selectedIndex = holder.getPosition();
             }
         });
     }

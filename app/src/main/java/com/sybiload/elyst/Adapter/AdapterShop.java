@@ -97,44 +97,76 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         // update database
         new Misc().updateItem(ctx, myItem);
 
-        // get current position of the item
-        int position = Static.currentList.itemShop.indexOf(myItem);
+        // get old pos
+        int oldpos = 0;
+        for (int i = 0; i < Static.currentList.itemShop.size(); i++)
+        {
+            if (Static.currentList.itemShop.get(i).getIdItem().equals(myItem.getIdItem()))
+            {
+                oldpos = i;
+                break;
+            }
+        }
 
         // sort itemShop
         Static.currentList.sortShop(ctx);
         Static.currentList.sortShopDone();
 
+        // get new pos
+        int newpos = 0;
+        for (int i = 0; i < Static.currentList.itemShop.size(); i++)
+        {
+            if (Static.currentList.itemShop.get(i).getIdItem().equals(myItem.getIdItem()))
+            {
+                newpos = i;
+                break;
+            }
+        }
+
         // move the item to the new position thanks to the previous position that we stored
-        notifyItemMoved(position, Static.currentList.itemShop.indexOf(myItem));
+        notifyItemMoved(oldpos, newpos);
     }
 
 
     public void update(Item oldItem, Item newItem)
     {
         // update database
-
         new Misc().updateItem(ctx, newItem);
 
-
-        int position = Static.currentList.itemShop.indexOf(oldItem);
+        // get old pos
+        int oldpos = 0;
+        for (int i = 0; i < Static.currentList.itemShop.size(); i++)
+        {
+            if (Static.currentList.itemShop.get(i).getIdItem().equals(oldItem.getIdItem()))
+            {
+                oldpos = i;
+                break;
+            }
+        }
 
         // prevent the 'not update on set list' bug
-        Static.currentList.itemShop.set(position, newItem);
+        Static.currentList.itemShop.set(oldpos, newItem);
 
         // if there is a bug somewhere, be sure it's here !
-
-        notifyItemChanged(position);
-
-        // possibility to remove this for the simple variable 'position' ?
-        Item it = Static.currentList.itemShop.get(position);
-
+        // reorganize list
         Static.currentList.sortShop(ctx);
         Static.currentList.sortShopDone();
 
-        int orf = Static.currentList.itemShop.indexOf(it);
+        // get new pos
+        int newpos = 0;
+        for (int i = 0; i < Static.currentList.itemShop.size(); i++)
+        {
+            if (Static.currentList.itemShop.get(i).getIdItem().equals(oldItem.getIdItem()))
+            {
+                newpos = i;
+                break;
+            }
+        }
 
-
-        notifyItemMoved(position, orf);
+        // change data
+        notifyItemChanged(oldpos);
+        // change position
+        notifyItemMoved(oldpos, newpos);
     }
 
     public void clearSelected()
@@ -163,9 +195,9 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        final Item myItem = Static.currentList.itemShop.get(position);
+        final Item myItem = Static.currentList.itemShop.get(holder.getPosition());
 
-        if (!selectedIndex.contains(position))
+        if (!selectedIndex.contains(holder.getPosition()))
         {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -196,14 +228,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             public boolean onLongClick(View v)
             {
 
-                if (!selectedIndex.contains(position) && !ActivityShop.toolbarOpened)
+                if (!selectedIndex.contains(holder.getPosition()) && !ActivityShop.toolbarOpened)
                 {
                     ActivityShop.currentItem = myItem;
 
                     v.setBackgroundColor(Color.parseColor("#C3C3C3"));
                     selectedItem.add(myItem);
                     selectedHolder.add(holder);
-                    selectedIndex.add(position);
+                    selectedIndex.add(holder.getPosition());
 
                     ((ActivityShop)ctx).pressSelect();
                 }
@@ -242,22 +274,22 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             {
                 if (!ActivityShop.toolbarOpened)
                 {
-                    if (selectedIndex.contains(position))
+                    if (selectedIndex.contains(holder.getPosition()))
                     {
                         holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
                         selectedHolder.remove(holder);
-                        selectedIndex.remove(selectedIndex.indexOf(position));
+                        selectedIndex.remove(selectedIndex.indexOf(holder.getPosition()));
                         selectedItem.remove(myItem);
 
                         ((ActivityShop)ctx).pressSelect();
                     }
-                    else if (!selectedIndex.contains(position) && selectedIndex.size() != 0)
+                    else if (!selectedIndex.contains(holder.getPosition()) && selectedIndex.size() != 0)
                     {
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
-                        selectedIndex.add(position);
+                        selectedIndex.add(holder.getPosition());
                         selectedItem.add(myItem);
 
                         ((ActivityShop)ctx).pressSelect();

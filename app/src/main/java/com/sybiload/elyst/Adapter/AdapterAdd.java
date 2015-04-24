@@ -110,21 +110,39 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         // update database
         new Misc().updateItem(ctx, newItem);
 
-        int position = Static.currentList.itemAvailable.indexOf(oldItem);
+        // get old pos
+        int oldpos = 0;
+        for (int i = 0; i < Static.currentList.itemAvailable.size(); i++)
+        {
+            if (Static.currentList.itemAvailable.get(i).getIdItem().equals(oldItem.getIdItem()))
+            {
+                oldpos = i;
+                break;
+            }
+        }
 
         // prevent the 'not update on set list' bug
-        Static.currentList.itemAvailable.set(position, newItem);
+        Static.currentList.itemAvailable.set(oldpos, newItem);
 
         // if there is a bug somewhere, be sure it's here !
-        notifyItemChanged(position);
-
-        // possibility to remove this for the simple variable 'position' ?
-        Item it = Static.currentList.itemAvailable.get(position);
-
+        // sort data
         Static.currentList.sortAvailable(ctx);
-        int orf = Static.currentList.itemAvailable.indexOf(it);
 
-        notifyItemMoved(position, orf);
+        // get new pos
+        int newpos = 0;
+        for (int i = 0; i < Static.currentList.itemAvailable.size(); i++)
+        {
+            if (Static.currentList.itemAvailable.get(i).getIdItem().equals(oldItem.getIdItem()))
+            {
+                newpos = i;
+                break;
+            }
+        }
+
+        // change data
+        notifyItemChanged(oldpos);
+        // change position
+        notifyItemMoved(oldpos, newpos);
     }
 
     @Override
@@ -140,9 +158,9 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        final Item myItem = Static.currentList.itemAvailable.get(position);
+        final Item myItem = Static.currentList.itemAvailable.get(holder.getPosition());
 
-        if (!selectedIndex.contains(position))
+        if (!selectedIndex.contains(holder.getPosition()))
         {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -159,14 +177,14 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             @Override
             public boolean onLongClick(View v)
             {
-                if (!selectedIndex.contains(position) && !ActivityAdd.toolbarOpened)
+                if (!selectedIndex.contains(holder.getPosition()) && !ActivityAdd.toolbarOpened)
                 {
                     ActivityAdd.currentItem = myItem;
 
                     holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                     selectedHolder.add(holder);
-                    selectedIndex.add(position);
+                    selectedIndex.add(holder.getPosition());
                     selectedItem.add(myItem);
 
                     ((ActivityAdd)ctx).pressSelect();
@@ -183,22 +201,22 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             {
                 if (!ActivityAdd.toolbarOpened)
                 {
-                    if (selectedIndex.contains(position))
+                    if (selectedIndex.contains(holder.getPosition()))
                     {
                         holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
                         selectedHolder.remove(holder);
-                        selectedIndex.remove(selectedIndex.indexOf(position));
+                        selectedIndex.remove(selectedIndex.indexOf(holder.getPosition()));
                         selectedItem.remove(myItem);
 
                         ((ActivityAdd)ctx).pressSelect();
                     }
-                    else if (!selectedIndex.contains(position) && selectedIndex.size() != 0)
+                    else if (!selectedIndex.contains(holder.getPosition()) && selectedIndex.size() != 0)
                     {
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
-                        selectedIndex.add(position);
+                        selectedIndex.add(holder.getPosition());
                         selectedItem.add(myItem);
 
                         ((ActivityAdd)ctx).pressSelect();

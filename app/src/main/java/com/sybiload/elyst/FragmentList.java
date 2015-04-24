@@ -30,7 +30,7 @@ public class FragmentList extends Fragment
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    private AdapterList currAdapter;
+    public static AdapterList currAdapter;
 
     ImageButton fabImageButton;
 
@@ -63,7 +63,7 @@ public class FragmentList extends Fragment
                 {
                     case R.id.action_edit:
 
-                        Static.currentList = AdapterList.selectedList;
+                        Static.currentList = currAdapter.selectedList;
 
                         Intent intent = new Intent(getActivity(), ActivityNewList.class);
                         startActivity(intent);
@@ -72,7 +72,7 @@ public class FragmentList extends Fragment
 
                     case R.id.action_delete:
 
-                        currAdapter.delete(AdapterList.selectedList);
+                        currAdapter.delete(currAdapter.selectedList);
 
                         currAdapter.clearSelected();
                         pressSelect();
@@ -109,6 +109,9 @@ public class FragmentList extends Fragment
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
+        // set adapter
+        currAdapter = new AdapterList(this);
+        recyclerView.setAdapter(currAdapter);
 
         return view;
     }
@@ -126,7 +129,7 @@ public class FragmentList extends Fragment
 
     public void pressSelect()
     {
-        if (AdapterList.selectedHolder == null)
+        if (currAdapter.selectedHolder == null)
         {
             // check if isPro
             getActivity().invalidateOptionsMenu();
@@ -175,16 +178,6 @@ public class FragmentList extends Fragment
             scaleAnim.setFillAfter(true);
             fabImageButton.startAnimation(scaleAnim);
         }
-    }
-
-    @Override
-    public void onResume()
-    {
-        // add all items to shop
-        currAdapter = new AdapterList(this);
-        recyclerView.setAdapter(currAdapter);
-
-        super.onResume();
     }
 
     @Override

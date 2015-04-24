@@ -43,8 +43,8 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     private DatabaseList database;
     private SharedPreferences mainPref;
 
-    public static List selectedList;
-    public static ViewHolder selectedHolder;
+    public List selectedList;
+    public ViewHolder selectedHolder;
 
     public AdapterList(FragmentList fm)
     {
@@ -82,21 +82,23 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 
     public void delete(List myList)
     {
-        if (Static.allList.contains(myList))
+        // update database
+        database.open();
+        database.deleteItem(myList);
+        database.dbList.close();
+
+        // delete database
+        fm.getActivity().deleteDatabase(myList.getIdDb());
+
+        // remove item from list
+        for (int i = 0; i < Static.allList.size(); i++)
         {
-            // update database
-            database.open();
-            database.deleteItem(myList);
-            database.dbList.close();
-
-            // delete database
-            fm.getActivity().deleteDatabase(myList.getIdDb());
-
-            // remove item from list
-            int position = Static.allList.indexOf(myList);
-            Static.allList.remove(position);
-
-            notifyItemRemoved(position);
+            if (Static.allList.get(i).getIdDb().equals(myList.getIdDb()))
+            {
+                Static.allList.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
         }
     }
 
@@ -113,11 +115,11 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        final List myList = Static.allList.get(position);
+        List myList = Static.allList.get(holder.getPosition());
 
         holder.setIsRecyclable(false);
-        new updateBmpAsync().execute(Static.cardDrw[Static.allList.get(position).getBackground()], holder);
-        holder.txtHeader.setText(Static.allList.get(position).getName());
+        new updateBmpAsync().execute(Static.cardDrw[Static.allList.get(holder.getPosition()).getBackground()], holder);
+        holder.txtHeader.setText(Static.allList.get(holder.getPosition()).getName());
 
         // hide footer if no description
         if (myList.getDescription() == null || myList.getDescription().equals(""))
@@ -141,7 +143,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
                 holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
 
                 selectedHolder = holder;
-                selectedList = myList;
+                selectedList = Static.allList.get(holder.getPosition());
 
                 fm.pressSelect();
 
@@ -154,14 +156,17 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             @Override
             public void onClick(View v)
             {
+                new Misc().log("holder: " + Integer.toString(holder.getPosition()));
+                new Misc().log("positi: " + Integer.toString(position));
+
+
                 if (selectedHolder == null)
-                    fm.enterList(position);
+                    fm.enterList(holder.getPosition());
                 else
                 {
                     clearSelected();
                     fm.pressSelect();
                 }
-
             }
         });
     }

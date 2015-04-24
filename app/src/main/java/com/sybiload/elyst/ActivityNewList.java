@@ -22,6 +22,8 @@ import com.sybiload.elyst.Adapter.AdapterList;
 import com.sybiload.elyst.Adapter.AdapterNewList;
 import com.sybiload.elyst.Database.List.DatabaseList;
 
+import java.util.ArrayList;
+
 public class ActivityNewList extends ActionBarActivity
 {
     private ImageButton fabImageButton;
@@ -107,6 +109,7 @@ public class ActivityNewList extends ActionBarActivity
         layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
 
+
         // disable the button to avoid null input
         if (Static.currentList == null)
         {
@@ -151,11 +154,20 @@ public class ActivityNewList extends ActionBarActivity
             DatabaseList databaseList = new DatabaseList(getApplicationContext());
             databaseList.open();
 
-            List myList = new List(new Misc().generateSeed() + ".db", editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), currAdapter.selectedIndex);
-
-            new Misc().addList(getApplicationContext(), myList);
+            Static.currentList = new List(new Misc().generateSeed() + ".db", editTextNewListName.getText().toString(), editTextNewListDescription.getText().toString(), currAdapter.selectedIndex);
+            new Misc().addList(getApplicationContext(), Static.currentList);
 
             databaseList.dbList.close();
+
+            // search and add data in the fragmentlist recyclerview
+            for (int i = 0; i < Static.allList.size(); i++)
+            {
+                if (Static.allList.get(i).getIdDb().equals(Static.currentList.getIdDb()))
+                {
+                    FragmentList.currAdapter.notifyItemInserted(i);
+                    break;
+                }
+            }
 
             return null;
         }
@@ -183,6 +195,35 @@ public class ActivityNewList extends ActionBarActivity
             databaseList.updateByName(Static.currentList);
 
             databaseList.dbList.close();
+
+            // get oldpos in recyclerview
+            int oldpos = 0;
+            for (int i = 0; i < Static.allList.size(); i++)
+            {
+                if (Static.allList.get(i).getIdDb().equals(Static.currentList.getIdDb()))
+                {
+                    oldpos = i;
+                    break;
+                }
+            }
+
+            new Misc().sortList(Static.allList);
+
+            // change data in the fragmentlist recyclerview
+            int newpos = 0;
+            for (int i = 0; i < Static.allList.size(); i++)
+            {
+                if (Static.allList.get(i).getIdDb().equals(Static.currentList.getIdDb()))
+                {
+                    newpos = i;
+                    break;
+                }
+            }
+
+            // change data
+            FragmentList.currAdapter.notifyItemChanged(oldpos);
+            // reorganize list
+            FragmentList.currAdapter.notifyItemMoved(oldpos, newpos);
 
             return null;
         }
