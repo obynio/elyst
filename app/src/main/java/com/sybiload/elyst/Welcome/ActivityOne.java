@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.*;
@@ -14,7 +15,7 @@ import android.widget.*;
 import com.sybiload.elyst.Misc;
 import com.sybiload.elyst.R;
 
-public class ActivityOne extends Activity
+public class ActivityOne extends AppCompatActivity
 {
     ImageButton fabImageButton;
 

@@ -10,11 +10,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
-import android.support.v7.internal.widget.TintCheckBox;
-import android.support.v7.internal.widget.TintCheckedTextView;
-import android.support.v7.internal.widget.TintEditText;
-import android.support.v7.internal.widget.TintRadioButton;
-import android.support.v7.internal.widget.TintSpinner;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
@@ -85,6 +80,7 @@ public class ActivitySystemPref extends PreferenceActivity
             return result;
         }
 
+        /*
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             // If we're running pre-L, we need to 'inject' our tint aware Views in place of the
             // standard framework versions
@@ -101,6 +97,7 @@ public class ActivitySystemPref extends PreferenceActivity
                     return new TintCheckedTextView(this, attrs);
             }
         }
+        */
 
         return null;
     }

@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,7 +28,7 @@ import com.sybiload.elyst.Database.List.DatabaseList;
 
 import java.util.ArrayList;
 
-public class ActivityNewList extends ActionBarActivity
+public class ActivityNewList extends AppCompatActivity
 {
     private ImageButton fabImageButton;
     private EditText editTextNewListName;

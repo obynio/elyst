@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -36,7 +37,7 @@ import com.sybiload.elyst.Database.Item.DatabaseItem;
 
 import java.util.ArrayList;
 
-public class ActivityAdd extends ActionBarActivity
+public class ActivityAdd extends AppCompatActivity
 {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;

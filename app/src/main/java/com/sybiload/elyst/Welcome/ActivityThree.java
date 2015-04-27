@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
@@ -22,7 +23,7 @@ import com.sybiload.elyst.Database.List.DatabaseList;
 import com.sybiload.elyst.Misc;
 import com.sybiload.elyst.R;
 
-public class ActivityThree extends Activity
+public class ActivityThree extends AppCompatActivity
 {
     SharedPreferences mainPref;
     ImageButton fabImageButton;

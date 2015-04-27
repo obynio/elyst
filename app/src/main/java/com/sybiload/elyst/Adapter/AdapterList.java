@@ -126,8 +126,8 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
         {
             if (Static.allList.get(i).getIdDb().equals(myList.getIdDb()))
             {
-                Static.allList.remove(i);
                 notifyItemRemoved(i);
+                Static.allList.remove(i);
                 break;
             }
         }

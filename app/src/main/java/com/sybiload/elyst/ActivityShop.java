@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,7 +33,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.elyst.Adapter.AdapterShop;
 import com.sybiload.elyst.Database.Item.DatabaseItem;
 
-public class ActivityShop extends ActionBarActivity
+public class ActivityShop extends AppCompatActivity
 {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;

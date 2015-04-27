@@ -180,6 +180,16 @@ public class FragmentList extends Fragment
         }
     }
 
+    /*
+    @Override
+    public void onResume()
+    {
+        Static.currentList = null;
+
+        super.onResume();
+    }
+    */
+
     @Override
     public void onPause()
     {
