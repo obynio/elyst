@@ -10,7 +10,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.provider.CalendarContract;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
@@ -32,6 +34,7 @@ import com.sybiload.elyst.FragmentList;
 import com.sybiload.elyst.Item;
 import com.sybiload.elyst.List;
 import com.sybiload.elyst.Misc;
+import com.sybiload.elyst.Pref.ActivityAppPref;
 import com.sybiload.elyst.R;
 import com.sybiload.elyst.Static;
 
@@ -167,6 +170,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             @Override
             public boolean onLongClick(View v)
             {
+
                 if (selectedHolder != null)
                     clearSelected();
 

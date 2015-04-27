@@ -15,9 +15,11 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.Explode;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -69,6 +71,7 @@ public class ActivityAdd extends AppCompatActivity
     protected void onCreate(Bundle paramBundle)
     {
         super.onCreate(paramBundle);
+
         mainPref = getApplicationContext().getSharedPreferences("main", 0);
         setContentView(R.layout.activity_additem);
 
@@ -84,6 +87,8 @@ public class ActivityAdd extends AppCompatActivity
         imageViewColorRed = (ImageView)findViewById(R.id.imageViewAddItemColorRed);
         imageViewColorPurple = (ImageView)findViewById(R.id.imageViewAddItemColorPurple);
         imageViewColorBlue = (ImageView)findViewById(R.id.imageViewAddItemColorBlue);
+
+
 
         if (mainPref.getBoolean("checkBoxSystemNoSleep", false))
         {
