@@ -7,7 +7,8 @@
     android:layout_height="100dp"
     android:layout_margin="6dp"
     android:id="@+id/cardViewList"
-    card_view:cardCornerRadius="4dp">
+    card_view:cardCornerRadius="4dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <RelativeLayout
         android:layout_width="match_parent"

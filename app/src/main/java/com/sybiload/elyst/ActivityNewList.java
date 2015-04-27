@@ -59,8 +59,6 @@ public class ActivityNewList extends AppCompatActivity
             }
         });
 
-        Intent intent = getIntent();
-
         if (Static.currentList != null)
         {
             editTextNewListName.setText(Static.currentList.getName());
