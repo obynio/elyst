@@ -63,15 +63,15 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        if (selectedIndex == holder.getPosition())
+        if (selectedIndex == holder.getLayoutPosition())
         {
             holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
             selectedHolder = holder;
-            selectedIndex = holder.getPosition();
+            selectedIndex = holder.getLayoutPosition();
         }
 
         holder.setIsRecyclable(false);
-        new updateBmpAsync().execute(Static.cardDrw[holder.getPosition()], holder);
+        new updateBmpAsync().execute(Static.cardDrw[holder.getLayoutPosition()], holder);
 
         holder.itemView.setOnClickListener(new View.OnClickListener()
         {
@@ -85,7 +85,7 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
                 holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
 
                 selectedHolder = holder;
-                selectedIndex = holder.getPosition();
+                selectedIndex = holder.getLayoutPosition();
             }
         });
     }

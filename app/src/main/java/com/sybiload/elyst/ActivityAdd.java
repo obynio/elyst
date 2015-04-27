@@ -288,11 +288,10 @@ public class ActivityAdd extends AppCompatActivity
         currAdap = new AdapterAdd(ActivityAdd.this);
         recyclerView.setAdapter(currAdap);
 
-
         // change searchView text color
         SearchView.SearchAutoComplete searchViewText = (SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
         searchViewText.setTextColor(Color.WHITE);
-        searchViewText.setHint("Search an item");
+        searchViewText.setHint("Search something..");
         searchViewText.setHintTextColor(Color.parseColor("#C5CAE9"));
 
         editTextName.addTextChangedListener(new TextWatcher()

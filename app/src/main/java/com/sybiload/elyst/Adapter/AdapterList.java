@@ -146,11 +146,10 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        List myList = Static.allList.get(holder.getPosition());
+        List myList = Static.allList.get(holder.getLayoutPosition());
 
-        holder.setIsRecyclable(false);
-        new updateBmpAsync().execute(Static.cardDrw[Static.allList.get(holder.getPosition()).getBackground()], holder);
-        holder.txtHeader.setText(Static.allList.get(holder.getPosition()).getName());
+        new updateBmpAsync().execute(Static.cardDrw[Static.allList.get(holder.getLayoutPosition()).getBackground()], holder);
+        holder.txtHeader.setText(Static.allList.get(holder.getLayoutPosition()).getName());
 
         // hide footer if no description
         if (myList.getDescription() == null || myList.getDescription().equals(""))
@@ -174,7 +173,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
                 holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
 
                 selectedHolder = holder;
-                selectedList = Static.allList.get(holder.getPosition());
+                selectedList = Static.allList.get(holder.getLayoutPosition());
 
                 fm.pressSelect();
 
@@ -187,9 +186,8 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             @Override
             public void onClick(View v)
             {
-
                 if (selectedHolder == null)
-                    fm.enterList(holder.getPosition());
+                    fm.enterList(holder.getLayoutPosition());
                 else
                 {
                     clearSelected();

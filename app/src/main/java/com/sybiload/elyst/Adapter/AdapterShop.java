@@ -195,9 +195,9 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        final Item myItem = Static.currentList.itemShop.get(holder.getPosition());
+        final Item myItem = Static.currentList.itemShop.get(holder.getLayoutPosition());
 
-        if (!selectedIndex.contains(holder.getPosition()))
+        if (!selectedIndex.contains(holder.getLayoutPosition()))
         {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -228,14 +228,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             public boolean onLongClick(View v)
             {
 
-                if (!selectedIndex.contains(holder.getPosition()) && !ActivityShop.toolbarOpened)
+                if (!selectedIndex.contains(holder.getLayoutPosition()) && !ActivityShop.toolbarOpened)
                 {
                     ActivityShop.currentItem = myItem;
 
                     v.setBackgroundColor(Color.parseColor("#C3C3C3"));
                     selectedItem.add(myItem);
                     selectedHolder.add(holder);
-                    selectedIndex.add(holder.getPosition());
+                    selectedIndex.add(holder.getLayoutPosition());
 
                     ((ActivityShop)ctx).pressSelect();
                 }
@@ -274,22 +274,22 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             {
                 if (!ActivityShop.toolbarOpened)
                 {
-                    if (selectedIndex.contains(holder.getPosition()))
+                    if (selectedIndex.contains(holder.getLayoutPosition()))
                     {
                         holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
                         selectedHolder.remove(holder);
-                        selectedIndex.remove(selectedIndex.indexOf(holder.getPosition()));
+                        selectedIndex.remove(selectedIndex.indexOf(holder.getLayoutPosition()));
                         selectedItem.remove(myItem);
 
                         ((ActivityShop)ctx).pressSelect();
                     }
-                    else if (!selectedIndex.contains(holder.getPosition()) && selectedIndex.size() != 0)
+                    else if (!selectedIndex.contains(holder.getLayoutPosition()) && selectedIndex.size() != 0)
                     {
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
-                        selectedIndex.add(holder.getPosition());
+                        selectedIndex.add(holder.getLayoutPosition());
                         selectedItem.add(myItem);
 
                         ((ActivityShop)ctx).pressSelect();

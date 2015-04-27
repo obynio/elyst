@@ -158,9 +158,9 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        final Item myItem = Static.currentList.itemAvailable.get(holder.getPosition());
+        final Item myItem = Static.currentList.itemAvailable.get(holder.getLayoutPosition());
 
-        if (!selectedIndex.contains(holder.getPosition()))
+        if (!selectedIndex.contains(holder.getLayoutPosition()))
         {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -177,14 +177,14 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             @Override
             public boolean onLongClick(View v)
             {
-                if (!selectedIndex.contains(holder.getPosition()) && !ActivityAdd.toolbarOpened)
+                if (!selectedIndex.contains(holder.getLayoutPosition()) && !ActivityAdd.toolbarOpened)
                 {
                     ActivityAdd.currentItem = myItem;
 
                     holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                     selectedHolder.add(holder);
-                    selectedIndex.add(holder.getPosition());
+                    selectedIndex.add(holder.getLayoutPosition());
                     selectedItem.add(myItem);
 
                     ((ActivityAdd)ctx).pressSelect();
@@ -201,22 +201,22 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             {
                 if (!ActivityAdd.toolbarOpened)
                 {
-                    if (selectedIndex.contains(holder.getPosition()))
+                    if (selectedIndex.contains(holder.getLayoutPosition()))
                     {
                         holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
                         selectedHolder.remove(holder);
-                        selectedIndex.remove(selectedIndex.indexOf(holder.getPosition()));
+                        selectedIndex.remove(selectedIndex.indexOf(holder.getLayoutPosition()));
                         selectedItem.remove(myItem);
 
                         ((ActivityAdd)ctx).pressSelect();
                     }
-                    else if (!selectedIndex.contains(holder.getPosition()) && selectedIndex.size() != 0)
+                    else if (!selectedIndex.contains(holder.getLayoutPosition()) && selectedIndex.size() != 0)
                     {
                         holder.itemView.setBackgroundColor(Color.parseColor("#C3C3C3"));
 
                         selectedHolder.add(holder);
-                        selectedIndex.add(holder.getPosition());
+                        selectedIndex.add(holder.getLayoutPosition());
                         selectedItem.add(myItem);
 
                         ((ActivityAdd)ctx).pressSelect();
