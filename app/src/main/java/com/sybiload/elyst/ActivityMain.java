@@ -316,13 +316,13 @@ public class ActivityMain extends AppCompatActivity
                     @Override
                     public void run()
                     {
-                        if (pos == 1)
+                        if (pos == 2)
                         {
                             Intent intent = new Intent(getApplicationContext(), ActivityAppPref.class);
                             startActivity(intent);
                             Misc.leftTransition(ActivityMain.this);
                         }
-                        else
+                        else if (pos == 1)
                         {
                             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
                             tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos - 1]));

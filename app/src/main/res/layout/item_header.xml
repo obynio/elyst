@@ -10,7 +10,7 @@
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dip"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_icon" />
 
     <TextView
         android:id="@+id/textViewNavTitle"

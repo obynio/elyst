@@ -1,12 +1,16 @@
 package com.sybiload.elyst;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +25,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +35,7 @@ import com.android.datetimepicker.time.TimePickerDialog;
 import com.sybiload.elyst.Adapter.AdapterList;
 import com.sybiload.elyst.Adapter.AdapterNewList;
 import com.sybiload.elyst.Database.List.DatabaseList;
+import com.sybiload.elyst.Receiver.AlarmReceiver;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,6 +51,7 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
     private SimpleDateFormat timeFormat;
 
     private ImageButton fabImageButton;
+    private ImageView imageViewRemoveReminder;
     private EditText editTextNewListName;
     private EditText editTextNewListDescription;
     private TextView textViewAddReminderDate;
@@ -58,6 +65,7 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_newlist);
 
+        imageViewRemoveReminder = (ImageView)findViewById(R.id.imageViewNewListRemoveReminder);
         textViewAddReminderDate = (TextView)findViewById(R.id.textViewNewListAddReminderDate);
         textViewAddReminderTime = (TextView)findViewById(R.id.textViewNewListAddReminderTime);
         editTextNewListName = (EditText)findViewById(R.id.editTextNewListName);
@@ -84,10 +92,15 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
             editTextNewListName.setText(Static.currentList.getName());
             editTextNewListDescription.setText(Static.currentList.getDescription());
 
-            calendar = Static.currentList.getReminder();
+            if (Static.currentList.getReminder() != null)
+            {
+                calendar = Static.currentList.getReminder();
 
-            textViewAddReminderDate.setText(dateFormat.format(calendar.getTime()));
-            textViewAddReminderTime.setText(timeFormat.format(calendar.getTime()));
+                textViewAddReminderDate.setText(dateFormat.format(calendar.getTime()));
+                textViewAddReminderTime.setText(timeFormat.format(calendar.getTime()));
+
+                imageViewRemoveReminder.setVisibility(View.VISIBLE);
+            }
         }
 
         textViewAddReminderDate.setOnClickListener(new View.OnClickListener()
@@ -111,6 +124,30 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
             }
         });
 
+        imageViewRemoveReminder.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                calendar = null;
+                textViewAddReminderDate.setText("Add a reminder");
+                textViewAddReminderTime.setText(null);
+
+                imageViewRemoveReminder.setVisibility(View.GONE);
+
+                if (Static.currentList != null)
+                {
+                    Intent alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                    alarmIntent.setAction(Static.currentList.getIdDb());
+
+                    AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                    PendingIntent displayIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, 0);
+
+                    alarmManager.cancel(displayIntent);
+                }
+            }
+        });
+
         editTextNewListName.addTextChangedListener(new TextWatcher()
         {
             public void afterTextChanged(Editable s)
@@ -131,9 +168,13 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
 
             }
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+            }
 
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+            }
         });
 
         fabImageButton.setVisibility(View.GONE);
@@ -214,6 +255,17 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
                 }
             }
 
+            if (Static.currentList.getReminder() != null)
+            {
+                Intent alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                alarmIntent.setAction(Static.currentList.getIdDb());
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                PendingIntent displayIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, 0);
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, Static.currentList.getReminder().getTimeInMillis(), displayIntent);
+            }
+
             return null;
         }
 
@@ -237,6 +289,17 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
 
             FragmentList.currAdapter.update(Static.currentList);
 
+            if (Static.currentList.getReminder() != null)
+            {
+                Intent alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                alarmIntent.setAction(Static.currentList.getIdDb());
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                PendingIntent displayIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, 0);
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, Static.currentList.getReminder().getTimeInMillis(), displayIntent);
+            }
+
             return null;
         }
 
@@ -254,6 +317,10 @@ public class ActivityNewList extends AppCompatActivity implements DatePickerDial
         calendar.set(year, monthOfYear, dayOfMonth);
         calendar.set(Calendar.HOUR_OF_DAY, 12);
         calendar.set(Calendar.MINUTE, 00);
+        calendar.set(Calendar.SECOND, 00);
+        calendar.set(Calendar.MILLISECOND, 00);
+
+        imageViewRemoveReminder.setVisibility(View.VISIBLE);
 
         textViewAddReminderDate.setText(dateFormat.format(calendar.getTime()));
         textViewAddReminderTime.setText(timeFormat.format(calendar.getTime()));

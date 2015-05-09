@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ import com.sybiload.elyst.Pref.ActivityAppPref;
 import com.sybiload.elyst.R;
 import com.sybiload.elyst.Static;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
@@ -65,11 +67,15 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
         public TextView txtHeader;
         public TextView txtFooter;
         public ImageView imageView;
+        public LinearLayout llReminder;
+        public TextView textViewReminder;
 
         public ViewHolder(View v)
         {
             super(v);
 
+            llReminder = (LinearLayout) v.findViewById(R.id.llListReminder);
+            textViewReminder = (TextView) v.findViewById(R.id.textViewListReminder);
             imageView = (ImageView) v.findViewById(R.id.imageViewList);
             txtHeader = (TextView) v.findViewById(R.id.textViewListFirstLine);
             txtFooter = (TextView) v.findViewById(R.id.textViewListSecondLine);
@@ -204,6 +210,12 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
                 fm.enterList(holder.getLayoutPosition());
             }
         });
+
+        if (myList.getReminder() != null)
+        {
+            holder.llReminder.setVisibility(View.VISIBLE);
+            holder.textViewReminder.setText(new SimpleDateFormat("MM-dd HH:mm").format(myList.getReminder().getTime()));
+        }
     }
 
     @Override

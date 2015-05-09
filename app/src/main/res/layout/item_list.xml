@@ -42,6 +42,35 @@
             android:singleLine="true"
             android:textSize="12sp" />
 
+        <LinearLayout
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:visibility="gone"
+            android:id="@+id/llListReminder">
+
+            <ImageView
+                android:id="@+id/imageViewListReminder"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="6dp"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_schedule" />
+
+            <TextView
+                android:id="@+id/textViewListReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:text="Add a reminder"
+                android:textSize="14dp"
+                android:layout_toRightOf="@id/imageViewListReminder"/>
+
+        </LinearLayout>
+
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>
