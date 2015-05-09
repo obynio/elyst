@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -15,15 +16,17 @@ public class List
     private String name;
     private String description;
     private String idDb;
+    private Calendar reminder;
     private int background;
     public static ArrayList<Item> itemShop;
     public static ArrayList<Item> itemAvailable;
 
-    public List(String idDb, String name, String description, int background)
+    public List(String idDb, String name, String description, Calendar reminder, int background)
     {
         this.idDb = idDb;
         this.name = name;
         this.description = description;
+        this.reminder = reminder;
         this.background = background;
         itemShop = new ArrayList<Item>();
         itemAvailable = new ArrayList<Item>();
@@ -54,6 +57,15 @@ public class List
     public void setIdDb(String idDb)
     {
         this.idDb = idDb;
+    }
+
+    public Calendar getReminder()
+    {
+        return this.reminder;
+    }
+    public void setReminder(Calendar reminder)
+    {
+        this.reminder = reminder;
     }
 
     public int getBackground()

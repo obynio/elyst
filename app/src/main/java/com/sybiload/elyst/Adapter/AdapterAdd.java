@@ -62,7 +62,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
         for (Item myItem : selectedItem)
         {
             // update database
-            new Misc().deleteItem(ctx, myItem);
+            Misc.deleteItem(ctx, myItem);
 
             // remove item from itemShop
             int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -92,7 +92,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
             myItem.setDone(false);
 
             // update database
-            new Misc().insertItem(ctx, myItem);
+            Misc.insertItem(ctx, myItem);
 
             // get position of our item in the availableItem and remove it
             int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -108,7 +108,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
     public void update(Item newItem)
     {
         // update database
-        new Misc().updateItem(ctx, newItem);
+        Misc.updateItem(ctx, newItem);
 
         // get old pos
         int oldpos = 0;
@@ -238,7 +238,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
 
         holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
-        holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getCategory())));
+        holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, myItem.getCategory())));
     }
 
     @Override

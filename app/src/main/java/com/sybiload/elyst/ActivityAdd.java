@@ -142,14 +142,14 @@ public class ActivityAdd extends AppCompatActivity
                             double price = (priceStr != null && !priceStr.equals("")) ? Double.parseDouble(priceStr) : 0.0;
 
                             // if there is a bug, it's here
-                            Item newItem = new Item(new Misc().generateSeed(), editTextName.getText().toString(), null, color, price, 0.0, 0, barType, barCode, false);
+                            Item newItem = new Item(Misc.generateSeed(), editTextName.getText().toString(), null, color, price, 0.0, 0, barType, barCode, false);
 
                             // add new item to the itemAvailable and sort the list
                             Static.currentList.itemAvailable.add(newItem);
                             Static.currentList.sortAvailable(getApplicationContext());
 
                             // update database with the new item
-                            new Misc().createItem(getApplicationContext(), newItem);
+                            Misc.createItem(getApplicationContext(), newItem);
 
                             // update the recyclerView with the new item
                             currAdap = new AdapterAdd(ActivityAdd.this);
@@ -384,13 +384,13 @@ public class ActivityAdd extends AppCompatActivity
 
     private void expand(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 168, 700);
+        ValueAnimator mAnimator = slideAnimator(v, (int)Misc.dpToPx(getApplicationContext(), 56.0), (int)Misc.dpToPx(getApplicationContext(), 233.0));
         mAnimator.start();
     }
 
     private void collapse(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 700, 168);
+        ValueAnimator mAnimator = slideAnimator(v, (int)Misc.dpToPx(getApplicationContext(), 233.0), (int)Misc.dpToPx(getApplicationContext(), 56.0));
         mAnimator.start();
     }
 

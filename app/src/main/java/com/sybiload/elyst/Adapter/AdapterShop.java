@@ -73,7 +73,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             myItem.setDescription(null);
 
             // update database
-            new Misc().removeItem(ctx, myItem);
+            Misc.removeItem(ctx, myItem);
 
             // remove item from itemShop
             int position = Static.currentList.itemShop.indexOf(myItem);
@@ -95,7 +95,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             myItem.setDone(false);
 
         // update database
-        new Misc().updateItem(ctx, myItem);
+        Misc.updateItem(ctx, myItem);
 
         // get old pos
         int oldpos = 0;
@@ -131,7 +131,7 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
     public void update(Item newItem)
     {
         // update database
-        new Misc().updateItem(ctx, newItem);
+        Misc.updateItem(ctx, newItem);
 
         // get old pos
         int oldpos = 0;
@@ -253,14 +253,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         {
             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, 0)));
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
         }
         else
         {
             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getCategory())));
+            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, myItem.getCategory())));
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
         }
 
@@ -309,14 +309,14 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                         {
                             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, 0)));
+                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, 0)));
                             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
                         }
                         else
                         {
                             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(new Misc().getColor(ctx, myItem.getCategory())));
+                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, myItem.getCategory())));
                             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
                         }
                     }

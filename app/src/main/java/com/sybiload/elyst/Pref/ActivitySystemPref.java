@@ -50,7 +50,7 @@ public class ActivitySystemPref extends PreferenceActivity
             public void onClick(View v)
             {
                 finish();
-                new Misc().rightTransition(ActivitySystemPref.this);
+                Misc.rightTransition(ActivitySystemPref.this);
             }
         });
 
@@ -106,6 +106,6 @@ public class ActivitySystemPref extends PreferenceActivity
     public void onBackPressed()
     {
         finish();
-        new Misc().rightTransition(ActivitySystemPref.this);
+        Misc.rightTransition(ActivitySystemPref.this);
     }
 }

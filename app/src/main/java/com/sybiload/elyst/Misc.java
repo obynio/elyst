@@ -20,17 +20,17 @@ import java.util.Set;
 
 public class Misc
 {
-    public void leftTransition(Activity act)
+    public static void leftTransition(Activity act)
     {
         act.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
-    public void rightTransition(Activity act)
+    public static void rightTransition(Activity act)
     {
         act.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 
-    public void log(String message)
+    public static void log(String message)
     {
         if (BuildConfig.DEBUG)
         {
@@ -38,8 +38,17 @@ public class Misc
         }
 
     }
+
+    public static double pxToDp(final Context context, final double px) {
+        return px / context.getResources().getDisplayMetrics().density;
+    }
+
+    public static double dpToPx(final Context context, final double dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
+    }
+
     // sort list in alphabetical order
-    public void sortList(ArrayList<List> list)
+    public static void sortList(ArrayList<List> list)
     {
         Collections.sort(list, new Comparator<List>()
         {
@@ -50,7 +59,7 @@ public class Misc
         });
     }
 
-    public void populateList(Context ctx)
+    public static void populateList(Context ctx)
     {
         DatabaseList databaseList = new DatabaseList(ctx);
 
@@ -65,7 +74,7 @@ public class Misc
         sortList(Static.allList);
     }
 
-    public void populateItem(Context ctx, List list)
+    public static void populateItem(Context ctx, List list)
     {
         DatabaseItem databaseItem = new DatabaseItem(ctx, list.getIdDb());
         databaseItem.open();
@@ -105,7 +114,7 @@ public class Misc
     }
 
     // get default item and send back an arraylist with all the default items
-    public void populateDefaultItem(Context ctx)
+    public static void populateDefaultItem(Context ctx)
     {
         ArrayList<Item> itemArray = new ArrayList<Item>();
         String[] defaultItemName = ctx.getResources().getStringArray(R.array.item_name);
@@ -123,7 +132,7 @@ public class Misc
         databaseItem.dbIndex.close();
     }
 
-    public String generateSeed()
+    public static String generateSeed()
     {
         char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 
@@ -138,7 +147,7 @@ public class Misc
         return sb.toString();
     }
 
-    public void createItem(Context ctx, Item myItem)
+    public static void createItem(Context ctx, Item myItem)
     {
         // adding item to the database
         DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
@@ -150,7 +159,7 @@ public class Misc
         databaseItem.dbChild.close();
     }
 
-    public void insertItem(Context ctx, Item myItem)
+    public static void insertItem(Context ctx, Item myItem)
     {
         // adding item to the database
         DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
@@ -162,7 +171,7 @@ public class Misc
         databaseItem.dbChild.close();
     }
 
-    public void removeItem(Context ctx, Item myItem)
+    public static void removeItem(Context ctx, Item myItem)
     {
         // removing item from the database
         DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
@@ -174,7 +183,7 @@ public class Misc
         databaseItem.dbChild.close();
     }
 
-    public void deleteItem(Context ctx, Item myItem)
+    public static void deleteItem(Context ctx, Item myItem)
     {
         // removing item from the database
         DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
@@ -186,7 +195,7 @@ public class Misc
         databaseItem.dbChild.close();
     }
 
-    public void updateItem(Context ctx, Item myItem)
+    public static void updateItem(Context ctx, Item myItem)
     {
         // removing item from the database
         DatabaseItem databaseItem = new DatabaseItem(ctx, Static.currentList.getIdDb());
@@ -198,7 +207,7 @@ public class Misc
         databaseItem.dbChild.close();
     }
 
-    public void createList(Context ctx, List myList)
+    public static void createList(Context ctx, List myList)
     {
         // open list tabl database
         DatabaseList databaseList = new DatabaseList(ctx);
@@ -211,7 +220,7 @@ public class Misc
         populateList(ctx);
     }
 
-    public void updateList(Context ctx, List myList)
+    public static void updateList(Context ctx, List myList)
     {
         DatabaseList databaseList = new DatabaseList(ctx);
         databaseList.open();
@@ -221,7 +230,7 @@ public class Misc
         databaseList.dbList.close();
     }
 
-    public void deleteList(Context ctx, List myList)
+    public static void deleteList(Context ctx, List myList)
     {
         DatabaseList databaseList = new DatabaseList(ctx);
         databaseList.open();
@@ -230,7 +239,7 @@ public class Misc
         databaseList.dbList.close();
     }
 
-    public String getColor(Context ctx, int color)
+    public static String getColor(Context ctx, int color)
     {
         if (color == 1)
             return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.green));

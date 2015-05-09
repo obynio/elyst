@@ -36,7 +36,7 @@ public class ActivityTwo extends AppCompatActivity
             public void onClick(View v) {
                 Intent intent = new Intent(getApplication(), ActivityThree.class);
                 startActivity(intent);
-                new Misc().leftTransition(ActivityTwo.this);
+                Misc.leftTransition(ActivityTwo.this);
             }
         });
     }
@@ -45,6 +45,6 @@ public class ActivityTwo extends AppCompatActivity
     public void onBackPressed()
     {
         finish();
-        new Misc().rightTransition(ActivityTwo.this);
+        Misc.rightTransition(ActivityTwo.this);
     }
 }

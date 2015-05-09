@@ -41,7 +41,7 @@ public class FragmentList extends Fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
         // populate items
-        new Misc().populateList(getActivity());
+        Misc.populateList(getActivity());
 
         ActivityMain.drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener()
         {
@@ -119,12 +119,12 @@ public class FragmentList extends Fragment
     public void enterList(final int position)
     {
         Static.currentList = Static.allList.get(position);
-        new Misc().populateItem(getActivity(), Static.currentList);
+        Misc.populateItem(getActivity(), Static.currentList);
 
         Intent intent = new Intent(getActivity(), ActivityShop.class);
 
         startActivity(intent);
-        new Misc().leftTransition(getActivity());
+        Misc.leftTransition(getActivity());
     }
 
     public void pressSelect()

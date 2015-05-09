@@ -35,7 +35,7 @@ public class WidgetConfigure extends Activity
         // If they gave us an intent without the widget_white id, just bail.
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID)
         {
-            new Misc().log("No appWidgetId provided");
+            Misc.log("No appWidgetId provided");
             finish();
         }
 

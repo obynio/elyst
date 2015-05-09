@@ -8,7 +8,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:background="?attr/colorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -20,7 +20,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="20dp"
                 android:maxLength="24"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:maxLength="42"
                 android:layout_below="@+id/editTextNewListName"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="20dp"
                 android:textColor="#FFFFFF"
@@ -51,6 +51,44 @@
                 android:inputType="textCapSentences"
                 android:singleLine="true"
                 android:id="@+id/editTextNewListDescription"/>
+
+            <LinearLayout
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="10dp"
+                android:layout_below="@id/editTextNewListDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/llNewListAddReminder">
+
+                <ImageView
+                    android:id="@+id/imageViewNewListAddReminder"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_schedule" />
+
+                <TextView
+                    android:id="@+id/textViewNewListAddReminderDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#ffffff"
+                    android:text="Add a reminder"
+                    android:textSize="16dp"
+                    android:layout_toRightOf="@id/imageViewNewListAddReminder"/>
+
+                <TextView
+                    android:id="@+id/textViewNewListAddReminderTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#ffffff"
+                    android:textSize="16dp"
+                    android:layout_toRightOf="@id/textViewNewListAddReminderDate"/>
+
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -69,7 +107,7 @@
         android:id="@+id/imageButtonNewListFab"
         android:layout_width="@dimen/fab_button_diameter"
         android:layout_height="@dimen/fab_button_diameter"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="190dp"
         android:layout_marginRight="16dp"
         android:layout_alignParentRight="true"
         android:background="@drawable/fab_shape"

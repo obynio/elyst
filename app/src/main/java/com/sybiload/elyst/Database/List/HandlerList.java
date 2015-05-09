@@ -12,14 +12,15 @@ public class HandlerList extends SQLiteOpenHelper
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_BACKGROUND = "background";
+    public static final String COLUMN_REMINDER = "reminder";
 
     public static final String CURRENT_TABL = "root";
     private static final String DATABASE_NAME = "main";
     private static final int DATABASE_VERSION = 1;
 
-    private static final String LIST_CREATE = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_ID_DB + " TEXT, " + COLUMN_NAME + " TEXT, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_BACKGROUND + " INTEGER DEFAULT 0);";
-    protected static final String LIST_INSERT = "INSERT INTO " + CURRENT_TABL + " VALUES (?, ?, ?, ?);";
-    protected static final String LIST_UPDATE = "UPDATE " + CURRENT_TABL + " SET " + COLUMN_ID_DB + "=?, " + COLUMN_NAME + "=?, " + COLUMN_DESCRIPTION + "=?, " + COLUMN_BACKGROUND + "=? WHERE " + COLUMN_ID_DB + "=?;";
+    private static final String LIST_CREATE = "CREATE TABLE " + CURRENT_TABL + " (" + COLUMN_ID_DB + " TEXT, " + COLUMN_NAME + " TEXT, " + COLUMN_DESCRIPTION + " TEXT, " + COLUMN_REMINDER + " TEXT, " + COLUMN_BACKGROUND + " INTEGER DEFAULT 0);";
+    protected static final String LIST_INSERT = "INSERT INTO " + CURRENT_TABL + " VALUES (?, ?, ?, ?, ?);";
+    protected static final String LIST_UPDATE = "UPDATE " + CURRENT_TABL + " SET " + COLUMN_ID_DB + "=?, " + COLUMN_NAME + "=?, " + COLUMN_DESCRIPTION + "=?, " + COLUMN_REMINDER + "=?, " + COLUMN_BACKGROUND + "=? WHERE " + COLUMN_ID_DB + "=?;";
 
     public HandlerList(Context context)
     {

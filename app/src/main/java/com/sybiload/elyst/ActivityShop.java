@@ -39,6 +39,7 @@ public class ActivityShop extends AppCompatActivity
     private RecyclerView.LayoutManager layoutManager;
 
     private Toolbar toolbar;
+    private RelativeLayout llEditItem;
     private EditText editTextName;
     private EditText editTextDescription;
     private EditText editTextPrice;
@@ -66,6 +67,7 @@ public class ActivityShop extends AppCompatActivity
         setContentView(R.layout.activity_shop);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        llEditItem = (RelativeLayout)findViewById(R.id.llEditItem);
         editTextName = (EditText)findViewById(R.id.editTextItemName);
         editTextDescription = (EditText)findViewById(R.id.editTextItemDescription);
         editTextPrice = (EditText)findViewById(R.id.editTextItemPrice);
@@ -108,7 +110,7 @@ public class ActivityShop extends AppCompatActivity
                 else
                 {
                     finish();
-                    new Misc().rightTransition(ActivityShop.this);
+                    Misc.rightTransition(ActivityShop.this);
                 }
             }
         });
@@ -321,13 +323,13 @@ public class ActivityShop extends AppCompatActivity
 
     private void expand(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 168, 900);
+        ValueAnimator mAnimator = slideAnimator(v, (int)Misc.dpToPx(getApplicationContext(), 56.0), (int)Misc.dpToPx(getApplicationContext(), 300.0));
         mAnimator.start();
     }
 
     private void collapse(View v)
     {
-        ValueAnimator mAnimator = slideAnimator(v, 900, 168);
+        ValueAnimator mAnimator = slideAnimator(v, (int)Misc.dpToPx(getApplicationContext(), 300.0), (int)Misc.dpToPx(getApplicationContext(), 56.0));
         mAnimator.start();
     }
 
@@ -351,9 +353,6 @@ public class ActivityShop extends AppCompatActivity
 
     public void barAction()
     {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        RelativeLayout llEditItem = (RelativeLayout)findViewById(R.id.llEditItem);
-
         if (toolbarOpened)
         {
             collapse(toolbar);
@@ -491,7 +490,7 @@ public class ActivityShop extends AppCompatActivity
                     DatabaseItem databaseItem = new DatabaseItem(getApplicationContext(), Static.currentList.getIdDb());
 
                     // update database
-                    new Misc().insertItem(getApplicationContext(), myItem);
+                    Misc.insertItem(getApplicationContext(), myItem);
 
                     // get position of our item in the availableItem and remove it
                     int position = Static.currentList.itemAvailable.indexOf(myItem);
@@ -626,7 +625,7 @@ public class ActivityShop extends AppCompatActivity
         else
         {
             finish();
-            new Misc().rightTransition(ActivityShop.this);
+            Misc.rightTransition(ActivityShop.this);
         }
     }
 }

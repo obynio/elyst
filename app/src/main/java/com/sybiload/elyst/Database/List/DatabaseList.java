@@ -13,7 +13,11 @@ import com.sybiload.elyst.List;
 import com.sybiload.elyst.Misc;
 import com.sybiload.elyst.Static;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class DatabaseList
 {
@@ -52,7 +56,18 @@ public class DatabaseList
         else
             stmtList.bindString(3, newList.getDescription());
 
-        stmtList.bindLong(4, newList.getBackground());
+        if (newList.getReminder() == null)
+            stmtList.bindNull(4);
+        else
+        {
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String strDate = simpleFormat.format(newList.getReminder().getTime());
+
+            stmtList.bindString(4, strDate);
+        }
+
+
+        stmtList.bindLong(5, newList.getBackground());
 
         stmtList.execute();
     }
@@ -68,10 +83,20 @@ public class DatabaseList
         else
             stmtList.bindString(3, newList.getDescription());
 
-        stmtList.bindLong(4, newList.getBackground());
+        if (newList.getReminder() == null)
+            stmtList.bindNull(4);
+        else
+        {
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String strDate = simpleFormat.format(newList.getReminder().getTime());
+
+            stmtList.bindString(4, strDate);
+        }
+
+        stmtList.bindLong(5, newList.getBackground());
 
         // value to search old list
-        stmtList.bindString(5, newList.getIdDb());
+        stmtList.bindString(6, newList.getIdDb());
 
         stmtList.execute();
     }
@@ -85,8 +110,25 @@ public class DatabaseList
 
         while (c.moveToNext())
         {
+            Calendar reminder = null;
+
+            if (c.getString(3) != null)
+            {
+                try
+                {
+                    String strDate = c.getString(3);
+                    Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(strDate);
+                    reminder = Calendar.getInstance();
+                    reminder.setTime(parsedDate);
+                }
+                catch (ParseException e)
+                {
+                    Misc.log("Error while parsing calendar");
+                }
+            }
+
             // for each row, create a new list object and add it to the list array
-            List myList = new List(c.getString(0), c.getString(1), c.getString(2), c.getInt(3));
+            List myList = new List(c.getString(0), c.getString(1), c.getString(2), reminder, c.getInt(4));
 
             allList.add(myList);
         }

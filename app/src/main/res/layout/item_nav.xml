@@ -7,8 +7,7 @@
         android:id="@+id/iconNav"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="10dip"
-        android:src="@mipmap/ic_launcher" />
+        android:layout_marginLeft="10dip" />
 
     <TextView
         android:id="@+id/textViewNavTitle"

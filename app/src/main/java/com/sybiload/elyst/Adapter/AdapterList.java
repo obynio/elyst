@@ -7,7 +7,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -84,7 +90,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     public void update(List myList)
     {
         // update database
-        new Misc().updateList(fm.getActivity(), myList);
+        Misc.updateList(fm.getActivity(), myList);
 
         // get oldpos in recyclerview
         int oldpos = 0;
@@ -97,7 +103,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             }
         }
 
-        new Misc().sortList(Static.allList);
+        Misc.sortList(Static.allList);
 
         // change data in the fragmentlist recyclerview
         int newpos = 0;
@@ -119,7 +125,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
     public void delete(List myList)
     {
         // update database
-        new Misc().deleteList(fm.getActivity(), myList);
+        Misc.deleteList(fm.getActivity(), myList);
 
         // delete database
         fm.getActivity().deleteDatabase(myList.getIdDb());
@@ -217,7 +223,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
         {
             myHolder = (ViewHolder) params[1];
 
-            BitmapFactory.Options options=new BitmapFactory.Options();
+            BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = Integer.parseInt(mainPref.getString("listPreferenceUiBgRes", "2")); //the higher this number goes, the smaller the image gets
             bitmap = BitmapFactory.decodeResource(fm.getResources(), (Integer) params[0], options);
 

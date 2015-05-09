@@ -78,13 +78,13 @@ public class ActivityMain extends AppCompatActivity
 
             if (result.isFailure())
             {
-                new Misc().log("In App query inventory failed");
+                Misc.log("In App query inventory failed");
             }
             else
             {
                 isPremium = inventory.hasPurchase(IabHelper.getSku());
-                new Misc().log("In App query inventory successfull");
-                new Misc().log("In App user " + (isPremium ? "has full version" : "has free version"));
+                Misc.log("In App query inventory successfull");
+                Misc.log("In App user " + (isPremium ? "has full version" : "has free version"));
 
                 mainPref.edit().putInt("deviceLoop", isPremium ? 8238 : 2895).commit();
                 invalidateOptionsMenu();
@@ -98,11 +98,11 @@ public class ActivityMain extends AppCompatActivity
         {
             if (result.isFailure())
             {
-                new Misc().log("In App payment failed");
+                Misc.log("In App payment failed");
             }
             else if (purchase.getSku().equals(IabHelper.getSku()))
             {
-                new Misc().log("In App payment successfull");
+                Misc.log("In App payment successfull");
                 helper.queryInventoryAsync(receivedInventoryListener);
             }
         }
@@ -130,8 +130,8 @@ public class ActivityMain extends AppCompatActivity
             isPremium = true;
             mainPref.edit().putInt("deviceLoop", isPremium ? 8238 : 2895).commit();
 
-            new Misc().log("Bypass InApp query, user is developer");
-            new Misc().log("In App user " + (isPremium ? "has full version" : "has free version"));
+            Misc.log("Bypass InApp query, user is developer");
+            Misc.log("In App user " + (isPremium ? "has full version" : "has free version"));
 
 
             return true;
@@ -231,11 +231,11 @@ public class ActivityMain extends AppCompatActivity
 
                 if (!result.isSuccess())
                 {
-                    new Misc().log("In App setup failed (" + result + ")");
+                    Misc.log("In App setup failed (" + result + ")");
                 }
                 else
                 {
-                    new Misc().log("In App setup successful");
+                    Misc.log("In App setup successful");
 
                     if (!isDeveloper() && isOnline())
                         helper.queryInventoryAsync(receivedInventoryListener);
@@ -299,6 +299,7 @@ public class ActivityMain extends AppCompatActivity
 
         navList = (ListView) findViewById(R.id.drawer);
 
+        models.add(new ListViewItem(null, null));
         models.add(new ListViewItem(drawerItems[0], getResources().getDrawable(R.mipmap.ic_shop)));
         models.add(new ListViewItem(drawerItems[1], getResources().getDrawable(R.mipmap.ic_settings)));
 
@@ -319,12 +320,12 @@ public class ActivityMain extends AppCompatActivity
                         {
                             Intent intent = new Intent(getApplicationContext(), ActivityAppPref.class);
                             startActivity(intent);
-                            new Misc().leftTransition(ActivityMain.this);
+                            Misc.leftTransition(ActivityMain.this);
                         }
                         else
                         {
                             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                            tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos]));
+                            tx.replace(R.id.main, Fragment.instantiate(ActivityMain.this, drawerFragments[pos - 1]));
                             tx.commit();
                         }
                     }
@@ -356,7 +357,7 @@ public class ActivityMain extends AppCompatActivity
         catch(Exception e)
         {
             // avoid a bug with billing library which cause a crash if google play has never been launched
-            new Misc().log("InApp billing onDestroy exception raised");
+            Misc.log("InApp billing onDestroy exception raised");
         }
 
     }
@@ -400,7 +401,7 @@ public class ActivityMain extends AppCompatActivity
         {
             if (ok)
             {
-                new Misc().log("auth_success");
+                Misc.log("auth_success");
                 mainPref.edit().putBoolean("done", true).commit();
             }
         }
@@ -432,7 +433,7 @@ public class ActivityMain extends AppCompatActivity
             }
             catch (Exception e)
             {
-                new Misc().log(e.toString());
+                Misc.log(e.toString());
             }
 
             // if there is an hacking app, make the activity crash

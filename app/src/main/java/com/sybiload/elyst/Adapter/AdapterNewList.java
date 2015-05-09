@@ -4,8 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
 import android.os.AsyncTask;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,12 +46,14 @@ public class AdapterNewList extends RecyclerView.Adapter<AdapterNewList.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public ImageView imageView;
+        public CardView cardView;
 
         public ViewHolder(View v)
         {
             super(v);
 
             imageView = (ImageView) v.findViewById(R.id.imageViewList);
+            cardView = (CardView) v.findViewById(R.id.cardViewList);
         }
     }
 

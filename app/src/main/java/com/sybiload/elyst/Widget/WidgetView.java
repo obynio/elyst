@@ -35,7 +35,7 @@ public class WidgetView extends AppWidgetProvider
         else
             views = new RemoteViews(context.getPackageName(), R.layout.widget_dark);
 
-        new Misc().populateList(context);
+        Misc.populateList(context);
 
         if (Static.allList.isEmpty())
         {
@@ -47,7 +47,7 @@ public class WidgetView extends AppWidgetProvider
         }
         else
         {
-            new Misc().populateItem(context, Static.allList.get(0));
+            Misc.populateItem(context, Static.allList.get(0));
 
             if (Static.widgetList.itemShop.isEmpty())
             {
@@ -75,7 +75,7 @@ public class WidgetView extends AppWidgetProvider
                     DatabaseItem database = new DatabaseItem(context, Static.allList.get(0).getIdDb());
 
                     // update database
-                    new Misc().updateItem(context, currentItem);
+                    Misc.updateItem(context, currentItem);
 
                     // make vibration
                     Vibrator vbr = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);

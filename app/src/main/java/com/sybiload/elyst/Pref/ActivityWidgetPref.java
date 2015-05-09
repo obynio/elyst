@@ -48,7 +48,7 @@ public class ActivityWidgetPref extends PreferenceActivity
             public void onClick(View v)
             {
                 finish();
-                new Misc().rightTransition(ActivityWidgetPref.this);
+                Misc.rightTransition(ActivityWidgetPref.this);
             }
         });
 
@@ -96,6 +96,6 @@ public class ActivityWidgetPref extends PreferenceActivity
     public void onBackPressed()
     {
         finish();
-        new Misc().rightTransition(ActivityWidgetPref.this);
+        Misc.rightTransition(ActivityWidgetPref.this);
     }
 }

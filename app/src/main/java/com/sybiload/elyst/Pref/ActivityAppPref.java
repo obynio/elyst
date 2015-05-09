@@ -44,7 +44,7 @@ public class ActivityAppPref extends PreferenceActivity
             public void onClick(View v)
             {
                 finish();
-                new Misc().rightTransition(ActivityAppPref.this);
+                Misc.rightTransition(ActivityAppPref.this);
             }
         });
 
@@ -55,7 +55,7 @@ public class ActivityAppPref extends PreferenceActivity
             {
                 Intent intent = new Intent(getApplicationContext(), ActivityUiPref.class);
                 startActivity(intent);
-                new Misc().leftTransition(ActivityAppPref.this);
+                Misc.leftTransition(ActivityAppPref.this);
                 return true;
             }
         });
@@ -67,7 +67,7 @@ public class ActivityAppPref extends PreferenceActivity
             {
                 Intent intent = new Intent(getApplicationContext(), ActivitySystemPref.class);
                 startActivity(intent);
-                new Misc().leftTransition(ActivityAppPref.this);
+                Misc.leftTransition(ActivityAppPref.this);
                 return true;
             }
         });
@@ -79,7 +79,7 @@ public class ActivityAppPref extends PreferenceActivity
             {
                 Intent intent = new Intent(getApplicationContext(), ActivityWidgetPref.class);
                 startActivity(intent);
-                new Misc().leftTransition(ActivityAppPref.this);
+                Misc.leftTransition(ActivityAppPref.this);
                 return true;
             }
         });
@@ -89,6 +89,6 @@ public class ActivityAppPref extends PreferenceActivity
     public void onBackPressed()
     {
         finish();
-        new Misc().rightTransition(ActivityAppPref.this);
+        Misc.rightTransition(ActivityAppPref.this);
     }
 }

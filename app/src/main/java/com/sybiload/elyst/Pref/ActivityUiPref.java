@@ -44,7 +44,7 @@ public class ActivityUiPref extends PreferenceActivity
             public void onClick(View v)
             {
                 finish();
-                new Misc().rightTransition(ActivityUiPref.this);
+                Misc.rightTransition(ActivityUiPref.this);
             }
         });
     }
@@ -83,6 +83,6 @@ public class ActivityUiPref extends PreferenceActivity
     public void onBackPressed()
     {
         finish();
-        new Misc().rightTransition(ActivityUiPref.this);
+        Misc.rightTransition(ActivityUiPref.this);
     }
 }

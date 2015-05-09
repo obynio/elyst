@@ -98,7 +98,7 @@ public class ActivityThree extends AppCompatActivity
     public void onBackPressed()
     {
         finish();
-        new Misc().rightTransition(ActivityThree.this);
+        Misc.rightTransition(ActivityThree.this);
     }
 
     public class newItemAsync extends AsyncTask<Void, Void, Void>
@@ -116,7 +116,7 @@ public class ActivityThree extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params)
         {
-            new Misc().populateDefaultItem(getApplicationContext());
+            Misc.populateDefaultItem(getApplicationContext());
             return null;
         }
 

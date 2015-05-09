@@ -33,14 +33,27 @@ public class AdapterListView extends ArrayAdapter<ListViewItem>
     {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View rowView;
-        rowView = inflater.inflate(R.layout.item_nav, parent, false);
+        View rowView = null;
 
-        TextView titleView = (TextView) rowView.findViewById(R.id.textViewNavTitle);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.iconNav);
+        if (position == 0)
+        {
 
-        titleView.setText(values.get(position).getTitle());
-        imageView.setImageDrawable(values.get(position).getIcon());
+            rowView = inflater.inflate(R.layout.item_header, parent, false);
+
+        }
+        else
+        {
+            rowView = inflater.inflate(R.layout.item_nav, parent, false);
+
+            TextView titleView = (TextView) rowView.findViewById(R.id.textViewNavTitle);
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.iconNav);
+
+            titleView.setText(values.get(position).getTitle());
+            imageView.setImageDrawable(values.get(position).getIcon());
+        }
+
+
+
 
         return rowView;
     }
