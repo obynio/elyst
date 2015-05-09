@@ -33,6 +33,8 @@ import com.google.zxing.integration.android.IntentResult;
 import com.sybiload.elyst.Adapter.AdapterShop;
 import com.sybiload.elyst.Database.Item.DatabaseItem;
 
+import org.w3c.dom.Text;
+
 public class ActivityShop extends AppCompatActivity
 {
     private RecyclerView recyclerView;
@@ -46,6 +48,7 @@ public class ActivityShop extends AppCompatActivity
     private EditText editTextQuantity;
     private TextView textViewBarcode;
     private TextView textViewUnit;
+    private TextView textViewCurrency;
     private ImageButton fabImageButton;
     private ImageView imageViewColorGreen;
     private ImageView imageViewColorOrange;
@@ -74,6 +77,7 @@ public class ActivityShop extends AppCompatActivity
         editTextQuantity = (EditText)findViewById(R.id.editTextItemQuantity);
         textViewBarcode = (TextView)findViewById(R.id.textViewItemBarcode);
         textViewUnit = (TextView)findViewById(R.id.textViewItemUnit);
+        textViewCurrency = (TextView)findViewById(R.id.textViewItemCurrency);
         imageViewColorGreen = (ImageView)findViewById(R.id.imageViewItemColorGreen);
         imageViewColorOrange = (ImageView)findViewById(R.id.imageViewItemColorOrange);
         imageViewColorRed = (ImageView)findViewById(R.id.imageViewItemColorRed);
@@ -185,6 +189,22 @@ public class ActivityShop extends AppCompatActivity
                         toolbar.getMenu().findItem(R.id.action_done).setEnabled(true);
                     }
                 }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        });
+
+        // listener to show the currency edit text when text is entered
+        editTextPrice.addTextChangedListener(new TextWatcher()
+        {
+            public void afterTextChanged(Editable s)
+            {
+                if (s.toString().isEmpty())
+                    textViewCurrency.setVisibility(View.GONE);
+                else
+                    textViewCurrency.setVisibility(View.VISIBLE);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -370,6 +390,7 @@ public class ActivityShop extends AppCompatActivity
             editTextPrice.setText(null);
             editTextQuantity.setText(null);
             textViewBarcode.setText(null);
+            textViewCurrency.setText(null);
             textViewUnit.setText(null);
 
             // hide fields
@@ -405,8 +426,12 @@ public class ActivityShop extends AppCompatActivity
             editTextPrice.setText(currentItem.getPrice() == 0.0 ? null : Double.toString(currentItem.getPrice()));
             editTextQuantity.setText(currentItem.getQuantity() == 0.0 ? null : Double.toString(currentItem.getQuantity()));
 
-            CharSequence[] entries = getApplicationContext().getResources().getStringArray(R.array.unit_entries);
-            textViewUnit.setText(entries[currentItem.getUnit()]);
+            CharSequence[] unitEntries = getApplicationContext().getResources().getStringArray(R.array.unit_entries);
+            CharSequence[] currencyEntries = getApplicationContext().getResources().getStringArray(R.array.ui_pref_currency_entries);
+            currencyEntries[0] = "";
+
+            textViewCurrency.setText(currencyEntries[Integer.parseInt(mainPref.getString("listPreferenceUiCurrency", "0"))]);
+            textViewUnit.setText(unitEntries[currentItem.getUnit()]);
             setColorImageView(currentItem.getCategory());
 
             // visible editText field

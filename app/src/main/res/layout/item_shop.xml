@@ -1,43 +1,111 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="fill_parent"
                 android:layout_height="?android:attr/listPreferredItemHeight">
 
     <ImageView
         android:id="@+id/imageViewShopItemIcon"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_margin="6dp"
-        android:layout_marginRight="6dip"
-        android:contentDescription="TODO"
         android:src="@mipmap/ic_launcher" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/imageViewShopItemIcon"
+        android:id="@+id/llShopInfo"
         android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/textViewShopFirstLine"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignWithParentIfMissing="true"
             android:gravity="center_vertical"
-            android:text="Example application"
+            android:text="Example"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/textViewShopSecondLine"
             android:layout_below="@id/textViewShopFirstLine"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#9E9E9E"
             android:singleLine="true"
             android:text="Description"
             android:textSize="12sp" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/llShopPrice"
+            android:layout_marginRight="20dp"
+            android:layout_alignLeft="@+id/llShopQuantity"
+            android:layout_alignStart="@+id/llShopQuantity">
+
+            <ImageView
+                android:id="@+id/imageViewShopPrice"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="6dp"
+                android:tint="@color/green"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_money" />
+
+            <TextView
+                android:id="@+id/textViewShopPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:textColor="@color/green"
+                android:text="12 €"
+                android:textSize="12dp"
+                android:layout_toRightOf="@id/imageViewShopPrice"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_below="@+id/llShopPrice"
+            android:id="@+id/llShopQuantity">
+
+            <ImageView
+                android:id="@+id/imageViewShopQuantity"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="6dp"
+                android:tint="@color/orange"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_quantity" />
+
+            <TextView
+                android:id="@+id/textViewShopQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:textColor="@color/orange"
+                android:text="23 kilo"
+                android:textSize="12dp"
+                android:layout_toRightOf="@id/imageViewShopQuantity"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 

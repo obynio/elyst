@@ -41,5 +41,20 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="categoryUiMisc"
+        android:title="Miscellaneous">
+
+        <ListPreference
+            android:dialogTitle="Currency"
+            android:entries="@array/ui_pref_currency_entries"
+            android:entryValues="@array/ui_pref_currency_values"
+            android:defaultValue="0"
+            android:key="listPreferenceUiCurrency"
+            android:title="Currency"
+            android:summary="Your local currency" />
+
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

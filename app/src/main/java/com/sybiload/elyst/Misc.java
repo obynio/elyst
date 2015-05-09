@@ -239,19 +239,19 @@ public class Misc
         databaseList.dbList.close();
     }
 
-    public static String getColor(Context ctx, int color)
+    public static int getColor(Context ctx, int color)
     {
         if (color == 1)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.green));
+            return ctx.getResources().getColor(R.color.green);
         else if (color == 2)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.orange));
+            return ctx.getResources().getColor(R.color.orange);
         else if (color == 3)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.red));
+            return ctx.getResources().getColor(R.color.red);
         else if (color == 4)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.purple));
+            return ctx.getResources().getColor(R.color.purple);
         else if (color == 5)
-            return "#" + Integer.toHexString(ctx.getResources().getColor(R.color.blue));
+            return ctx.getResources().getColor(R.color.blue);
         else
-            return "#9e9e9e";
+            return ctx.getResources().getColor(R.color.grey);
     }
 }

@@ -46,6 +46,7 @@ public class ActivityAdd extends AppCompatActivity
     private SearchView searchView;
     private ImageButton fabImageButton;
     private TextView textViewBarcode;
+    private TextView textViewCurrency;
     private ImageView imageViewColorGreen;
     private ImageView imageViewColorOrange;
     private ImageView imageViewColorRed;
@@ -82,6 +83,7 @@ public class ActivityAdd extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler);
         searchView = (SearchView) toolbar.findViewById(R.id.searchViewAdd);
         textViewBarcode = (TextView) findViewById(R.id.textViewAddItemBarcode);
+        textViewCurrency = (TextView)findViewById(R.id.textViewAddItemCurrency);
         imageViewColorGreen = (ImageView)findViewById(R.id.imageViewAddItemColorGreen);
         imageViewColorOrange = (ImageView)findViewById(R.id.imageViewAddItemColorOrange);
         imageViewColorRed = (ImageView)findViewById(R.id.imageViewAddItemColorRed);
@@ -202,6 +204,22 @@ public class ActivityAdd extends AppCompatActivity
                         return false;
                 }
             }
+        });
+
+        // listener to show the currency edit text when text is entered
+        editTextPrice.addTextChangedListener(new TextWatcher()
+        {
+            public void afterTextChanged(Editable s)
+            {
+                if (s.toString().isEmpty())
+                    textViewCurrency.setVisibility(View.GONE);
+                else
+                    textViewCurrency.setVisibility(View.VISIBLE);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
         });
 
         fabImageButton.setVisibility(View.GONE);
@@ -456,17 +474,26 @@ public class ActivityAdd extends AppCompatActivity
 
             if (AdapterAdd.selectedIndex.isEmpty())
             {
+                CharSequence[] currencyEntries = getApplicationContext().getResources().getStringArray(R.array.ui_pref_currency_entries);
+                currencyEntries[0] = "";
+
                 // reset text fields and color
                 editTextName.setText(null);
                 editTextPrice.setText(null);
                 textViewBarcode.setText(null);
+                textViewCurrency.setText(currencyEntries[Integer.parseInt(mainPref.getString("listPreferenceUiCurrency", "0"))]);
                 setColorImageView(color);
             }
             else
             {
+                CharSequence[] currencyEntries = getApplicationContext().getResources().getStringArray(R.array.ui_pref_currency_entries);
+                currencyEntries[0] = "";
+
                 // reset text fields and color
                 editTextName.setText(currentItem.getName());
                 editTextPrice.setText(currentItem.getPrice() == 0.0 ? null : Double.toString(currentItem.getPrice()));
+                textViewCurrency.setText(currencyEntries[Integer.parseInt(mainPref.getString("listPreferenceUiCurrency", "0"))]);
+
                 setColorImageView(currentItem.getCategory());
 
                 // check if a barcode exists and set visible if yes

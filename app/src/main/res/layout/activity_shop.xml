@@ -65,28 +65,45 @@
                 android:textColor="#C5CAE9"
                 android:visibility="gone"/>
 
-            <EditText
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="6"
                 android:layout_below="@+id/textViewItemBarcode"
-                android:layout_marginTop="30dp"
-                android:layout_marginLeft="8dp"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#C5CAE9"
-                android:background="@null"
-                android:textSize="18dp"
-                android:textColorHighlight="#2196F3"
-                android:hint="Unit price"
-                android:inputType="numberDecimal"
-                android:singleLine="true"
-                android:id="@+id/editTextItemPrice"/>
+                android:id="@+id/llItemPrice"
+                android:layout_marginTop="30dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="6"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#C5CAE9"
+                    android:background="@null"
+                    android:textSize="18dp"
+                    android:textColorHighlight="#2196F3"
+                    android:hint="Unit price"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:id="@+id/editTextItemPrice"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:textSize="18dp"
+                    android:id="@+id/textViewItemCurrency"
+                    android:textColor="#FFFFFF"/>
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/editTextItemPrice"
-                android:id="@+id/llQuantity"
+                android:layout_below="@+id/llItemPrice"
+                android:id="@+id/llItemQuantity"
                 android:layout_marginTop="10dp">
 
                 <EditText
@@ -111,7 +128,6 @@
                     android:layout_weight="2"
                     android:textSize="18dp"
                     android:id="@+id/textViewItemUnit"
-                    android:text="hello"
                     android:textColor="#FFFFFF"/>
 
             </LinearLayout>
@@ -119,7 +135,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/llQuantity"
+                android:layout_below="@+id/llItemQuantity"
                 android:layout_marginTop="20dp">
 
                 <ImageView

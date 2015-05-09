@@ -238,7 +238,7 @@ public class AdapterAdd extends RecyclerView.Adapter<AdapterAdd.ViewHolder>
 
 
         holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
-        holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, myItem.getCategory())));
+        holder.imageViewItemIcon.setColorFilter(Misc.getColor(ctx, myItem.getCategory()));
     }
 
     @Override

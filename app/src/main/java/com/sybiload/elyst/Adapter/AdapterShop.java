@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,6 +55,12 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         public TextView txtHeader;
         public TextView txtFooter;
         public ImageView imageViewItemIcon;
+        public LinearLayout llPrice;
+        public LinearLayout llQuantity;
+        public TextView textViewPrice;
+        public TextView textViewQuantity;
+        public ImageView imageViewPrice;
+        public ImageView imageViewQuantity;
 
         public ViewHolder(View v)
         {
@@ -62,6 +69,12 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             txtHeader = (TextView) v.findViewById(R.id.textViewShopFirstLine);
             txtFooter = (TextView) v.findViewById(R.id.textViewShopSecondLine);
             imageViewItemIcon = (ImageView) v.findViewById(R.id.imageViewShopItemIcon);
+            llPrice = (LinearLayout) v.findViewById(R.id.llShopPrice);
+            llQuantity = (LinearLayout) v.findViewById(R.id.llShopQuantity);
+            textViewPrice = (TextView) v.findViewById(R.id.textViewShopPrice);
+            textViewQuantity = (TextView) v.findViewById(R.id.textViewShopQuantity);
+            imageViewPrice = (ImageView) v.findViewById(R.id.imageViewShopPrice);
+            imageViewQuantity = (ImageView) v.findViewById(R.id.imageViewShopQuantity);
         }
     }
 
@@ -219,7 +232,26 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
             holder.txtFooter.setVisibility(View.VISIBLE);
         }
 
+        if (myItem.getPrice() != 0.0)
+        {
+            CharSequence[] entries = ctx.getResources().getStringArray(R.array.ui_pref_currency_entries);
+            entries[0] = "";
 
+            holder.llPrice.setVisibility(View.VISIBLE);
+            holder.textViewPrice.setText(Double.toString(myItem.getPrice() * (myItem.getQuantity() == 0.0 ? 1.0 : myItem.getQuantity())) + " " + entries[Integer.parseInt(mainPref.getString("listPreferenceUiCurrency", "0"))]);
+        }
+        else
+            holder.llPrice.setVisibility(View.GONE);
+
+        if (myItem.getQuantity() != 0.0)
+        {
+            CharSequence[] entries = ctx.getResources().getStringArray(R.array.unit_entries);
+
+            holder.llQuantity.setVisibility(View.VISIBLE);
+            holder.textViewQuantity.setText(Double.toString(myItem.getQuantity()) + " " + entries[myItem.getUnit()]);
+        }
+        else
+            holder.llQuantity.setVisibility(View.GONE);
 
         // when there is a long click on a row, either remove item if the toolbar of the activity is not opened, or hide the toolbar if it is opened. More details below
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener()
@@ -253,15 +285,23 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
         {
             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, 0)));
+            holder.imageViewItemIcon.setColorFilter(ctx.getResources().getColor(R.color.grey));
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
+            holder.imageViewPrice.setColorFilter(ctx.getResources().getColor(R.color.grey));
+            holder.imageViewQuantity.setColorFilter(ctx.getResources().getColor(R.color.grey));
+            holder.textViewPrice.setTextColor(ctx.getResources().getColor(R.color.grey));
+            holder.textViewQuantity.setTextColor(ctx.getResources().getColor(R.color.grey));
         }
         else
         {
             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, myItem.getCategory())));
+            holder.imageViewItemIcon.setColorFilter(Misc.getColor(ctx, myItem.getCategory()));
             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
+            holder.imageViewPrice.setColorFilter(ctx.getResources().getColor(R.color.green));
+            holder.imageViewQuantity.setColorFilter(ctx.getResources().getColor(R.color.orange));
+            holder.textViewPrice.setTextColor(ctx.getResources().getColor(R.color.green));
+            holder.textViewQuantity.setTextColor(ctx.getResources().getColor(R.color.orange));
         }
 
 
@@ -309,15 +349,23 @@ public class AdapterShop extends RecyclerView.Adapter<AdapterShop.ViewHolder>
                         {
                             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, 0)));
+                            holder.imageViewItemIcon.setColorFilter(ctx.getResources().getColor(R.color.grey));
                             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_nicon));
+                            holder.imageViewPrice.setColorFilter(ctx.getResources().getColor(R.color.grey));
+                            holder.imageViewQuantity.setColorFilter(ctx.getResources().getColor(R.color.grey));
+                            holder.textViewPrice.setTextColor(ctx.getResources().getColor(R.color.grey));
+                            holder.textViewQuantity.setTextColor(ctx.getResources().getColor(R.color.grey));
                         }
                         else
                         {
                             holder.txtHeader.setPaintFlags(holder.txtHeader.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                             holder.txtFooter.setPaintFlags(holder.txtFooter.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                            holder.imageViewItemIcon.setColorFilter(Color.parseColor(Misc.getColor(ctx, myItem.getCategory())));
+                            holder.imageViewItemIcon.setColorFilter(Misc.getColor(ctx, myItem.getCategory()));
                             holder.imageViewItemIcon.setImageDrawable(ctx.getResources().getDrawable(R.mipmap.ic_icon));
+                            holder.imageViewPrice.setColorFilter(ctx.getResources().getColor(R.color.green));
+                            holder.imageViewQuantity.setColorFilter(ctx.getResources().getColor(R.color.orange));
+                            holder.textViewPrice.setTextColor(ctx.getResources().getColor(R.color.green));
+                            holder.textViewQuantity.setTextColor(ctx.getResources().getColor(R.color.orange));
                         }
                     }
                 }
