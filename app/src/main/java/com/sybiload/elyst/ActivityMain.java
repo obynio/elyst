@@ -56,9 +56,9 @@ import java.util.Calendar;
 
 public class ActivityMain extends AppCompatActivity
 {
-    public static Toolbar toolbar;
-    public static ActionBarDrawerToggle drawerToggle;
-    public static DrawerLayout drawerLayout;
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
     private ListView navList;
     private String[] drawerItems;
     private String[] drawerFragments;
@@ -335,6 +335,23 @@ public class ActivityMain extends AppCompatActivity
             }
         });
 
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener()
+        {
+            @Override
+            public boolean onMenuItemClick(MenuItem item)
+            {
+
+                switch (item.getItemId())
+                {
+                    case R.id.action_buy:
+                        buy();
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+        });
 
 
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();

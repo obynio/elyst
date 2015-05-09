@@ -3,6 +3,7 @@ package com.sybiload.elyst.Adapter;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.CalendarContract;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
@@ -33,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sybiload.elyst.ActivityNewList;
 import com.sybiload.elyst.ActivityShop;
 import com.sybiload.elyst.Database.Item.DatabaseItem;
 import com.sybiload.elyst.Database.List.DatabaseList;
@@ -50,9 +53,6 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
 {
     private FragmentList fm;
     private SharedPreferences mainPref;
-
-    public List selectedList;
-    public ViewHolder selectedHolder;
 
     public AdapterList(FragmentList fm)
     {
@@ -74,17 +74,6 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             txtHeader = (TextView) v.findViewById(R.id.textViewListFirstLine);
             txtFooter = (TextView) v.findViewById(R.id.textViewListSecondLine);
         }
-    }
-
-    public void clearSelected()
-    {
-        if (selectedHolder != null && selectedList != null)
-        {
-            selectedHolder.imageView.setColorFilter(Color.TRANSPARENT);
-            selectedHolder = null;
-            selectedList = null;
-        }
-
     }
 
     public void update(List myList)
@@ -176,16 +165,32 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             @Override
             public boolean onLongClick(View v)
             {
+                AlertDialog.Builder alert = new AlertDialog.Builder(fm.getActivity(), R.style.AppCompatAlertDialogStyle);
 
-                if (selectedHolder != null)
-                    clearSelected();
+                alert.setTitle(Static.allList.get(holder.getLayoutPosition()).getName());
 
-                holder.imageView.setColorFilter(Color.parseColor("#66FFFFFF"));
+                alert.setItems(new String[]{"Edit", "Delete"}, new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        switch (which)
+                        {
+                            case 0:
+                                Static.currentList = Static.allList.get(holder.getLayoutPosition());
 
-                selectedHolder = holder;
-                selectedList = Static.allList.get(holder.getLayoutPosition());
+                                Intent intent = new Intent(fm.getActivity(), ActivityNewList.class);
+                                fm.startActivity(intent);
+                                break;
+                            case 1:
+                                delete(Static.allList.get(holder.getLayoutPosition()));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
 
-                fm.pressSelect();
+                alert.show();
 
                 return true;
             }
@@ -196,13 +201,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.ViewHolder>
             @Override
             public void onClick(View v)
             {
-                if (selectedHolder == null)
-                    fm.enterList(holder.getLayoutPosition());
-                else
-                {
-                    clearSelected();
-                    fm.pressSelect();
-                }
+                fm.enterList(holder.getLayoutPosition());
             }
         });
     }
