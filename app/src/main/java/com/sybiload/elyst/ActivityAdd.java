@@ -166,7 +166,7 @@ public class ActivityAdd extends AppCompatActivity
                             String priceStr = editTextPrice.getText().toString();
                             double price = (priceStr != null && !priceStr.equals("")) ? Double.parseDouble(priceStr) : 0.0;
 
-                            Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), null, currentItem.getCategory(), price, 0.0, 0, currentItem.getBarType(), currentItem.getBarCode(), currentItem.getDone());
+                            Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), null, currentItem.getCategory(), price, 0.0, 0, barType, barCode, currentItem.getDone());
 
                             currAdap.update(newItem);
 
@@ -556,9 +556,6 @@ public class ActivityAdd extends AppCompatActivity
             }
             else
             {
-                currentItem.setBarType(barType);
-                currentItem.setBarCode(barCode);
-
                 Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
                 textViewBarcode.setVisibility(View.VISIBLE);
                 textViewBarcode.setText(barType + " - " + barCode);

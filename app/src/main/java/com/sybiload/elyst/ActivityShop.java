@@ -40,6 +40,9 @@ public class ActivityShop extends AppCompatActivity
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
+    private String barType = null;
+    private String barCode = null;
+
     private Toolbar toolbar;
     private RelativeLayout llEditItem;
     private EditText editTextName;
@@ -136,13 +139,17 @@ public class ActivityShop extends AppCompatActivity
                         double quantity = (quantityStr != null && !quantityStr.equals("")) ? Double.parseDouble(quantityStr) : 0.0;
 
                         // create new item
-                        Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getCategory(), price, quantity, currentItem.getUnit(), currentItem.getBarType(), currentItem.getBarCode(), currentItem.getDone());
+                        Item newItem = new Item(currentItem.getIdItem(), editTextName.getText().toString(), editTextDescription.getText().toString(), currentItem.getCategory(), price, quantity, currentItem.getUnit(),barType, barCode, currentItem.getDone());
 
                         // update the recyclerView for changes
                         currAdap.update(newItem);
 
                         // collapse bar
                         barAction();
+
+                        // reset barType and barCode
+                        barType = null;
+                        barCode = null;
 
                         return true;
 
@@ -406,6 +413,8 @@ public class ActivityShop extends AppCompatActivity
 
             // reset barType, barCode, currentItem
             currentItem = null;
+            barType = null;
+            barCode = null;
         }
         else
         {
@@ -460,8 +469,8 @@ public class ActivityShop extends AppCompatActivity
         {
             Item myItem = null;
 
-            String barType = scanningResult.getFormatName();
-            String barCode = scanningResult.getContents();
+            barType = scanningResult.getFormatName();
+            barCode = scanningResult.getContents();
 
             if (toolbarOpened)
             {
@@ -486,11 +495,13 @@ public class ActivityShop extends AppCompatActivity
                 if (myItem != null)
                 {
                     Toast.makeText(getApplicationContext(), "Barcode already assigned to " + myItem.getName(), Toast.LENGTH_SHORT).show();
+
+                    // reset barType and barCode
+                    barType = null;
+                    barCode = null;
                 }
                 else
                 {
-                    currentItem.setBarType(barType);
-                    currentItem.setBarCode(barCode);
 
                     Toast.makeText(getApplicationContext(), "Barcode scanned", Toast.LENGTH_SHORT).show();
                     textViewBarcode.setVisibility(View.VISIBLE);
