@@ -42,6 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver
         if (myList != null)
         {
             Static.currentList = myList;
+            Misc.populateItem(context, Static.currentList);
 
             Intent mainIntent = new Intent(context, ActivityShop.class);
             PendingIntent pIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
