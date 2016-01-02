@@ -1,9 +1,8 @@
-Elyst
-=====
+#Synopsis
 
-A shopping list android app written on my spare time :)
+Elyst is a shopping list android app written on my spare time :)
 
-Spoilers
+#Spoilers
 -------
 
 ![alt tag](http://pool.sybiload.com/public/git/elyst/elyst_1.jpg)
