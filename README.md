@@ -1,11 +1,11 @@
 Elyst
-========
+=====
 
 A shopping list android app written on my spare time :)
 
-Some screenshots
-----------------
+Spoilers
+-------
 
-![alt tag](http://pool.sybiload.com/public/github/elyst/elyst_1.png)
-![alt tag](http://pool.sybiload.com/public/github/elyst/elyst_2.png)
-![alt tag](http://pool.sybiload.com/public/github/elyst/elyst_3.png)
+![alt tag](http://pool.sybiload.com/public/git/elyst/elyst_1.jpg)
+![alt tag](http://pool.sybiload.com/public/git/elyst/elyst_2.jpg)
+![alt tag](http://pool.sybiload.com/public/git/elyst/elyst_3.jpg)
